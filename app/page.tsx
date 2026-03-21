@@ -4,7 +4,6 @@ import path from "path";
 import matter from "gray-matter";
 import ScrollReveal, { ScrollRevealGroup } from "./scroll-reveal";
 import VehicleOrbit from "./vehicle-orbit";
-import CardStack from "./card-stack";
 
 /* ═══════════════════════════════════════════
    Homepage — 北大液晶儀表維修工作室
@@ -55,7 +54,6 @@ export default function HomePage() {
       <StatusBanner />
       <ServicesSection />
       <WhyUsSection />
-      <CardStack posts={posts} />
       <ArticlesSection posts={posts} />
       <FaqSection />
       <ContactSection />

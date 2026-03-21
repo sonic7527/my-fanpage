@@ -209,7 +209,7 @@ export default function AdminDashboard() {
         ) : (
           <div className="space-y-1">
             {/* Table header */}
-            <div className="grid grid-cols-[1fr_90px_90px_120px] gap-4 px-4 py-2 text-xs font-medium text-white/30 uppercase tracking-wider">
+            <div className="grid grid-cols-[1fr_100px_90px_200px] gap-4 px-4 py-2 text-xs font-medium text-white/30 uppercase tracking-wider">
               <span>標題</span>
               <span>日期</span>
               <span>分類</span>
