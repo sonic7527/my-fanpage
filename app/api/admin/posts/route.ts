@@ -51,3 +51,40 @@ export async function DELETE(req: NextRequest) {
   fs.unlinkSync(filePath);
   return NextResponse.json({ ok: true, message: `已刪除 ${slug}` });
 }
+
+// POST: create new post
+export async function POST(req: NextRequest) {
+  const authError = await verifyAdmin(req);
+  if (authError) return authError;
+
+  const { title, date, category, content, excerpt } = await req.json();
+  if (!title || !date) {
+    return NextResponse.json({ error: "標題和日期為必填" }, { status: 400 });
+  }
+
+  // Generate slug from date and title
+  const slugBase = `${date}-${title.replace(/[^a-zA-Z0-9\u4e00-\u9fff]/g, "-").replace(/-+/g, "-").toLowerCase().slice(0, 50)}`;
+  const filePath = path.join(POSTS_DIR, `${slugBase}.md`);
+
+  if (fs.existsSync(filePath)) {
+    return NextResponse.json({ error: "同名文章已存在" }, { status: 409 });
+  }
+
+  const frontmatter = {
+    title,
+    date,
+    excerpt: excerpt || content?.slice(0, 120) + "…" || "",
+    image: "",
+    category: category || "repair",
+    model: "",
+    pinned: false,
+    order: 0,
+    fb_id: "",
+    fb_permalink: "",
+  };
+
+  const file = matter.stringify(content || "", frontmatter);
+  fs.writeFileSync(filePath, file, "utf-8");
+
+  return NextResponse.json({ ok: true, slug: slugBase });
+}
