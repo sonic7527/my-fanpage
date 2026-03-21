@@ -323,18 +323,17 @@ function WhyUsSection() {
 function ArticlesSection({ posts }: { posts: Post[] }) {
   if (posts.length === 0) return null;
 
-  const featured = posts[0];
-  const rest = posts.slice(1);
+  const revealClasses = ["reveal-left", "reveal-right", "reveal-scale", "reveal"];
 
   return (
     <section id="articles" className="py-28">
-      <div className="mx-auto max-w-6xl px-6">
+      <div className="mx-auto max-w-7xl px-6">
         <ScrollReveal>
           <div className="mb-16 flex items-end justify-between">
             <div>
-              <span className="text-xs font-bold uppercase tracking-[0.25em] text-accent">Articles</span>
+              <span className="text-xs font-bold uppercase tracking-[0.25em] text-accent">Repair Cases</span>
               <h2 className="mt-3 font-display text-[clamp(2rem,4vw,3.2rem)] font-black leading-tight text-text">
-                維修知識專欄
+                維修案例
               </h2>
             </div>
             <Link href="/posts" className="hidden text-sm font-medium text-text-muted hover:text-accent md:block">
@@ -343,53 +342,43 @@ function ArticlesSection({ posts }: { posts: Post[] }) {
           </div>
         </ScrollReveal>
 
-        <div className="grid gap-8 lg:grid-cols-[1.4fr_1fr]">
-          <ScrollReveal className="reveal-left">
-            <Link href={`/posts/${featured.slug}`} className="group block">
-              <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-surface">
-                {featured.image ? (
-                  <img src={featured.image} alt={featured.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                ) : (
-                  <div className="flex h-full items-center justify-center">
-                    <LcdIcon size={100} />
-                  </div>
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-primary-deep/90 via-primary-deep/30 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-8">
-                  <time className="text-xs font-medium text-gold">{featured.date}</time>
-                  <h3 className="mt-2 font-display text-2xl font-bold leading-snug text-text group-hover:text-accent transition-colors">
-                    {featured.title}
-                  </h3>
-                  <p className="mt-3 text-sm leading-relaxed text-text-muted line-clamp-2">{featured.excerpt}</p>
-                </div>
-              </div>
-            </Link>
-          </ScrollReveal>
-
-          <ScrollRevealGroup className="flex flex-col gap-6">
-            {rest.map((post) => (
+        {/* Grid — cards fly in from different directions on scroll */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          {posts.map((post, i) => (
+            <ScrollReveal key={post.slug} className={revealClasses[i % 4]}>
               <Link
-                key={post.slug}
                 href={`/posts/${post.slug}`}
-                className="reveal group flex gap-5 border-b border-border/50 pb-6 last:border-0"
+                className="group block overflow-hidden rounded-xl bg-surface border border-white/[0.06] hover:border-accent/30 transition-all duration-300 hover:shadow-[0_0_24px_rgba(220,60,40,0.15)] hover:scale-[1.03]"
               >
-                <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-surface">
+                <div className="relative aspect-square overflow-hidden bg-surface-light">
                   {post.image ? (
-                    <img src={post.image} alt={post.title} className="h-full w-full object-cover" />
+                    <img src={post.image} alt={post.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
                   ) : (
-                    <div className="flex h-full items-center justify-center"><LcdIcon size={32} /></div>
+                    <div className="flex h-full items-center justify-center">
+                      <LcdIcon size={48} />
+                    </div>
+                  )}
+                  {post.category && (
+                    <span className="absolute top-2 left-2 text-[10px] font-bold uppercase tracking-wider bg-primary-deep/80 text-accent px-2 py-0.5 rounded">
+                      {post.category}
+                    </span>
                   )}
                 </div>
-                <div className="min-w-0 flex-1">
-                  <time className="text-xs text-text-dim">{post.date}</time>
+                <div className="p-4">
+                  <time className="text-[11px] text-text-dim">{post.date}</time>
                   <h4 className="mt-1 font-display text-sm font-bold leading-snug text-text group-hover:text-accent transition-colors line-clamp-2">
                     {post.title}
                   </h4>
-                  <p className="mt-1.5 text-xs leading-relaxed text-text-muted line-clamp-2">{post.excerpt}</p>
                 </div>
               </Link>
-            ))}
-          </ScrollRevealGroup>
+            </ScrollReveal>
+          ))}
+        </div>
+
+        <div className="mt-10 text-center md:hidden">
+          <Link href="/posts" className="text-sm font-medium text-text-muted hover:text-accent">
+            查看全部文章 →
+          </Link>
         </div>
       </div>
     </section>
