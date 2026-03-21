@@ -50,8 +50,8 @@ export default function HomePage() {
   return (
     <>
       <HeroSection />
-      <StatusBanner />
       <VehicleOrbit />
+      <StatusBanner />
       <ServicesSection />
       <WhyUsSection />
       <ArticlesSection posts={posts} />
@@ -105,6 +105,10 @@ function HeroSection() {
             專注一般機車液晶儀表維修 — 液晶淡化、斷字、按鍵故障。
             效果更好、壽命更長。高雄、屏東雙據點，採預約制服務。
           </p>
+
+          <a href="#vehicles" className="animate-fade-up-delay-2 mt-5 inline-flex items-center gap-2 text-accent/80 hover:text-accent text-sm font-medium transition-colors">
+            為什麼選擇北大？看看我們支援的車款 →
+          </a>
 
           <div className="animate-fade-up-delay-3 mt-12 flex flex-wrap items-center gap-4">
             <a

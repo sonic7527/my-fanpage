@@ -5,148 +5,173 @@ import { useState, useEffect, useRef, useCallback } from "react";
 const brands = [
   {
     id: "sym", name: "SYM", sub: "三陽", color: "#3B82F6",
-    orbit: { layer: 2, speed: 0.25, startAngle: 15 },
+    orbit: { layer: 1, fixedAngle: 220 },
     size: 52,
     models: ["FIGHTER 5／JET EVO", "FIGHTER 6", "FNX", "GT 125", "GR 125", "JET-S／SR", "JET-POWER", "MIO 115", "MII 110", "NEW MII", "RX 110", "TL-508", "Z1／IRX"],
   },
   {
     id: "kymco", name: "KYMCO", sub: "光陽", color: "#10B981",
-    orbit: { layer: 3, speed: 0.15, startAngle: 200 },
+    orbit: { layer: 2, fixedAngle: 30 },
     size: 50,
     models: ["新名流", "GP 125", "G5 系列", "G6", "G6 50週年", "KIWI", "Like", "Many 110", "Many 125", "NEW Many", "Racing", "Racing King", "VJR 110", "VJR 125"],
   },
   {
     id: "yamaha", name: "YAM", sub: "山葉", color: "#0EA5E9",
-    orbit: { layer: 1, speed: 0.35, startAngle: 100 },
+    orbit: { layer: 0, fixedAngle: 310 },
     size: 48,
     models: ["BWS'X", "BWS'R", "CUXI", "NEW CUXI", "CUXI 115", "FORCE", "GTR", "LIMI", "RSZ", "RS-ZERO", "S-MAX", "勁戰2代"],
   },
   {
     id: "pgo", name: "PGO", sub: "比雅久", color: "#F97316",
-    orbit: { layer: 3, speed: 0.2, startAngle: 50 },
+    orbit: { layer: 2, fixedAngle: 210 },
     size: 44,
     models: ["ALPHA MAX", "JBUBU 115", "JBUBU 125", "TIGRA 125", "TIGRA 150", "X-HOT"],
   },
   {
     id: "suzuki", name: "SUZ", sub: "鈴木", color: "#EAB308",
-    orbit: { layer: 2, speed: 0.3, startAngle: 250 },
+    orbit: { layer: 1, fixedAngle: 60 },
     size: 40,
     models: ["GSR／NEX", "SALUTO"],
   },
   {
     id: "vespa", name: "Ves", sub: "偉士牌", color: "#14B8A6",
-    orbit: { layer: 1, speed: 0.4, startAngle: 280 },
+    orbit: { layer: 0, fixedAngle: 140 },
     size: 38,
     models: ["春天 Primavera"],
   },
 ];
 
-// Irregular polygon orbit paths (like kzero.com)
-// Each layer is a set of points forming an irregular polygon
-function getOrbitPoint(layer: number, angle: number, cx: number, cy: number): { x: number; y: number } {
-  // Each layer has different radii at different angles — irregular shape
-  const layers = [
-    // Layer 0: inner (r ~120-150)
-    [130, 145, 120, 150, 135, 140, 125, 148, 132, 142, 128, 138],
-    // Layer 1: middle (r ~170-210)
-    [190, 175, 210, 185, 200, 170, 195, 180, 205, 172, 188, 198],
-    // Layer 2: outer (r ~230-280)
-    [250, 270, 235, 275, 245, 260, 240, 280, 255, 238, 265, 248],
-    // Layer 3: outermost (r ~290-340)
-    [310, 295, 340, 305, 325, 290, 335, 300, 320, 298, 330, 308],
-  ];
+// Layer rotation speeds (degrees/second) — visible rotation
+const layerSpeeds = [18, -12, 8];
 
-  const radii = layers[layer] || layers[0];
-  const segments = radii.length;
-  const normalizedAngle = ((angle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
-  const segIndex = (normalizedAngle / (Math.PI * 2)) * segments;
-  const i0 = Math.floor(segIndex) % segments;
-  const i1 = (i0 + 1) % segments;
-  const frac = segIndex - Math.floor(segIndex);
+// Irregular polygon radii for each layer
+const layerRadii = [
+  [140, 155, 130, 160, 145, 150, 135, 158, 142, 152, 138, 148],
+  [200, 185, 220, 195, 210, 180, 205, 190, 215, 182, 198, 208],
+  [270, 285, 255, 290, 265, 280, 260, 295, 275, 258, 282, 268],
+];
 
-  // Smooth interpolation between radii points
-  const r = radii[i0] + (radii[i1] - radii[i0]) * frac;
-
-  return {
-    x: cx + Math.cos(normalizedAngle) * r,
-    y: cy + Math.sin(normalizedAngle) * r * 0.85, // slight vertical squish
-  };
+// Catmull-Rom spline for smooth curves
+function catmullRom(p0: number, p1: number, p2: number, p3: number, t: number): number {
+  return 0.5 * (2 * p1 + (-p0 + p2) * t + (2 * p0 - 5 * p1 + 4 * p2 - p3) * t * t + (-p0 + 3 * p1 - 3 * p2 + p3) * t * t * t);
 }
 
-// Generate SVG path for orbit ring
-function orbitPath(layer: number, cx: number, cy: number): string {
-  const steps = 72;
-  let d = "";
-  for (let i = 0; i <= steps; i++) {
-    const a = (i / steps) * Math.PI * 2;
-    const p = getOrbitPoint(layer, a, cx, cy);
-    d += i === 0 ? `M ${p.x} ${p.y}` : ` L ${p.x} ${p.y}`;
-  }
-  return d + " Z";
+// Get point on orbit at given angle (degrees), BEFORE layer rotation
+function getOrbitPoint(layer: number, angleDeg: number, cx: number, cy: number): [number, number] {
+  const radii = layerRadii[layer];
+  const n = radii.length;
+  const a = ((angleDeg % 360) + 360) % 360;
+  const seg = (a / 360) * n;
+  const i0 = Math.floor(seg) % n;
+  const frac = seg - Math.floor(seg);
+  const r = catmullRom(
+    radii[(i0 - 1 + n) % n], radii[i0],
+    radii[(i0 + 1) % n], radii[(i0 + 2) % n],
+    frac
+  );
+  const rad = (a * Math.PI) / 180;
+  return [cx + Math.cos(rad) * r, cy + Math.sin(rad) * r * 0.85];
 }
 
-// Decorative dots scattered around orbits
+// Rotate (px, py) around (cx, cy) by angleDeg degrees
+function rotateAround(px: number, py: number, cx: number, cy: number, angleDeg: number): [number, number] {
+  const rad = (angleDeg * Math.PI) / 180;
+  const dx = px - cx, dy = py - cy;
+  return [cx + dx * Math.cos(rad) - dy * Math.sin(rad), cy + dx * Math.sin(rad) + dy * Math.cos(rad)];
+}
+
+// Build SVG path string for orbit ring
+function buildOrbitPath(layer: number, cx: number, cy: number): string {
+  const steps = 120;
+  return Array.from({ length: steps + 1 }, (_, i) => {
+    const [x, y] = getOrbitPoint(layer, (i / steps) * 360, cx, cy);
+    return `${i === 0 ? "M" : "L"} ${x.toFixed(1)} ${y.toFixed(1)}`;
+  }).join(" ") + " Z";
+}
+
+// Decorative dots fixed on layers
 const decorDots = [
-  { layer: 0, angle: 2.1, color: "#DC3C28", size: 5 },
-  { layer: 1, angle: 0.8, color: "#8B5CF6", size: 4 },
-  { layer: 1, angle: 3.5, color: "#3B82F6", size: 6 },
-  { layer: 2, angle: 1.5, color: "#DC3C28", size: 3 },
-  { layer: 2, angle: 4.2, color: "#8B5CF6", size: 5 },
-  { layer: 3, angle: 0.3, color: "#14B8A6", size: 4 },
-  { layer: 3, angle: 2.8, color: "#F97316", size: 3 },
-  { layer: 0, angle: 4.8, color: "#0EA5E9", size: 4 },
+  { layer: 0, angle: 50, color: "#DC3C28", size: 6 },
+  { layer: 0, angle: 230, color: "#8B5CF6", size: 5 },
+  { layer: 1, angle: 150, color: "#3B82F6", size: 7 },
+  { layer: 1, angle: 320, color: "#0EA5E9", size: 5 },
+  { layer: 2, angle: 120, color: "#DC3C28", size: 4 },
+  { layer: 2, angle: 300, color: "#14B8A6", size: 5 },
 ];
 
 export default function VehicleOrbit() {
   const [selected, setSelected] = useState<string | null>(null);
-  const pausedRef = useRef(false);
-  const timeRef = useRef(0);
+  const containerRef = useRef<HTMLDivElement>(null);
   const animRef = useRef<number>(0);
-  const [positions, setPositions] = useState<{ x: number; y: number }[]>(
-    brands.map(() => ({ x: 350, y: 300 }))
-  );
-  const [dotPositions, setDotPositions] = useState<{ x: number; y: number }[]>(
-    decorDots.map(() => ({ x: 0, y: 0 }))
-  );
+  const startTimeRef = useRef(0);
+  // Track layer rotation angles (in degrees)
+  const layerAnglesRef = useRef([0, 0, 0]);
+  const lastFrameRef = useRef(0);
+  const runningRef = useRef(true);
 
-  const cx = 350;
-  const cy = 300;
+  const CX = 350, CY = 320;
+  const W = 700, H = 640;
 
-  const updatePositions = useCallback((time: number) => {
-    if (!pausedRef.current) {
-      timeRef.current = time;
+  const animate = useCallback((now: number) => {
+    if (!startTimeRef.current) startTimeRef.current = now;
+    if (!lastFrameRef.current) lastFrameRef.current = now;
+    const dt = (now - lastFrameRef.current) / 1000;
+    lastFrameRef.current = now;
+
+    const container = containerRef.current;
+    if (!container) { animRef.current = requestAnimationFrame(animate); return; }
+
+    // Always advance layer angles (never pause)
+    if (runningRef.current) {
+      for (let l = 0; l < 3; l++) {
+        layerAnglesRef.current[l] = (layerAnglesRef.current[l] + layerSpeeds[l] * dt) % 360;
+      }
     }
-    const t = timeRef.current / 1000;
 
-    const newPos = brands.map((brand) => {
-      const { layer, speed, startAngle } = brand.orbit;
-      const a = (startAngle * Math.PI) / 180 + t * speed;
-      return getOrbitPoint(layer, a, cx, cy);
+    const angles = layerAnglesRef.current;
+
+    // Rotate SVG orbit paths
+    const svgGroups = container.querySelectorAll<SVGGElement>("[data-orbit-layer]");
+    svgGroups.forEach((g) => {
+      const layer = Number(g.dataset.orbitLayer);
+      g.setAttribute("transform", `rotate(${angles[layer]} ${CX} ${CY})`);
     });
 
-    const newDots = decorDots.map((dot) => {
-      const a = dot.angle + t * 0.08; // slow drift
-      return getOrbitPoint(dot.layer, a, cx, cy);
+    // Move brand icons — fixed on orbit, rotated with layer
+    const brandEls = container.querySelectorAll<HTMLElement>("[data-brand-idx]");
+    brandEls.forEach((el) => {
+      const idx = Number(el.dataset.brandIdx);
+      const brand = brands[idx];
+      const { layer, fixedAngle } = brand.orbit;
+      const [bx, by] = getOrbitPoint(layer, fixedAngle, CX, CY);
+      const [rx, ry] = rotateAround(bx, by, CX, CY, angles[layer]);
+      el.style.left = `${rx}px`;
+      el.style.top = `${ry}px`;
     });
 
-    setPositions(newPos);
-    setDotPositions(newDots);
-    animRef.current = requestAnimationFrame(updatePositions);
+    // Move decorative dots
+    const dotEls = container.querySelectorAll<HTMLElement>("[data-dot-idx]");
+    dotEls.forEach((el) => {
+      const idx = Number(el.dataset.dotIdx);
+      const dot = decorDots[idx];
+      const [bx, by] = getOrbitPoint(dot.layer, dot.angle, CX, CY);
+      const [rx, ry] = rotateAround(bx, by, CX, CY, angles[dot.layer]);
+      el.style.left = `${rx}px`;
+      el.style.top = `${ry}px`;
+    });
+
+    animRef.current = requestAnimationFrame(animate);
   }, []);
 
   useEffect(() => {
-    animRef.current = requestAnimationFrame(updatePositions);
+    runningRef.current = true;
+    animRef.current = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animRef.current);
-  }, [updatePositions]);
+  }, [animate]);
 
   function handleBrandClick(id: string) {
-    if (selected === id) {
-      setSelected(null);
-      pausedRef.current = false;
-    } else {
-      setSelected(id);
-      pausedRef.current = true;
-    }
+    setSelected((prev) => (prev === id ? null : id));
+    // Animation NEVER stops — always rotating
   }
 
   const selectedBrand = brands.find((b) => b.id === selected);
@@ -154,7 +179,6 @@ export default function VehicleOrbit() {
   return (
     <section id="vehicles" className="relative py-28 overflow-hidden bg-primary-deep">
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
-        {/* Header */}
         <div className="text-center mb-6">
           <span className="text-xs font-bold uppercase tracking-[0.3em] text-accent">Compatible Models</span>
           <h2 className="mt-3 font-display text-[clamp(1.8rem,3.5vw,3rem)] font-black text-white">可維修車款一覽</h2>
@@ -162,8 +186,8 @@ export default function VehicleOrbit() {
         </div>
 
         <div className="relative">
-          {/* Left panel - overlaid */}
-          <div className={`lg:absolute lg:left-0 lg:top-1/2 lg:-translate-y-1/2 z-20 w-full lg:w-[320px] transition-all duration-700 ${selected ? "opacity-100 translate-x-0" : "opacity-0 lg:-translate-x-10 pointer-events-none h-0 lg:h-auto"}`}>
+          {/* Left panel */}
+          <div className={`lg:absolute lg:left-0 lg:top-1/2 lg:-translate-y-1/2 z-30 w-full lg:w-[320px] transition-all duration-500 ${selected ? "opacity-100 translate-x-0" : "opacity-0 lg:-translate-x-10 pointer-events-none h-0 lg:h-auto"}`}>
             {selectedBrand && (
               <div className="rounded-2xl border border-white/[0.08] bg-primary-deep/95 backdrop-blur-xl p-6 shadow-2xl">
                 <h3 className="font-bold text-lg mb-1" style={{ color: selectedBrand.color }}>
@@ -179,105 +203,101 @@ export default function VehicleOrbit() {
                     </li>
                   ))}
                 </ul>
-                <button type="button" onClick={() => { setSelected(null); pausedRef.current = false; }} className="mt-4 text-xs text-text-dim hover:text-accent transition-colors">
+                <button type="button" onClick={() => setSelected(null)} className="mt-4 text-xs text-text-dim hover:text-accent transition-colors">
                   ← 返回
                 </button>
               </div>
             )}
           </div>
 
-          {/* Orbit area - always centered */}
+          {/* Orbit container */}
           <div className="flex justify-center">
-            <div className="relative" style={{ width: 700, height: 600 }}>
-              {/* Orbit ring paths */}
-              <svg className="absolute inset-0 w-full h-full" viewBox="0 0 700 600">
-                {[0, 1, 2, 3].map((layer) => (
-                  <path
-                    key={layer}
-                    d={orbitPath(layer, cx, cy)}
-                    fill="none"
-                    stroke="white"
-                    strokeOpacity={0.06 - layer * 0.005}
-                    strokeWidth={0.8}
-                  />
+            <div ref={containerRef} className="relative" style={{ width: W, height: H }}>
+
+              {/* SVG orbit rings */}
+              <svg className="absolute inset-0 w-full h-full" viewBox={`0 0 ${W} ${H}`}>
+                {layerRadii.map((_, layer) => (
+                  <g key={layer} data-orbit-layer={layer}>
+                    <path
+                      d={buildOrbitPath(layer, CX, CY)}
+                      fill="none"
+                      stroke="white"
+                      strokeOpacity={0.15}
+                      strokeWidth={1.5}
+                    />
+                  </g>
                 ))}
               </svg>
 
               {/* Decorative dots */}
               {decorDots.map((dot, i) => (
                 <div
-                  key={i}
-                  className="absolute rounded-full -translate-x-1/2 -translate-y-1/2 transition-all duration-1000"
+                  key={`dot-${i}`}
+                  data-dot-idx={i}
+                  className="absolute rounded-full"
                   style={{
-                    left: dotPositions[i]?.x || 0,
-                    top: dotPositions[i]?.y || 0,
                     width: dot.size,
                     height: dot.size,
                     backgroundColor: dot.color,
-                    opacity: 0.5,
-                    boxShadow: `0 0 ${dot.size * 2}px ${dot.color}40`,
+                    opacity: 0.7,
+                    boxShadow: `0 0 ${dot.size * 3}px ${dot.color}80`,
+                    transform: "translate(-50%, -50%)",
                   }}
                 />
               ))}
 
-              {/* Center - galaxy glow + 北大 calligraphy */}
+              {/* Center: galaxy glow + calligraphy image */}
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <div className={`text-center transition-all duration-500 ${selected ? "scale-90 opacity-50" : "scale-100 opacity-100"}`}>
-                  {/* Galaxy / crystal glow effect */}
-                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-                    {/* Outer glow */}
-                    <div className="absolute inset-0 -m-20 rounded-full bg-purple-600/[0.06] blur-[80px]" />
-                    {/* Rotating crystal shape */}
-                    <div className="relative h-40 w-40 -m-20 animate-spin" style={{ animationDuration: "15s" }}>
-                      <div className="absolute inset-2 rounded-[30%] bg-gradient-to-br from-purple-500/20 via-accent/15 to-blue-500/20 blur-[20px] rotate-45" />
-                      <div className="absolute inset-4 rounded-[35%] bg-gradient-to-tr from-orange-500/15 via-pink-500/10 to-purple-600/15 blur-[15px] -rotate-12" />
-                      <div className="absolute inset-6 rounded-[40%] bg-gradient-to-bl from-blue-400/20 via-violet-500/15 to-rose-500/10 blur-[10px] rotate-[30deg]" />
-                    </div>
-                    {/* Inner bright core */}
-                    <div className="absolute inset-0 -m-8 rounded-full bg-white/[0.03] blur-[30px]" />
+                <div className={`relative transition-all duration-500 ${selected ? "scale-90 opacity-60" : "scale-100 opacity-100"}`}>
+                  {/* Glow layers */}
+                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] h-[340px] rounded-full" style={{ background: "radial-gradient(circle, rgba(120,40,200,0.15) 0%, rgba(80,20,160,0.08) 40%, transparent 70%)" }} />
+                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[260px] h-[260px] rounded-full blur-[60px]" style={{ background: "radial-gradient(circle, rgba(140,60,220,0.3) 0%, rgba(100,30,180,0.15) 50%, transparent 80%)" }} />
+                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[200px] h-[200px] rounded-full blur-[40px]" style={{ background: "radial-gradient(circle, rgba(220,80,50,0.25) 0%, rgba(200,60,120,0.18) 40%, transparent 75%)" }} />
+                  {/* Spinning crystal layers */}
+                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[160px] h-[160px] animate-spin" style={{ animationDuration: "12s" }}>
+                    <div className="absolute inset-0 rounded-[30%] rotate-45" style={{ background: "linear-gradient(135deg, rgba(180,60,220,0.4) 0%, rgba(220,80,40,0.3) 50%, rgba(60,120,220,0.35) 100%)", filter: "blur(12px)" }} />
                   </div>
-                  {/* Text overlay */}
-                  <div className="relative">
-                    <div
-                      className="text-8xl text-white leading-none"
-                      style={{ fontFamily: "'Ma Shan Zheng', cursive", textShadow: "0 0 60px rgba(220,60,40,0.3), 0 0 120px rgba(150,50,200,0.15), 0 2px 4px rgba(0,0,0,0.5)" }}
-                    >
-                      北大
-                    </div>
-                    <div className="text-[10px] font-bold text-accent/50 tracking-[0.6em] mt-3 uppercase font-display">
-                      Bei Da
-                    </div>
+                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[130px] h-[130px]" style={{ animation: "spin 18s linear infinite reverse" }}>
+                    <div className="absolute inset-0 rounded-[35%] -rotate-12" style={{ background: "linear-gradient(225deg, rgba(240,100,60,0.35) 0%, rgba(200,50,150,0.3) 40%, rgba(100,60,220,0.4) 100%)", filter: "blur(8px)" }} />
+                  </div>
+                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[100px] h-[100px] animate-spin" style={{ animationDuration: "8s" }}>
+                    <div className="absolute inset-0 rounded-[25%] rotate-[30deg]" style={{ background: "linear-gradient(315deg, rgba(80,140,255,0.4) 0%, rgba(180,80,220,0.35) 50%, rgba(240,90,70,0.3) 100%)", filter: "blur(5px)" }} />
+                  </div>
+                  {/* Hot core */}
+                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[60px] h-[60px] rounded-full" style={{ background: "radial-gradient(circle, rgba(255,200,180,0.35) 0%, rgba(220,100,180,0.2) 40%, transparent 70%)", filter: "blur(8px)" }} />
+                  {/* Calligraphy image */}
+                  <div className="relative flex items-center justify-center">
+                    <img src="/北大旋轉書法.png" alt="北大" className="w-[220px] h-auto drop-shadow-[0_0_50px_rgba(150,50,200,0.5)]" draggable={false} />
                   </div>
                 </div>
               </div>
 
               {/* Brand icons */}
               {brands.map((brand, i) => {
-                const pos = positions[i];
                 const isSelected = selected === brand.id;
                 const s = brand.size;
-
                 return (
                   <button
                     key={brand.id}
                     type="button"
+                    data-brand-idx={i}
                     onClick={() => handleBrandClick(brand.id)}
-                    className={`absolute flex flex-col items-center justify-center -translate-x-1/2 -translate-y-1/2 group transition-all duration-500 ${isSelected ? "z-20 scale-125" : "z-10 hover:scale-110"}`}
-                    style={{ left: pos.x, top: pos.y }}
+                    className={`absolute flex flex-col items-center justify-center group ${isSelected ? "z-20" : "z-10"}`}
+                    style={{
+                      transform: `translate(-50%, -50%) scale(${isSelected ? 1.25 : 1})`,
+                      transition: "transform 0.3s ease",
+                    }}
                   >
                     <div
-                      className="flex items-center justify-center rounded-full border-2 transition-all duration-300"
+                      className="flex items-center justify-center rounded-full border-2 transition-colors duration-300"
                       style={{
-                        width: s,
-                        height: s,
+                        width: s, height: s,
                         borderColor: isSelected ? brand.color : brand.color + "40",
-                        backgroundColor: isSelected ? brand.color + "20" : "rgba(15,15,25,0.8)",
+                        backgroundColor: isSelected ? brand.color + "20" : "rgba(15,15,25,0.85)",
                         boxShadow: isSelected ? `0 0 30px ${brand.color}40` : `0 0 10px ${brand.color}15`,
                       }}
                     >
-                      <span className="font-bold" style={{ color: brand.color, fontSize: s * 0.22 }}>
-                        {brand.name}
-                      </span>
+                      <span className="font-bold" style={{ color: brand.color, fontSize: s * 0.22 }}>{brand.name}</span>
                     </div>
                     <span className={`mt-1 text-[9px] font-medium whitespace-nowrap transition-opacity duration-300 ${isSelected ? "opacity-100" : "opacity-40 group-hover:opacity-90"}`} style={{ color: brand.color }}>
                       {brand.sub}
@@ -289,7 +309,6 @@ export default function VehicleOrbit() {
           </div>
         </div>
 
-        {/* Footer */}
         <div className="mt-6 text-center">
           <p className="text-xs text-text-dim">⚠️ 僅服務一般機車儀表，重機與汽車恕不服務 ｜ 114.07.27 更新</p>
         </div>
