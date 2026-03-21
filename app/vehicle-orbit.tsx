@@ -164,9 +164,11 @@ export default function VehicleOrbit() {
         tr.active = false;
         runningRef.current = false; // pause
       } else {
-        // Still spinning during transition
+        // Fast spin during transition (5x normal speed, easing out)
+        const ease = tr.remaining / 0.4; // 1→0 as time passes
+        const speedMult = 3 + ease * 5; // starts fast, slows down
         for (let l = 0; l < 3; l++) {
-          layerAnglesRef.current[l] = (layerAnglesRef.current[l] + layerSpeeds[l] * dt) % 360;
+          layerAnglesRef.current[l] = (layerAnglesRef.current[l] + layerSpeeds[l] * dt * speedMult) % 360;
         }
       }
     } else if (runningRef.current) {
@@ -223,14 +225,10 @@ export default function VehicleOrbit() {
       runningRef.current = true;
       transitionRef.current = { active: false, remaining: 0 };
     } else {
-      // Select brand → quick shuffle all layer angles then pause
+      // Select brand → fast spin for 0.4s then pause
       setSelected(id);
-      // Rapidly jump to new random positions for visual punch
-      for (let l = 0; l < 3; l++) {
-        layerAnglesRef.current[l] = (layerAnglesRef.current[l] + 60 + Math.random() * 120) % 360;
-      }
-      runningRef.current = false;
-      transitionRef.current = { active: false, remaining: 0 };
+      runningRef.current = true;
+      transitionRef.current = { active: true, remaining: 0.4 };
     }
   }
 
