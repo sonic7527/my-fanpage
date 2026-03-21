@@ -41,37 +41,71 @@ const brands = [
   },
 ];
 
-// Layer rotation speeds (degrees/second) — visible rotation
-const layerSpeeds = [18, -12, 8];
+// Layer rotation speeds (degrees/second) — each layer different direction
+const layerSpeeds = [14, -10, 6];
 
-// Irregular polygon radii for each layer
-// Near-circular orbits with subtle irregularity (±3-5%)
-const layerRadii = [
-  [165, 168, 163, 170, 166, 169, 164, 168, 165, 167, 163, 166],
-  [235, 240, 232, 238, 234, 241, 233, 237, 236, 239, 232, 238],
-  [310, 315, 307, 313, 309, 317, 308, 314, 311, 316, 308, 312],
-];
+// Radii for each octagon layer
+const layerOctagons = [165, 235, 310];
 
-// Catmull-Rom spline for smooth curves
-function catmullRom(p0: number, p1: number, p2: number, p3: number, t: number): number {
-  return 0.5 * (2 * p1 + (-p0 + p2) * t + (2 * p0 - 5 * p1 + 4 * p2 - p3) * t * t + (-p0 + 3 * p1 - 3 * p2 + p3) * t * t * t);
+// Corner rounding ratio (0 = sharp octagon, 1 = circle)
+const CORNER_ROUND = 0.55;
+
+// Get the 8 vertices of an octagon at given radius
+function getOctagonVertices(r: number, cx: number, cy: number): [number, number][] {
+  return Array.from({ length: 8 }, (_, i) => {
+    const angle = (i * 45 - 90) * Math.PI / 180; // start from top
+    return [cx + Math.cos(angle) * r, cy + Math.sin(angle) * r] as [number, number];
+  });
 }
 
-// Get point on orbit at given angle (degrees), BEFORE layer rotation
+// Get point on rounded octagon at normalized position t (0-1)
 function getOrbitPoint(layer: number, angleDeg: number, cx: number, cy: number): [number, number] {
-  const radii = layerRadii[layer];
-  const n = radii.length;
-  const a = ((angleDeg % 360) + 360) % 360;
-  const seg = (a / 360) * n;
-  const i0 = Math.floor(seg) % n;
+  const r = layerOctagons[layer];
+  const verts = getOctagonVertices(r, cx, cy);
+  const n = 8;
+  const t = ((angleDeg % 360 + 360) % 360) / 360;
+  const seg = t * n;
+  const i = Math.floor(seg) % n;
   const frac = seg - Math.floor(seg);
-  const r = catmullRom(
-    radii[(i0 - 1 + n) % n], radii[i0],
-    radii[(i0 + 1) % n], radii[(i0 + 2) % n],
-    frac
-  );
-  const rad = (a * Math.PI) / 180;
-  return [cx + Math.cos(rad) * r, cy + Math.sin(rad) * r];
+
+  const curr = verts[i];
+  const next = verts[(i + 1) % n];
+  const midX = (curr[0] + next[0]) / 2;
+  const midY = (curr[1] + next[1]) / 2;
+
+  // Each segment: straight middle portion + curved corners
+  // frac 0→0.5 = from corner(curr) to midpoint, frac 0.5→1 = midpoint to corner(next)
+  if (frac <= 0.5) {
+    // Curve from prev-midpoint through vertex to next-midpoint
+    const prev = verts[(i - 1 + n) % n];
+    const prevMidX = (prev[0] + curr[0]) / 2;
+    const prevMidY = (prev[1] + curr[1]) / 2;
+    const ct = frac * 2; // 0→1
+    // Quadratic bezier: prevMid → curr(control) → mid
+    const cPrevMid = [prevMidX + (curr[0] - prevMidX) * CORNER_ROUND, prevMidY + (curr[1] - prevMidY) * CORNER_ROUND];
+    const cMid = [midX + (curr[0] - midX) * CORNER_ROUND, midY + (curr[1] - midY) * CORNER_ROUND];
+    const x = (1 - ct) * (1 - ct) * (prevMidX + (cPrevMid[0] - prevMidX) * (1 - CORNER_ROUND)) +
+              2 * (1 - ct) * ct * curr[0] * (1 - CORNER_ROUND) +
+              ct * ct * (midX + (cMid[0] - midX) * (1 - CORNER_ROUND));
+    const y = (1 - ct) * (1 - ct) * (prevMidY + (cPrevMid[1] - prevMidY) * (1 - CORNER_ROUND)) +
+              2 * (1 - ct) * ct * curr[1] * (1 - CORNER_ROUND) +
+              ct * ct * (midY + (cMid[1] - midY) * (1 - CORNER_ROUND));
+    // Blend between sharp octagon interpolation and bezier curve
+    const sharpX = curr[0] + (midX - curr[0]) * frac * 2;
+    const sharpY = curr[1] + (midY - curr[1]) * frac * 2;
+    return [sharpX * (1 - CORNER_ROUND) + x * CORNER_ROUND, sharpY * (1 - CORNER_ROUND) + y * CORNER_ROUND];
+  } else {
+    const ft = (frac - 0.5) * 2; // 0→1
+    const x = midX + (next[0] - midX) * ft;
+    const y = midY + (next[1] - midY) * ft;
+    // Blend toward next corner with rounding
+    const nextNext = verts[(i + 2) % n];
+    const nextMidX = (next[0] + nextNext[0]) / 2;
+    const nextMidY = (next[1] + nextNext[1]) / 2;
+    const bx = (1 - ft) * (1 - ft) * midX + 2 * (1 - ft) * ft * next[0] + ft * ft * nextMidX;
+    const by = (1 - ft) * (1 - ft) * midY + 2 * (1 - ft) * ft * next[1] + ft * ft * nextMidY;
+    return [x * (1 - CORNER_ROUND) + bx * CORNER_ROUND, y * (1 - CORNER_ROUND) + by * CORNER_ROUND];
+  }
 }
 
 // Rotate (px, py) around (cx, cy) by angleDeg degrees
@@ -81,13 +115,32 @@ function rotateAround(px: number, py: number, cx: number, cy: number, angleDeg: 
   return [cx + dx * Math.cos(rad) - dy * Math.sin(rad), cy + dx * Math.sin(rad) + dy * Math.cos(rad)];
 }
 
-// Build SVG path string for orbit ring
+// Build SVG path for rounded octagon
 function buildOrbitPath(layer: number, cx: number, cy: number): string {
-  const steps = 120;
-  return Array.from({ length: steps + 1 }, (_, i) => {
-    const [x, y] = getOrbitPoint(layer, (i / steps) * 360, cx, cy);
-    return `${i === 0 ? "M" : "L"} ${x.toFixed(1)} ${y.toFixed(1)}`;
-  }).join(" ") + " Z";
+  const r = layerOctagons[layer];
+  const verts = getOctagonVertices(r, cx, cy);
+  const n = 8;
+  const parts: string[] = [];
+
+  for (let i = 0; i < n; i++) {
+    const curr = verts[i];
+    const next = verts[(i + 1) % n];
+    const midX = (curr[0] + next[0]) / 2;
+    const midY = (curr[1] + next[1]) / 2;
+
+    if (i === 0) {
+      const prev = verts[n - 1];
+      const prevMidX = (prev[0] + curr[0]) / 2;
+      const prevMidY = (prev[1] + curr[1]) / 2;
+      parts.push(`M ${prevMidX.toFixed(1)} ${prevMidY.toFixed(1)}`);
+    }
+
+    // Quadratic bezier curve through vertex (rounded corner)
+    parts.push(`Q ${curr[0].toFixed(1)} ${curr[1].toFixed(1)} ${midX.toFixed(1)} ${midY.toFixed(1)}`);
+  }
+
+  parts.push("Z");
+  return parts.join(" ");
 }
 
 // Decorative dots fixed on layers
@@ -243,7 +296,7 @@ export default function VehicleOrbit() {
 
               {/* SVG orbit rings */}
               <svg className="absolute inset-0 w-full h-full" viewBox={`0 0 ${W} ${H}`}>
-                {layerRadii.map((_, layer) => (
+                {layerOctagons.map((_, layer) => (
                   <g key={layer} data-orbit-layer={layer}>
                     <path
                       d={buildOrbitPath(layer, CX, CY)}
