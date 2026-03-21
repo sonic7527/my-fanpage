@@ -122,35 +122,28 @@ export default function VehicleOrbit() {
           <div className={`lg:absolute lg:left-0 lg:top-1/2 lg:-translate-y-1/2 z-20 w-full lg:w-[340px] transition-all duration-700 ${selected ? "opacity-100 translate-x-0" : "opacity-0 lg:-translate-x-10 pointer-events-none h-0 lg:h-auto"}`}>
             {selectedBrand && (
               <div className="rounded-2xl border border-white/[0.08] bg-surface/30 p-6 backdrop-blur-sm">
-                <div className="flex items-center gap-3 mb-5">
-                  <div
-                    className="flex h-10 w-10 items-center justify-center rounded-xl font-bold text-sm"
-                    style={{ backgroundColor: selectedBrand.color + "30", color: selectedBrand.color }}
-                  >
-                    {selectedBrand.name.slice(0, 2)}
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-white text-lg">{selectedBrand.name}</h3>
-                    <p className="text-xs text-text-dim">{selectedBrand.sub} ｜ {selectedBrand.models.length} 款</p>
-                  </div>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {selectedBrand.models.map((model) => (
-                    <span
+                <h3 className="font-bold text-lg mb-1" style={{ color: selectedBrand.color }}>
+                  {selectedBrand.name}
+                </h3>
+                <p className="text-xs text-text-dim mb-4">{selectedBrand.sub} ｜ {selectedBrand.models.length} 款可維修</p>
+                <ul className="space-y-0">
+                  {selectedBrand.models.map((model, idx) => (
+                    <li
                       key={model}
-                      className="rounded-full px-3 py-1.5 text-xs font-medium text-white/80 border"
-                      style={{ borderColor: selectedBrand.color + "30", backgroundColor: selectedBrand.color + "10" }}
+                      className="flex items-center gap-3 py-2 border-b border-white/[0.04] last:border-0 text-sm text-text-muted"
                     >
+                      <span className="text-[10px] font-mono w-5 text-text-dim text-right">{String(idx + 1).padStart(2, "0")}</span>
+                      <span className="h-1 w-1 rounded-full shrink-0" style={{ backgroundColor: selectedBrand.color + "60" }} />
                       {model}
-                    </span>
+                    </li>
                   ))}
-                </div>
+                </ul>
                 <button
                   type="button"
                   onClick={() => { setSelected(null); pausedRef.current = false; }}
-                  className="mt-5 text-xs text-text-dim hover:text-accent transition-colors"
+                  className="mt-4 text-xs text-text-dim hover:text-accent transition-colors"
                 >
-                  ← 返回瀏覽全部品牌
+                  ← 返回
                 </button>
               </div>
             )}
@@ -190,12 +183,12 @@ export default function VehicleOrbit() {
                   </div>
                   <div className="relative">
                     <div
-                      className="font-display text-7xl font-black text-white leading-none"
-                      style={{ textShadow: "0 0 60px rgba(220,60,40,0.2), 0 2px 4px rgba(0,0,0,0.3)" }}
+                      className="text-8xl text-white leading-none"
+                      style={{ fontFamily: "'Ma Shan Zheng', cursive", textShadow: "0 0 60px rgba(220,60,40,0.25), 0 0 120px rgba(220,60,40,0.1), 0 2px 4px rgba(0,0,0,0.4)" }}
                     >
                       北大
                     </div>
-                    <div className="text-xs font-bold text-accent/60 tracking-[0.5em] mt-3 uppercase">
+                    <div className="text-[10px] font-bold text-accent/50 tracking-[0.6em] mt-3 uppercase font-display">
                       Bei Da
                     </div>
                   </div>
