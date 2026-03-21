@@ -11,3 +11,7 @@ next-env.d.ts
 facebook-*/
 facebook-data/
 this_profile's_activity_across_facebook/
+
+# Logo design assets (local only)
+bei_da_logo_redesign_pack/
+logo_split_package/

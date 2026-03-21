@@ -325,9 +325,31 @@ export default function VehicleOrbit() {
                   </div>
                   {/* Hot core */}
                   <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[60px] h-[60px] rounded-full" style={{ background: "radial-gradient(circle, rgba(255,200,180,0.35) 0%, rgba(220,100,180,0.2) 40%, transparent 70%)", filter: "blur(8px)" }} />
-                  {/* Calligraphy image (transparent PNG) */}
-                  <div className="relative flex items-center justify-center">
-                    <img src="/北大旋轉書法.png" alt="北大" className="w-[220px] h-auto mix-blend-screen" draggable={false} />
+                  {/* Calligraphy text */}
+                  <div className="relative flex flex-col items-center justify-center select-none">
+                    <span
+                      className="text-[6rem] leading-none"
+                      style={{
+                        fontFamily: "'Ma Shan Zheng', cursive",
+                        color: "transparent",
+                        backgroundImage: "linear-gradient(180deg, #ffffff 0%, #c8d8e8 35%, #8ab4d4 65%, #60a0c8 100%)",
+                        backgroundClip: "text",
+                        WebkitBackgroundClip: "text",
+                        filter: "drop-shadow(0 0 24px rgba(120,180,255,0.5)) drop-shadow(0 0 60px rgba(80,120,200,0.3))",
+                        letterSpacing: "0.08em",
+                      }}
+                    >
+                      北大
+                    </span>
+                    <span
+                      className="text-sm tracking-[0.4em] mt-0.5 text-white/50"
+                      style={{
+                        fontFamily: "'Inter', sans-serif",
+                        textShadow: "0 0 16px rgba(100,160,255,0.4)",
+                      }}
+                    >
+                      BEI, DA
+                    </span>
                   </div>
                 </div>
               </div>
