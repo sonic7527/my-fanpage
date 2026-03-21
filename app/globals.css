@@ -92,6 +92,11 @@ body {
 .animate-float { animation: float 20s ease-in-out infinite; }
 .animate-float-delayed { animation: float-delayed 25s ease-in-out infinite; }
 
+@keyframes wave-drift {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(20px); }
+}
+
 /* ─── Nav scroll state ─── */
 .nav-bar { transition: background-color 0.5s, border-color 0.5s, box-shadow 0.5s; }
 .nav-scrolled {

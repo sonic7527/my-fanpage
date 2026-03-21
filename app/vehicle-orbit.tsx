@@ -294,7 +294,7 @@ export default function VehicleOrbit() {
                   <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[60px] h-[60px] rounded-full" style={{ background: "radial-gradient(circle, rgba(255,200,180,0.35) 0%, rgba(220,100,180,0.2) 40%, transparent 70%)", filter: "blur(8px)" }} />
                   {/* Calligraphy image */}
                   <div className="relative flex items-center justify-center">
-                    <img src="/北大旋轉書法.png" alt="北大" className="w-[220px] h-auto drop-shadow-[0_0_50px_rgba(150,50,200,0.5)]" draggable={false} />
+                    <img src="/北大旋轉書法.png" alt="北大" className="w-[220px] h-auto drop-shadow-[0_0_50px_rgba(150,50,200,0.5)]" draggable={false} style={{ mixBlendMode: "screen" }} />
                   </div>
                 </div>
               </div>

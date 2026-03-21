@@ -4,6 +4,7 @@ import path from "path";
 import matter from "gray-matter";
 import ScrollReveal, { ScrollRevealGroup } from "./scroll-reveal";
 import VehicleOrbit from "./vehicle-orbit";
+import CardStack from "./card-stack";
 
 /* ═══════════════════════════════════════════
    Homepage — 北大液晶儀表維修工作室
@@ -54,6 +55,7 @@ export default function HomePage() {
       <StatusBanner />
       <ServicesSection />
       <WhyUsSection />
+      <CardStack posts={posts} />
       <ArticlesSection posts={posts} />
       <FaqSection />
       <ContactSection />
@@ -106,8 +108,11 @@ function HeroSection() {
             效果更好、壽命更長。高雄、屏東雙據點，採預約制服務。
           </p>
 
-          <a href="#vehicles" className="animate-fade-up-delay-2 mt-5 inline-flex items-center gap-2 text-accent/80 hover:text-accent text-sm font-medium transition-colors">
-            為什麼選擇北大？看看我們支援的車款 →
+          <h2 className="animate-fade-up-delay-2 mt-8 font-display text-[clamp(1.5rem,3vw,2.2rem)] font-black text-white">
+            為什麼選擇北大？
+          </h2>
+          <a href="#vehicles" className="animate-fade-up-delay-2 mt-3 inline-flex items-center gap-2 text-accent/80 hover:text-accent text-sm font-medium transition-colors">
+            看看我們支援的車款 →
           </a>
 
           <div className="animate-fade-up-delay-3 mt-12 flex flex-wrap items-center gap-4">
