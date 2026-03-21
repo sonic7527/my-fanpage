@@ -6,37 +6,37 @@ const brands = [
   {
     id: "sym", name: "SYM", sub: "三陽", color: "#3B82F6",
     orbit: { layer: 1, fixedAngle: 220 },
-    size: 52,
+    size: 68,
     models: ["FIGHTER 5／JET EVO", "FIGHTER 6", "FNX", "GT 125", "GR 125", "JET-S／SR", "JET-POWER", "MIO 115", "MII 110", "NEW MII", "RX 110", "TL-508", "Z1／IRX"],
   },
   {
     id: "kymco", name: "KYMCO", sub: "光陽", color: "#10B981",
     orbit: { layer: 2, fixedAngle: 30 },
-    size: 50,
+    size: 66,
     models: ["新名流", "GP 125", "G5 系列", "G6", "G6 50週年", "KIWI", "Like", "Many 110", "Many 125", "NEW Many", "Racing", "Racing King", "VJR 110", "VJR 125"],
   },
   {
     id: "yamaha", name: "YAM", sub: "山葉", color: "#0EA5E9",
     orbit: { layer: 0, fixedAngle: 310 },
-    size: 48,
+    size: 62,
     models: ["BWS'X", "BWS'R", "CUXI", "NEW CUXI", "CUXI 115", "FORCE", "GTR", "LIMI", "RSZ", "RS-ZERO", "S-MAX", "勁戰2代"],
   },
   {
     id: "pgo", name: "PGO", sub: "比雅久", color: "#F97316",
     orbit: { layer: 2, fixedAngle: 210 },
-    size: 44,
+    size: 60,
     models: ["ALPHA MAX", "JBUBU 115", "JBUBU 125", "TIGRA 125", "TIGRA 150", "X-HOT"],
   },
   {
     id: "suzuki", name: "SUZ", sub: "鈴木", color: "#EAB308",
     orbit: { layer: 1, fixedAngle: 60 },
-    size: 40,
+    size: 56,
     models: ["GSR／NEX", "SALUTO"],
   },
   {
     id: "vespa", name: "Ves", sub: "偉士牌", color: "#14B8A6",
     orbit: { layer: 0, fixedAngle: 140 },
-    size: 38,
+    size: 52,
     models: ["春天 Primavera"],
   },
 ];
@@ -125,12 +125,12 @@ function buildOrbitPath(layer: number, cx: number, cy: number): string {
 
 // Decorative dots fixed on layers
 const decorDots = [
-  { layer: 0, angle: 50, color: "#DC3C28", size: 6 },
-  { layer: 0, angle: 230, color: "#8B5CF6", size: 5 },
-  { layer: 1, angle: 150, color: "#3B82F6", size: 7 },
-  { layer: 1, angle: 320, color: "#0EA5E9", size: 5 },
-  { layer: 2, angle: 120, color: "#DC3C28", size: 4 },
-  { layer: 2, angle: 300, color: "#14B8A6", size: 5 },
+  { layer: 0, angle: 50, color: "#DC3C28", size: 12 },
+  { layer: 0, angle: 230, color: "#8B5CF6", size: 10 },
+  { layer: 1, angle: 150, color: "#3B82F6", size: 14 },
+  { layer: 1, angle: 320, color: "#0EA5E9", size: 10 },
+  { layer: 2, angle: 120, color: "#DC3C28", size: 9 },
+  { layer: 2, angle: 300, color: "#14B8A6", size: 11 },
 ];
 
 export default function VehicleOrbit() {
