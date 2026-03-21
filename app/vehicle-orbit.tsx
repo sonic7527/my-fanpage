@@ -104,10 +104,11 @@ export default function VehicleOrbit() {
   const containerRef = useRef<HTMLDivElement>(null);
   const animRef = useRef<number>(0);
   const startTimeRef = useRef(0);
-  // Track layer rotation angles (in degrees)
   const layerAnglesRef = useRef([0, 0, 0]);
   const lastFrameRef = useRef(0);
   const runningRef = useRef(true);
+  // For "spin then pause" transition when switching brands
+  const transitionRef = useRef<{ active: boolean; remaining: number }>({ active: false, remaining: 0 });
 
   const CX = 350, CY = 320;
   const W = 700, H = 640;
@@ -121,8 +122,20 @@ export default function VehicleOrbit() {
     const container = containerRef.current;
     if (!container) { animRef.current = requestAnimationFrame(animate); return; }
 
-    // Always advance layer angles (never pause)
-    if (runningRef.current) {
+    // Handle transition: spin a bit then pause
+    const tr = transitionRef.current;
+    if (tr.active) {
+      tr.remaining -= dt;
+      if (tr.remaining <= 0) {
+        tr.active = false;
+        runningRef.current = false; // pause
+      } else {
+        // Still spinning during transition
+        for (let l = 0; l < 3; l++) {
+          layerAnglesRef.current[l] = (layerAnglesRef.current[l] + layerSpeeds[l] * dt) % 360;
+        }
+      }
+    } else if (runningRef.current) {
       for (let l = 0; l < 3; l++) {
         layerAnglesRef.current[l] = (layerAnglesRef.current[l] + layerSpeeds[l] * dt) % 360;
       }
@@ -170,8 +183,22 @@ export default function VehicleOrbit() {
   }, [animate]);
 
   function handleBrandClick(id: string) {
-    setSelected((prev) => (prev === id ? null : id));
-    // Animation NEVER stops — always rotating
+    if (selected === id) {
+      // Same brand → deselect → resume rotation
+      setSelected(null);
+      runningRef.current = true;
+      transitionRef.current = { active: false, remaining: 0 };
+    } else if (selected) {
+      // Already viewing a brand → switch: spin briefly then pause
+      setSelected(id);
+      runningRef.current = true;
+      transitionRef.current = { active: true, remaining: 0.6 + Math.random() * 0.5 };
+    } else {
+      // Nothing selected → pause immediately
+      setSelected(id);
+      runningRef.current = false;
+      transitionRef.current = { active: false, remaining: 0 };
+    }
   }
 
   const selectedBrand = brands.find((b) => b.id === selected);
@@ -203,7 +230,7 @@ export default function VehicleOrbit() {
                     </li>
                   ))}
                 </ul>
-                <button type="button" onClick={() => setSelected(null)} className="mt-4 text-xs text-text-dim hover:text-accent transition-colors">
+                <button type="button" onClick={() => { setSelected(null); runningRef.current = true; transitionRef.current = { active: false, remaining: 0 }; }} className="mt-4 text-xs text-text-dim hover:text-accent transition-colors">
                   ← 返回
                 </button>
               </div>
