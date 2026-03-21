@@ -143,7 +143,7 @@ function Footer() {
             <div className="flex flex-col gap-3 text-sm text-text-muted">
               <span>週一、三 — 高雄</span>
               <span>週二、四、五 — 屏東</span>
-              <span>09:00 – 18:00</span>
+              <span>10:30 – 18:00</span>
               <span className="text-accent font-medium">採預約制服務</span>
             </div>
           </div>
