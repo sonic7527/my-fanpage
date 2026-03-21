@@ -247,23 +247,23 @@ export default function VehicleOrbit() {
 
         <div className="relative">
           {/* Left panel */}
-          <div className={`lg:absolute lg:-left-16 lg:top-1/2 lg:-translate-y-1/2 z-30 w-full lg:w-[320px] transition-all duration-500 ${selected ? "opacity-100 translate-x-0" : "opacity-0 lg:-translate-x-10 pointer-events-none h-0 lg:h-auto"}`}>
+          <div className={`lg:absolute lg:-left-32 lg:top-1/2 lg:-translate-y-1/2 z-30 w-full lg:w-[360px] transition-all duration-500 ${selected ? "opacity-100 translate-x-0" : "opacity-0 lg:-translate-x-10 pointer-events-none h-0 lg:h-auto"}`}>
             {selectedBrand && (
-              <div className="rounded-2xl border border-white/[0.08] bg-primary-deep/95 backdrop-blur-xl p-6 shadow-2xl">
-                <h3 className="font-bold text-lg mb-1" style={{ color: selectedBrand.color }}>
+              <div className="rounded-2xl border border-white/[0.08] bg-primary-deep/95 backdrop-blur-xl p-8 shadow-2xl">
+                <h3 className="font-bold text-2xl mb-2" style={{ color: selectedBrand.color }}>
                   {selectedBrand.id === "yamaha" ? "YAMAHA" : selectedBrand.name}
                 </h3>
-                <p className="text-xs text-text-dim mb-4">{selectedBrand.sub} ｜ {selectedBrand.models.length} 款可維修</p>
+                <p className="text-sm text-text-dim mb-5">{selectedBrand.sub} ｜ {selectedBrand.models.length} 款可維修</p>
                 <ul className="space-y-0">
                   {selectedBrand.models.map((model, idx) => (
-                    <li key={model} className="flex items-center gap-3 py-2 border-b border-white/[0.04] last:border-0 text-sm text-text-muted">
-                      <span className="text-[10px] font-mono w-5 text-text-dim text-right">{String(idx + 1).padStart(2, "0")}</span>
-                      <span className="h-1 w-1 rounded-full shrink-0" style={{ backgroundColor: selectedBrand.color + "60" }} />
+                    <li key={model} className="flex items-center gap-3 py-2.5 border-b border-white/[0.04] last:border-0 text-base text-text-muted">
+                      <span className="text-xs font-mono w-6 text-text-dim text-right">{String(idx + 1).padStart(2, "0")}</span>
+                      <span className="h-1.5 w-1.5 rounded-full shrink-0" style={{ backgroundColor: selectedBrand.color + "60" }} />
                       {model}
                     </li>
                   ))}
                 </ul>
-                <button type="button" onClick={() => { setSelected(null); runningRef.current = true; transitionRef.current = { active: false, remaining: 0 }; }} className="mt-4 text-xs text-text-dim hover:text-accent transition-colors">
+                <button type="button" onClick={() => { setSelected(null); runningRef.current = true; transitionRef.current = { active: false, remaining: 0 }; }} className="mt-5 text-sm text-text-dim hover:text-accent transition-colors">
                   ← 返回
                 </button>
               </div>
