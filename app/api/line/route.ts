@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifySignature, replyMessage } from "@/lib/line";
 import type { LineWebhookBody } from "@/lib/line";
-import { handleIncomingMessage } from "@/lib/message-router";
 
 export async function POST(req: NextRequest) {
   try {
@@ -20,22 +19,10 @@ export async function POST(req: NextRequest) {
         continue;
       }
 
-      const userMessage = event.message.text || "";
-      const userId = event.source.userId;
-
-      // 轉發給管理員
-      await handleIncomingMessage({
-        source: "line",
-        senderName: `LINE用戶 (${userId.slice(-6)})`,
-        message: userMessage,
-        senderId: userId,
-        replyToken: event.replyToken,
-      });
-
       // 自動回覆客戶（使用 reply token，免費無額度限制）
       await replyMessage(
         event.replyToken,
-        "您好！已收到您的訊息，我們會盡快回覆。\n如有緊急需求，請直接來電。"
+        "您好！已收到您的訊息，我們會盡快回覆。\n如有緊急需求，請直接來電 0958-320-153。"
       );
     }
 
