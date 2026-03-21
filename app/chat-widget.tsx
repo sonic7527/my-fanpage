@@ -47,6 +47,7 @@ const INITIAL_SUGGESTIONS = [
   "寄件維修",
   "營業時間",
   "保固說明",
+  "維修地點",
 ];
 
 export default function ChatWidget() {

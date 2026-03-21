@@ -249,9 +249,9 @@ export default function VehicleOrbit() {
             {selectedBrand && (
               <div className="rounded-2xl border border-white/[0.08] bg-primary-deep/95 backdrop-blur-xl p-8 shadow-2xl">
                 <h3 className="font-bold text-2xl mb-2" style={{ color: selectedBrand.color }}>
-                  {selectedBrand.id === "yamaha" ? "YAMAHA" : selectedBrand.name}
+                  {selectedBrand.id === "yamaha" ? "YAMAHA" : selectedBrand.id === "suzuki" ? "SUZUKI" : selectedBrand.id === "vespa" ? "Vespa" : selectedBrand.name} {selectedBrand.sub}
                 </h3>
-                <p className="text-sm text-text-dim mb-5">{selectedBrand.sub} ｜ {selectedBrand.models.length} 款可維修</p>
+                <p className="text-sm text-text-dim mb-5">{selectedBrand.models.length} 款可維修</p>
                 <ul className="space-y-0">
                   {selectedBrand.models.map((model, idx) => (
                     <li key={model} className="flex items-center gap-3 py-2.5 border-b border-white/[0.04] last:border-0 text-base text-text-muted">
