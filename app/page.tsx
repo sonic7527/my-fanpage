@@ -91,11 +91,11 @@ function HeroSection() {
           </div>
 
           <h1 className="animate-fade-up-delay-1">
-            <span className="block font-display text-[clamp(2.5rem,6vw,5rem)] font-black leading-[1.05] tracking-tight text-white">
-              不換偏光片
+            <span className="block font-display text-[clamp(2rem,5vw,4rem)] font-black leading-[1.1] tracking-tight text-white">
+              北大工作室堅持不換偏光片
             </span>
-            <span className="block font-display text-[clamp(2.5rem,6vw,5rem)] font-black leading-[1.05] tracking-tight">
-              直接更換
+            <span className="block font-display text-[clamp(2rem,5vw,4rem)] font-black leading-[1.1] tracking-tight">
+              採用直接更換
               <span className="relative text-accent">
                 全新液晶
                 <span className="absolute -bottom-2 left-0 h-1 w-full bg-accent/30 rounded-full" />

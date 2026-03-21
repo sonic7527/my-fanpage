@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 interface CardPost {
   title: string;
   date: string;
-  category: string;
+  category?: string;
   image?: string;
 }
 
