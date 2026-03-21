@@ -14,12 +14,14 @@ interface Post {
   date: string;
   excerpt: string;
   image?: string;
+  pinned?: boolean;
+  category?: string;
 }
 
 function getPosts(): Post[] {
   const dir = path.join(process.cwd(), "content/posts");
   if (!fs.existsSync(dir)) return [];
-  return fs
+  const allPosts = fs
     .readdirSync(dir)
     .filter((f) => f.endsWith(".md"))
     .map((filename) => {
@@ -31,10 +33,15 @@ function getPosts(): Post[] {
         date: data.date || "",
         excerpt: data.excerpt || content.replace(/[#*>\-\n]/g, " ").slice(0, 120) + "…",
         image: data.image,
+        pinned: data.pinned || false,
+        category: data.category || "",
       };
-    })
-    .sort((a, b) => (b.date > a.date ? 1 : -1))
-    .slice(0, 6);
+    });
+
+  // Pinned posts first, then by date
+  const pinned = allPosts.filter((p) => p.pinned).sort((a, b) => (b.date > a.date ? 1 : -1));
+  const regular = allPosts.filter((p) => !p.pinned).sort((a, b) => (b.date > a.date ? 1 : -1));
+  return [...pinned, ...regular].slice(0, 6);
 }
 
 export default function HomePage() {
@@ -53,68 +60,76 @@ export default function HomePage() {
 }
 
 /* ═══════════════════════════════════════════
-   HERO — 全畫面 + 入場動畫
+   HERO — 全畫面 + 入場動畫 + 視差效果
    ═══════════════════════════════════════════ */
 function HeroSection() {
   return (
     <section className="relative flex min-h-screen items-center overflow-hidden">
+      {/* 多層背景 */}
       <div className="absolute inset-0 bg-primary-deep" />
-      <div className="absolute inset-0 grid-texture opacity-30" />
+      <div className="absolute inset-0 grid-texture opacity-20" />
 
-      {/* 背景 hero logo */}
-      <div className="absolute right-[-5%] top-1/2 -translate-y-1/2 pointer-events-none hidden lg:block">
+      {/* 光暈裝飾 */}
+      <div className="absolute top-[-20%] right-[-10%] h-[800px] w-[800px] rounded-full bg-accent/[0.04] blur-[120px] animate-float" />
+      <div className="absolute bottom-[-30%] left-[-15%] h-[600px] w-[600px] rounded-full bg-gold/[0.03] blur-[100px] animate-float-delayed" />
+
+      {/* 背景 Logo — 大尺寸半透明 */}
+      <div className="absolute right-[-5%] top-1/2 -translate-y-1/2 pointer-events-none hidden lg:block hero-parallax">
         <img
-          src="/images/logo-hero.jpg"
+          src="/images/logo-hero.png"
           alt=""
-          className="w-[650px] opacity-25 rounded-2xl"
+          className="w-[700px] opacity-[0.15] drop-shadow-[0_0_80px_rgba(220,60,40,0.15)]"
           aria-hidden="true"
         />
       </div>
 
       {/* 內容 */}
-      <div className="relative z-10 mx-auto max-w-6xl px-6 pt-24">
+      <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-10 pt-28 pb-20">
         <div className="max-w-3xl">
-          <div className="animate-fade-up mb-6 flex items-center gap-3">
-            <span className="h-px w-12 bg-accent" />
-            <span className="text-xs font-bold uppercase tracking-[0.25em] text-accent">
+          <div className="animate-fade-up mb-8 flex items-center gap-3">
+            <span className="h-px w-16 bg-gradient-to-r from-accent to-transparent" />
+            <span className="text-xs font-bold uppercase tracking-[0.3em] text-accent/80">
               Bei Da LCD Dashboard Maintenance
             </span>
           </div>
 
           <h1 className="animate-fade-up-delay-1">
-            <span className="block font-display text-[clamp(2.2rem,5.5vw,4.5rem)] font-black leading-[1.08] tracking-tight text-text">
+            <span className="block font-display text-[clamp(2.5rem,6vw,5rem)] font-black leading-[1.05] tracking-tight text-white">
               不換偏光片
             </span>
-            <span className="block font-display text-[clamp(2.2rem,5.5vw,4.5rem)] font-black leading-[1.08] tracking-tight">
+            <span className="block font-display text-[clamp(2.5rem,6vw,5rem)] font-black leading-[1.05] tracking-tight">
               直接更換
-              <span className="text-accent">全新液晶</span>
+              <span className="relative text-accent">
+                全新液晶
+                <span className="absolute -bottom-2 left-0 h-1 w-full bg-accent/30 rounded-full" />
+              </span>
             </span>
           </h1>
 
-          <p className="animate-fade-up-delay-2 mt-8 max-w-xl text-lg leading-relaxed text-text-muted">
+          <p className="animate-fade-up-delay-2 mt-10 max-w-xl text-lg leading-relaxed text-white/60">
             專注一般機車液晶儀表維修 — 液晶淡化、斷字、按鍵故障。
             效果更好、壽命更長。高雄、屏東雙據點，採預約制服務。
           </p>
 
-          <div className="animate-fade-up-delay-3 mt-10 flex flex-wrap items-center gap-4">
+          <div className="animate-fade-up-delay-3 mt-12 flex flex-wrap items-center gap-4">
             <a
               href="#contact"
-              className="group inline-flex items-center gap-2 rounded-full bg-accent px-7 py-3.5 text-sm font-bold text-white transition-all hover:bg-accent-hover hover:gap-3"
+              className="group relative inline-flex items-center gap-2 rounded-full bg-accent px-8 py-4 text-sm font-bold text-white overflow-hidden transition-all duration-300 hover:shadow-[0_0_32px_rgba(220,60,40,0.5)] hover:scale-[1.03] hover:gap-3"
             >
-              預約維修諮詢
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="transition-transform group-hover:translate-x-0.5">
+              <span className="relative z-10">預約維修諮詢</span>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="relative z-10 transition-transform duration-300 group-hover:translate-x-1">
                 <path d="M3 8h10m0 0L9 4m4 4L9 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </a>
             <a
               href="#services"
-              className="inline-flex items-center gap-2 rounded-full border border-border-light px-7 py-3.5 text-sm font-medium text-text-muted transition-colors hover:border-text-muted hover:text-text"
+              className="inline-flex items-center gap-2 rounded-full border border-white/15 px-8 py-4 text-sm font-medium text-white/70 transition-all duration-300 hover:border-white/30 hover:text-white hover:bg-white/[0.04]"
             >
               瀏覽服務項目
             </a>
           </div>
 
-          <div className="animate-fade-up-delay-3 mt-16 flex gap-12 border-t border-border pt-8">
+          <div className="animate-fade-up-delay-3 mt-20 flex gap-16 border-t border-white/[0.08] pt-10">
             <StatItem value="10+" label="年維修經驗" />
             <StatItem value="3000+" label="成功案例" />
             <StatItem value="98%" label="客戶滿意度" />
@@ -122,16 +137,17 @@ function HeroSection() {
         </div>
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-primary to-transparent" />
+      {/* 底部漸層過渡 */}
+      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-primary via-primary/50 to-transparent" />
     </section>
   );
 }
 
 function StatItem({ value, label }: { value: string; label: string }) {
   return (
-    <div>
-      <div className="font-display text-2xl font-black text-gold">{value}</div>
-      <div className="mt-1 text-xs text-text-dim">{label}</div>
+    <div className="group">
+      <div className="font-display text-3xl font-black text-gold transition-all duration-300 group-hover:text-accent">{value}</div>
+      <div className="mt-1.5 text-xs font-medium text-white/40 uppercase tracking-wider">{label}</div>
     </div>
   );
 }
@@ -174,64 +190,77 @@ function ServicesSection() {
       title: "液晶淡化修復",
       desc: "儀表液晶螢幕隨使用年限逐漸淡化、對比度下降、數字模糊不清。我們不更換偏光片，直接更換全新液晶，效果更好、壽命更長。",
       tags: ["全新液晶更換", "不換偏光片", "顯示清晰"],
+      icon: "M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z",
     },
     {
       num: "02",
       title: "斷字顯示修復",
       desc: "液晶螢幕出現斷字，數字或圖示部分筆劃消失。主因為導電橡膠條老化或接觸不良，經專業處理即可恢復完整顯示。",
       tags: ["斷字修復", "斑馬條更換", "接觸不良"],
+      icon: "M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z",
     },
     {
       num: "03",
       title: "按鍵故障排除",
       desc: "儀表按鍵按壓無反應、觸感異常或接觸不良。針對按鍵開關與電路進行檢測維修，恢復各項功能切換操作。",
       tags: ["按鍵無反應", "開關維修", "功能切換"],
+      icon: "M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.573-1.066z M15 12a3 3 0 11-6 0 3 3 0 016 0z",
     },
   ];
 
   return (
-    <section id="services" className="relative py-28">
-      <div className="absolute inset-0 stripe-accent" />
-      <div className="relative mx-auto max-w-6xl px-6">
+    <section id="services" className="relative py-32">
+      <div className="absolute inset-0 bg-surface/20" />
+      <div className="absolute inset-0 stripe-accent opacity-50" />
+      <div className="relative mx-auto max-w-7xl px-6 lg:px-10">
         <ScrollReveal>
           <div className="mb-20 max-w-2xl">
-            <span className="text-xs font-bold uppercase tracking-[0.25em] text-accent">Services</span>
-            <h2 className="mt-3 font-display text-[clamp(2rem,4vw,3.2rem)] font-black leading-tight text-text">
+            <span className="flex items-center gap-3 text-xs font-bold uppercase tracking-[0.3em] text-accent">
+              <span className="h-px w-10 bg-accent" /> Services
+            </span>
+            <h2 className="mt-4 font-display text-[clamp(2rem,4vw,3.5rem)] font-black leading-tight text-white">
               專業維修項目
             </h2>
-            <p className="mt-4 text-base leading-relaxed text-text-muted">
+            <p className="mt-5 text-base leading-relaxed text-white/50">
               專注液晶儀表的三大常見問題，精準診斷、快速維修。
             </p>
-            <p className="mt-2 text-sm text-accent">
-              ⚠ 備註：本工作室僅服務一般機車儀表，重機與汽車儀表板恕不提供維修服務。
-            </p>
+            <div className="mt-4 inline-flex items-center gap-2 rounded-lg border border-accent/20 bg-accent/[0.06] px-4 py-2 text-sm text-accent">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              本工作室僅服務一般機車儀表，重機與汽車儀表板恕不提供維修服務
+            </div>
           </div>
         </ScrollReveal>
 
-        <ScrollRevealGroup className="space-y-0">
-          {services.map((s, i) => (
+        <ScrollRevealGroup className="grid gap-6 md:grid-cols-3">
+          {services.map((s) => (
             <div
               key={s.num}
-              className={`reveal grid gap-8 py-12 md:grid-cols-[1fr_1.2fr] ${
-                i !== services.length - 1 ? "border-b border-border/50" : ""
-              }`}
+              className="reveal group relative rounded-2xl border border-white/[0.06] bg-primary-deep/60 p-8 backdrop-blur-sm transition-all duration-500 hover:border-accent/30 hover:bg-surface/40 hover:shadow-[0_0_40px_rgba(220,60,40,0.08)] hover:-translate-y-1"
             >
-              <div>
-                <span className="font-display text-5xl font-black text-surface-light">{s.num}</span>
-                <h3 className="mt-2 font-display text-xl font-bold text-text">{s.title}</h3>
+              {/* 序號 */}
+              <span className="absolute top-6 right-6 font-display text-6xl font-black text-white/[0.04] transition-all duration-500 group-hover:text-accent/10">
+                {s.num}
+              </span>
+
+              {/* 圖示 */}
+              <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-accent/10 text-accent transition-all duration-300 group-hover:bg-accent group-hover:text-white group-hover:scale-110 group-hover:shadow-[0_0_20px_rgba(220,60,40,0.3)]">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d={s.icon} />
+                </svg>
               </div>
-              <div>
-                <p className="text-base leading-relaxed text-text-muted">{s.desc}</p>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {s.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="rounded-full border border-border px-3 py-1 text-xs text-text-dim transition-colors hover:border-accent hover:text-accent"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
+
+              <h3 className="font-display text-xl font-bold text-white transition-colors duration-300 group-hover:text-accent">{s.title}</h3>
+              <p className="mt-3 text-sm leading-relaxed text-white/50">{s.desc}</p>
+
+              <div className="mt-6 flex flex-wrap gap-2">
+                {s.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="rounded-full border border-white/[0.08] px-3 py-1 text-xs text-white/40 transition-all duration-300 group-hover:border-accent/20 group-hover:text-accent/70"
+                  >
+                    {tag}
+                  </span>
+                ))}
               </div>
             </div>
           ))}
@@ -245,61 +274,61 @@ function ServicesSection() {
    WHY US — 為什麼選擇我們（左右交錯動畫）
    ═══════════════════════════════════════════ */
 function WhyUsSection() {
+  const reasons = [
+    {
+      icon: "M9 12l2 2 4-4M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
+      title: "全新液晶更換",
+      desc: "不使用偏光片替換的治標方式，直接更換全新液晶面板，顯示效果如同全新品，使用壽命更長。",
+      highlight: "根本解決方案",
+    },
+    {
+      icon: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z",
+      title: "快速交件",
+      desc: "一般維修 3-5 個工作天完成。全程可透過 LINE 追蹤進度，維修完成立即通知。",
+      highlight: "3-5 天完工",
+    },
+    {
+      icon: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z",
+      title: "品質保固",
+      desc: "所有維修項目提供保固服務。保固期間相同問題免費維修，讓您安心騎乘。",
+      highlight: "售後無憂",
+    },
+  ];
+
   return (
-    <section className="bg-primary-deep py-28">
-      <div className="mx-auto max-w-6xl px-6">
+    <section className="relative bg-primary-deep py-32 overflow-hidden">
+      {/* 背景光暈 */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[600px] rounded-full bg-accent/[0.03] blur-[120px]" />
+
+      <div className="relative mx-auto max-w-7xl px-6 lg:px-10">
         <ScrollReveal>
-          <div className="mb-16 text-center">
-            <span className="text-xs font-bold uppercase tracking-[0.25em] text-accent">Why Choose Us</span>
-            <h2 className="mt-3 font-display text-[clamp(2rem,4vw,3.2rem)] font-black leading-tight text-text">
+          <div className="mb-20 text-center">
+            <span className="flex items-center justify-center gap-3 text-xs font-bold uppercase tracking-[0.3em] text-accent">
+              <span className="h-px w-10 bg-accent/50" /> Why Choose Us <span className="h-px w-10 bg-accent/50" />
+            </span>
+            <h2 className="mt-4 font-display text-[clamp(2rem,4vw,3.5rem)] font-black leading-tight text-white">
               為什麼選擇我們
             </h2>
+            <p className="mt-4 text-base text-white/40 max-w-lg mx-auto">
+              十年以上維修經驗，堅持使用最好的材料與最專業的技術
+            </p>
           </div>
         </ScrollReveal>
 
-        <div className="grid gap-8 md:grid-cols-3">
-          <ScrollReveal className="reveal">
-            <div className="rounded-xl border border-border bg-surface/40 p-8 transition-all hover:border-accent/40 hover:bg-surface/60">
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-accent/10 text-accent">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                  <path d="M9 12l2 2 4-4" /><circle cx="12" cy="12" r="10" />
+        <ScrollRevealGroup className="grid gap-6 md:grid-cols-3">
+          {reasons.map((r) => (
+            <div key={r.title} className="reveal group relative rounded-2xl border border-white/[0.06] bg-white/[0.02] p-10 transition-all duration-500 hover:border-accent/20 hover:bg-white/[0.04] hover:-translate-y-2">
+              <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-accent/20 to-accent/5 text-accent ring-1 ring-accent/10">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d={r.icon} />
                 </svg>
               </div>
-              <h3 className="font-display text-lg font-bold text-text">全新液晶更換</h3>
-              <p className="mt-2 text-sm leading-relaxed text-text-muted">
-                不使用偏光片替換的治標方式，直接更換全新液晶面板，顯示效果如同全新品，使用壽命更長。
-              </p>
+              <span className="inline-block rounded-full bg-accent/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-accent mb-4">{r.highlight}</span>
+              <h3 className="font-display text-xl font-bold text-white">{r.title}</h3>
+              <p className="mt-3 text-sm leading-relaxed text-white/45">{r.desc}</p>
             </div>
-          </ScrollReveal>
-
-          <ScrollReveal className="reveal">
-            <div className="rounded-xl border border-border bg-surface/40 p-8 transition-all hover:border-accent/40 hover:bg-surface/60">
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-accent/10 text-accent">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                  <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
-                </svg>
-              </div>
-              <h3 className="font-display text-lg font-bold text-text">快速交件</h3>
-              <p className="mt-2 text-sm leading-relaxed text-text-muted">
-                一般維修 3-5 個工作天完成。全程可透過 LINE 追蹤進度，維修完成立即通知。
-              </p>
-            </div>
-          </ScrollReveal>
-
-          <ScrollReveal className="reveal">
-            <div className="rounded-xl border border-border bg-surface/40 p-8 transition-all hover:border-accent/40 hover:bg-surface/60">
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-accent/10 text-accent">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                </svg>
-              </div>
-              <h3 className="font-display text-lg font-bold text-text">品質保固</h3>
-              <p className="mt-2 text-sm leading-relaxed text-text-muted">
-                所有維修項目提供保固服務。保固期間相同問題免費維修，讓您安心騎乘。
-              </p>
-            </div>
-          </ScrollReveal>
-        </div>
+          ))}
+        </ScrollRevealGroup>
       </div>
     </section>
   );
@@ -309,32 +338,10 @@ function WhyUsSection() {
    ARTICLES — 雜誌風排版 + 滾動動畫
    ═══════════════════════════════════════════ */
 function ArticlesSection({ posts }: { posts: Post[] }) {
-  const displayPosts: Post[] =
-    posts.length > 0
-      ? posts
-      : [
-          {
-            slug: "sample-1",
-            title: "液晶儀表常見故障解析：淡化、斷字、按鍵失靈的成因與對策",
-            date: "2024-12-15",
-            excerpt: "許多車主遇到儀表液晶螢幕出現淡化或斷字問題，本文深入分析常見原因與專業維修方式⋯",
-          },
-          {
-            slug: "sample-2",
-            title: "為什麼我們堅持更換全新液晶，而非只換偏光片？",
-            date: "2024-12-10",
-            excerpt: "市面上許多店家選擇更換偏光片作為快速修復方案，但我們認為直接更換液晶才是根本之道⋯",
-          },
-          {
-            slug: "sample-3",
-            title: "寄件維修全流程教學：從包裝到收到修好的儀表",
-            date: "2024-12-05",
-            excerpt: "不在高雄或屏東也沒關係！本文詳細說明寄件維修的完整流程與包裝注意事項⋯",
-          },
-        ];
+  if (posts.length === 0) return null;
 
-  const featured = displayPosts[0];
-  const rest = displayPosts.slice(1);
+  const featured = posts[0];
+  const rest = posts.slice(1);
 
   return (
     <section id="articles" className="py-28">
@@ -476,18 +483,20 @@ function ContactSection() {
               </div>
 
               <div className="mt-8 space-y-5">
-                <ContactRow label="高雄據點" value="週一、週三（請填入高雄地址）" />
-                <ContactRow label="屏東據點" value="週二、週四、週五（請填入屏東地址）" />
+                <ContactRow label="高雄據點" value="高雄市苓雅區建國一路64巷59號2樓" />
+                <ContactRow label="屏東據點" value="屏東市頂柳路539巷76號" />
                 <ContactRow label="營業時間" value="09:00 – 18:00｜週六、日公休" />
-                <ContactRow label="電話" value="（請填入您的電話）" />
+                <ContactRow label="電話" value="0958-320-153" />
               </div>
 
               <div className="mt-8 flex gap-3">
-                {["Facebook", "LINE", "Telegram"].map((name) => (
+                {["Facebook", "LINE"].map((name) => (
                   <a
                     key={name}
-                    href="#"
-                    className="rounded-full border border-border px-4 py-1.5 text-xs font-medium text-text-muted hover:border-accent hover:text-accent transition-colors"
+                    href={name === "LINE" ? "https://line.me/R/ti/p/@777xvkrg" : "#"}
+                    target={name === "LINE" ? "_blank" : undefined}
+                    rel={name === "LINE" ? "noopener noreferrer" : undefined}
+                    className="rounded-full border border-white/10 px-4 py-1.5 text-xs font-medium text-white/50 hover:border-accent/50 hover:text-accent transition-all duration-300"
                   >
                     {name}
                   </a>
