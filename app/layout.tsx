@@ -5,6 +5,7 @@ import MobileMenu from "./mobile-menu";
 import NavScrollEffect from "./nav-scroll";
 import ChatButton from "./chat-button";
 import { ChatWidgetWrapper } from "./chat-widget";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   title: "北大液晶儀表維修 — 專業機車液晶儀表更換服務",
@@ -34,6 +35,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <NavScrollEffect />
         <LineQrButton />
         <ChatWidgetWrapper />
+        <Analytics />
       </body>
     </html>
   );

@@ -10,6 +10,7 @@
     "sync-fb": "node scripts/sync-fb-posts.js"
   },
   "dependencies": {
+    "@vercel/analytics": "^2.0.1",
     "gray-matter": "^4.0.3",
     "jose": "^6.2.2",
     "next": "^16.2.1",
