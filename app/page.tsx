@@ -108,13 +108,6 @@ function HeroSection() {
             效果更好、壽命更長。高雄、屏東雙據點，採預約制服務。
           </p>
 
-          <h2 className="animate-fade-up-delay-2 mt-8 font-display text-[clamp(1.5rem,3vw,2.2rem)] font-black text-white">
-            為什麼選擇北大？
-          </h2>
-          <a href="#vehicles" className="animate-fade-up-delay-2 mt-3 inline-flex items-center gap-2 text-accent/80 hover:text-accent text-sm font-medium transition-colors">
-            看看我們支援的車款 →
-          </a>
-
           <div className="animate-fade-up-delay-3 mt-12 flex flex-wrap items-center gap-4">
             <a
               href="#contact"
@@ -133,11 +126,6 @@ function HeroSection() {
             </a>
           </div>
 
-          <div className="animate-fade-up-delay-3 mt-20 flex gap-16 border-t border-white/[0.08] pt-10">
-            <StatItem value="多年" label="維修經驗" />
-            <StatItem value="3000+" label="成功案例" />
-            <StatItem value="98%" label="客戶滿意度" />
-          </div>
         </div>
       </div>
 
@@ -147,14 +135,6 @@ function HeroSection() {
   );
 }
 
-function StatItem({ value, label }: { value: string; label: string }) {
-  return (
-    <div className="group">
-      <div className="font-display text-3xl font-black text-gold transition-all duration-300 group-hover:text-accent">{value}</div>
-      <div className="mt-1.5 text-xs font-medium text-white/40 uppercase tracking-wider">{label}</div>
-    </div>
-  );
-}
 
 /* ═══════════════════════════════════════════
    STATUS BANNER — 跑馬燈
@@ -276,7 +256,7 @@ function ServicesSection() {
 }
 
 /* ═══════════════════════════════════════════
-   WHY US — 為什麼選擇我們（左右交錯動畫）
+   WHY US — 為什麼選擇北大（左右交錯動畫）
    ═══════════════════════════════════════════ */
 function WhyUsSection() {
   const reasons = [
@@ -312,7 +292,7 @@ function WhyUsSection() {
               <span className="h-px w-10 bg-accent/50" /> Why Choose Us <span className="h-px w-10 bg-accent/50" />
             </span>
             <h2 className="mt-4 font-display text-[clamp(2rem,4vw,3.5rem)] font-black leading-tight text-white">
-              為什麼選擇我們
+              為什麼選擇北大
             </h2>
             <p className="mt-4 text-base text-white/40 max-w-lg mx-auto">
               多年的維修經驗，堅持使用最好的材料與熱誠的服務
