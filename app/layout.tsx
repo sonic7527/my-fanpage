@@ -48,7 +48,7 @@ function Nav() {
           <img
             src="/images/logo-nav-white.png"
             alt="北大液晶儀表維修"
-            className="h-12 w-auto opacity-90 transition-all duration-300 group-hover:opacity-100 group-hover:scale-105"
+            className="h-14 w-auto opacity-95 transition-all duration-300 group-hover:opacity-100 group-hover:scale-105"
           />
         </a>
 
