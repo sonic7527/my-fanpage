@@ -3,10 +3,11 @@ import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
 import { verifyAdmin } from "../auth";
+import { ghGetFile, ghPutFile, ghDeleteFile } from "../github";
 
 const POSTS_DIR = path.join(process.cwd(), "content/posts");
 
-// GET: list all posts
+// GET: list all posts (read from deployed fs — fast)
 export async function GET(req: NextRequest) {
   const authError = await verifyAdmin(req);
   if (authError) return authError;
@@ -29,13 +30,11 @@ export async function GET(req: NextRequest) {
     };
   });
 
-  // Sort by date descending
   posts.sort((a, b) => (b.date > a.date ? 1 : -1));
-
   return NextResponse.json({ posts });
 }
 
-// DELETE: delete a post
+// DELETE: delete a post (via GitHub API)
 export async function DELETE(req: NextRequest) {
   const authError = await verifyAdmin(req);
   if (authError) return authError;
@@ -43,16 +42,18 @@ export async function DELETE(req: NextRequest) {
   const { slug } = await req.json();
   if (!slug) return NextResponse.json({ error: "缺少 slug" }, { status: 400 });
 
-  const filePath = path.join(POSTS_DIR, `${slug}.md`);
-  if (!fs.existsSync(filePath)) {
-    return NextResponse.json({ error: "文章不存在" }, { status: 404 });
+  try {
+    const filename = `${slug}.md`;
+    const { sha } = await ghGetFile(filename);
+    await ghDeleteFile(filename, sha, `刪除文章: ${slug}`);
+    return NextResponse.json({ ok: true, message: `已刪除 ${slug}，網站將在幾秒後自動更新` });
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : "未知錯誤";
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
-
-  fs.unlinkSync(filePath);
-  return NextResponse.json({ ok: true, message: `已刪除 ${slug}` });
 }
 
-// POST: create new post
+// POST: create new post (via GitHub API)
 export async function POST(req: NextRequest) {
   const authError = await verifyAdmin(req);
   if (authError) return authError;
@@ -62,18 +63,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "標題和日期為必填" }, { status: 400 });
   }
 
-  // Generate slug from date and title
   const slugBase = `${date}-${title.replace(/[^a-zA-Z0-9\u4e00-\u9fff]/g, "-").replace(/-+/g, "-").toLowerCase().slice(0, 50)}`;
-  const filePath = path.join(POSTS_DIR, `${slugBase}.md`);
-
-  if (fs.existsSync(filePath)) {
-    return NextResponse.json({ error: "同名文章已存在" }, { status: 409 });
-  }
+  const filename = `${slugBase}.md`;
 
   const frontmatter = {
     title,
     date,
-    excerpt: excerpt || content?.slice(0, 120) + "…" || "",
+    excerpt: excerpt || (content ? content.slice(0, 120) + "…" : ""),
     image: "",
     category: category || "repair",
     model: "",
@@ -84,7 +80,12 @@ export async function POST(req: NextRequest) {
   };
 
   const file = matter.stringify(content || "", frontmatter);
-  fs.writeFileSync(filePath, file, "utf-8");
 
-  return NextResponse.json({ ok: true, slug: slugBase });
+  try {
+    await ghPutFile(filename, file, undefined, `新增文章: ${title}`);
+    return NextResponse.json({ ok: true, slug: slugBase, message: "文章已新增，網站將在幾秒後自動更新" });
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : "未知錯誤";
+    return NextResponse.json({ error: msg }, { status: 500 });
+  }
 }
