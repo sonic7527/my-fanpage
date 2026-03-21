@@ -51,7 +51,7 @@ function Nav() {
             <img
               src="/images/logo-nav-white.png"
               alt="北大液晶儀表維修"
-              className="h-28 w-auto transition-all duration-300 group-hover:scale-105"
+              className="h-44 w-auto transition-all duration-300 group-hover:scale-105"
             />
           </a>
         </div>
@@ -104,13 +104,13 @@ function Footer() {
         <div className="grid gap-12 md:grid-cols-[1.5fr_1fr_1fr_1fr]">
           {/* 品牌欄 */}
           <div>
-            <img src="/images/logo-nav-white.png" alt="北大液晶儀表維修" className="mb-5 h-12 w-auto opacity-80" />
+            <img src="/images/logo-nav-white.png" alt="北大液晶儀表維修" className="mb-5 h-28 w-auto opacity-80" />
             <p className="text-sm leading-relaxed text-text-muted max-w-xs">
               專注一般機車液晶儀表維修，不換偏光片，直接更換全新液晶。高雄、屏東雙據點，採預約制服務。
             </p>
             <div className="mt-6 flex gap-3">
-              <SocialLink href="#" label="Facebook" icon="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-              <SocialLink href="#" label="LINE" icon="M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" />
+              <SocialLink href="https://www.facebook.com/profile.php?id=100075586557819" label="Facebook" icon="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+              <SocialLink href="https://line.me/R/ti/p/@777xvkrg" label="LINE" icon="M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" />
             </div>
           </div>
 
