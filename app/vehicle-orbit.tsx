@@ -325,31 +325,9 @@ export default function VehicleOrbit() {
                   </div>
                   {/* Hot core */}
                   <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[60px] h-[60px] rounded-full" style={{ background: "radial-gradient(circle, rgba(255,200,180,0.35) 0%, rgba(220,100,180,0.2) 40%, transparent 70%)", filter: "blur(8px)" }} />
-                  {/* Calligraphy text (pure CSS, no image) */}
-                  <div className="relative flex flex-col items-center justify-center select-none">
-                    <span
-                      className="text-[5.5rem] font-black leading-none tracking-[0.05em]"
-                      style={{
-                        fontFamily: "'Noto Serif TC', 'PMingLiU', serif",
-                        color: "transparent",
-                        backgroundImage: "linear-gradient(180deg, #fff 0%, #b8c6db 40%, #8ea8c8 70%, #a0d2e7 100%)",
-                        backgroundClip: "text",
-                        WebkitBackgroundClip: "text",
-                        filter: "drop-shadow(0 0 30px rgba(150,200,255,0.4)) drop-shadow(0 0 60px rgba(100,150,220,0.25))",
-                      }}
-                    >
-                      北大
-                    </span>
-                    <span
-                      className="text-[0.85rem] font-light tracking-[0.35em] mt-1"
-                      style={{
-                        fontFamily: "'Inter', sans-serif",
-                        color: "rgba(180,210,240,0.7)",
-                        textShadow: "0 0 20px rgba(100,180,255,0.5)",
-                      }}
-                    >
-                      BEI, DA
-                    </span>
+                  {/* Calligraphy image (transparent PNG) */}
+                  <div className="relative flex items-center justify-center">
+                    <img src="/北大旋轉書法.png" alt="北大" className="w-[220px] h-auto drop-shadow-[0_0_50px_rgba(150,200,255,0.4)]" draggable={false} />
                   </div>
                 </div>
               </div>
