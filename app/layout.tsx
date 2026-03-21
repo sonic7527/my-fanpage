@@ -60,7 +60,6 @@ function Nav() {
         <div className="hidden items-center gap-1 md:flex">
           <NavLink href="/#services">服務項目</NavLink>
           <NavLink href="/posts">維修案例</NavLink>
-          <NavLink href="/#faq">常見問題</NavLink>
           <NavLink href="/#contact">聯絡我們</NavLink>
         </div>
 
@@ -130,10 +129,8 @@ function Footer() {
           <div>
             <h4 className="mb-5 text-xs font-bold uppercase tracking-[0.2em] text-white/40">快速連結</h4>
             <div className="flex flex-col gap-3">
-              <FLink href="#articles">維修案例</FLink>
-              <FLink href="#faq">常見問題</FLink>
+              <FLink href="/posts">維修案例</FLink>
               <FLink href="#contact">聯絡我們</FLink>
-              <FLink href="/faq">完整 FAQ</FLink>
             </div>
           </div>
 

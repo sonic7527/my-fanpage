@@ -17,7 +17,6 @@ export default function MobileMenu() {
   const links = [
     { href: "/#services", label: "服務項目" },
     { href: "/posts", label: "維修案例" },
-    { href: "/#faq", label: "常見問題" },
     { href: "/#contact", label: "聯絡我們" },
   ];
 
