@@ -5,6 +5,7 @@ import MobileMenu from "./mobile-menu";
 import NavScrollEffect from "./nav-scroll";
 import ChatButton from "./chat-button";
 import { ChatWidgetWrapper } from "./chat-widget";
+import VehiclePanel from "./vehicle-panel";
 
 export const metadata: Metadata = {
   title: "北大液晶儀表維修 — 專業機車液晶儀表更換服務",
@@ -45,15 +46,16 @@ function Nav() {
     <nav className="nav-bar fixed top-0 left-0 right-0 z-50 transition-all duration-500">
       {/* 三欄 grid：Logo 左 ｜ 導航置中 ｜ CTA 右 */}
       <div className="relative grid grid-cols-[1fr_auto_1fr] items-center px-6 lg:px-10">
-        {/* 左欄：Logo — 獨立空間，可以比導航列高 */}
+        {/* 左欄：Logo + 車款列表 */}
         <div className="justify-self-start">
           <a href="/" className="group inline-block">
             <img
               src="/images/logo-nav-white.png"
               alt="北大液晶儀表維修"
-              className="h-20 w-auto drop-shadow-[0_0_20px_rgba(100,160,255,0.15)] transition-all duration-300 group-hover:drop-shadow-[0_0_30px_rgba(100,160,255,0.3)] group-hover:scale-105"
+              className="h-16 w-auto drop-shadow-[0_0_15px_rgba(255,140,40,0.3)] transition-all duration-300 group-hover:drop-shadow-[0_0_25px_rgba(255,140,40,0.5)] group-hover:scale-105"
             />
           </a>
+          <VehiclePanel />
         </div>
 
         {/* 中欄：導航連結 — 永遠置中 */}

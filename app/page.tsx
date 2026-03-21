@@ -73,23 +73,8 @@ function HeroSection() {
       <div className="absolute top-[-20%] right-[-10%] h-[800px] w-[800px] rounded-full bg-accent/[0.04] blur-[120px] animate-float" />
       <div className="absolute bottom-[-30%] left-[-15%] h-[600px] w-[600px] rounded-full bg-gold/[0.03] blur-[100px] animate-float-delayed" />
 
-      {/* 幾何線條背景 */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-        {/* 斜線網格 */}
-        <div className="absolute inset-0 hero-grid opacity-[0.06]" />
-        {/* 裝飾圓環 */}
-        <div className="absolute top-[15%] right-[10%] h-[400px] w-[400px] rounded-full border border-white/[0.04] hidden lg:block" />
-        <div className="absolute top-[20%] right-[12%] h-[300px] w-[300px] rounded-full border border-accent/[0.06] hidden lg:block" />
-        <div className="absolute bottom-[20%] right-[8%] h-[200px] w-[200px] rounded-full border border-white/[0.03] hidden lg:block" />
-        {/* 水平線條 */}
-        <div className="absolute top-[30%] right-0 w-[40%] h-px bg-gradient-to-l from-accent/10 to-transparent hidden lg:block" />
-        <div className="absolute top-[50%] right-0 w-[30%] h-px bg-gradient-to-l from-white/[0.06] to-transparent hidden lg:block" />
-        <div className="absolute top-[70%] right-0 w-[35%] h-px bg-gradient-to-l from-accent/[0.05] to-transparent hidden lg:block" />
-        {/* 角落裝飾點 */}
-        <div className="absolute top-[25%] right-[25%] h-1.5 w-1.5 rounded-full bg-accent/20 hidden lg:block" />
-        <div className="absolute top-[45%] right-[15%] h-1 w-1 rounded-full bg-white/10 hidden lg:block" />
-        <div className="absolute top-[60%] right-[30%] h-2 w-2 rounded-full bg-accent/10 hidden lg:block" />
-      </div>
+      {/* 背景網格 */}
+      <div className="absolute inset-0 hero-grid opacity-[0.04]" />
 
       {/* 內容 */}
       <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-10 pt-28 pb-20">
