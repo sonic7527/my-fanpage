@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 
 const brands = [
   {
@@ -8,6 +8,8 @@ const brands = [
     name: "SYM",
     sub: "三陽",
     color: "#3B82F6",
+    // Unique orbit params: radius, speed, offset angle, y-stretch (ellipse)
+    orbit: { rx: 210, ry: 180, speed: 0.3, startAngle: 0 },
     models: ["FIGHTER 5／JET EVO", "FIGHTER 6", "FNX", "GT 125", "GR 125", "JET-S／SR", "JET-POWER", "MIO 115", "MII 110", "NEW MII", "RX 110", "TL-508", "Z1／IRX"],
   },
   {
@@ -15,6 +17,7 @@ const brands = [
     name: "KYMCO",
     sub: "光陽",
     color: "#10B981",
+    orbit: { rx: 250, ry: 200, speed: 0.22, startAngle: 60 },
     models: ["新名流", "GP 125", "G5 系列", "G6", "G6 50週年", "KIWI", "Like", "Many 110", "Many 125", "NEW Many", "Racing", "Racing King", "VJR 110", "VJR 125"],
   },
   {
@@ -22,6 +25,7 @@ const brands = [
     name: "YAMAHA",
     sub: "山葉",
     color: "#0EA5E9",
+    orbit: { rx: 190, ry: 230, speed: 0.26, startAngle: 120 },
     models: ["BWS'X", "BWS'R", "CUXI", "NEW CUXI", "CUXI 115", "FORCE", "GTR", "LIMI", "RSZ", "RS-ZERO", "S-MAX", "勁戰2代"],
   },
   {
@@ -29,6 +33,7 @@ const brands = [
     name: "PGO",
     sub: "比雅久",
     color: "#F97316",
+    orbit: { rx: 270, ry: 170, speed: 0.18, startAngle: 180 },
     models: ["ALPHA MAX", "JBUBU 115", "JBUBU 125", "TIGRA 125", "TIGRA 150", "X-HOT"],
   },
   {
@@ -36,6 +41,7 @@ const brands = [
     name: "SUZUKI",
     sub: "鈴木",
     color: "#EAB308",
+    orbit: { rx: 160, ry: 240, speed: 0.35, startAngle: 240 },
     models: ["GSR／NEX", "SALUTO"],
   },
   {
@@ -43,65 +49,82 @@ const brands = [
     name: "Vespa",
     sub: "偉士牌",
     color: "#14B8A6",
+    orbit: { rx: 230, ry: 160, speed: 0.28, startAngle: 300 },
     models: ["春天 Primavera"],
   },
 ];
 
 export default function VehicleOrbit() {
   const [selected, setSelected] = useState<string | null>(null);
-  const [paused, setPaused] = useState(false);
-  const [angle, setAngle] = useState(0);
+  const pausedRef = useRef(false);
+  const timeRef = useRef(0);
   const animRef = useRef<number>(0);
-  const lastTime = useRef<number>(0);
+  const [positions, setPositions] = useState<{ x: number; y: number }[]>(
+    brands.map(() => ({ x: 0, y: 0 }))
+  );
+
+  const updatePositions = useCallback((time: number) => {
+    if (!pausedRef.current) {
+      timeRef.current = time;
+    }
+    const t = timeRef.current / 1000; // seconds
+
+    const cx = 280;
+    const cy = 260;
+
+    const newPos = brands.map((brand) => {
+      const { rx, ry, speed, startAngle } = brand.orbit;
+      const a = (startAngle * Math.PI) / 180 + t * speed;
+      // Add wobble for organic feel
+      const wobbleX = Math.sin(t * speed * 1.7 + startAngle) * 15;
+      const wobbleY = Math.cos(t * speed * 2.3 + startAngle) * 10;
+      return {
+        x: cx + Math.cos(a) * rx + wobbleX,
+        y: cy + Math.sin(a) * ry + wobbleY,
+      };
+    });
+
+    setPositions(newPos);
+    animRef.current = requestAnimationFrame(updatePositions);
+  }, []);
 
   useEffect(() => {
-    function animate(time: number) {
-      if (!paused) {
-        const delta = lastTime.current ? (time - lastTime.current) / 1000 : 0;
-        setAngle((prev) => (prev + delta * 15) % 360); // 15 degrees per second
-      }
-      lastTime.current = time;
-      animRef.current = requestAnimationFrame(animate);
-    }
-    animRef.current = requestAnimationFrame(animate);
+    animRef.current = requestAnimationFrame(updatePositions);
     return () => cancelAnimationFrame(animRef.current);
-  }, [paused]);
+  }, [updatePositions]);
 
   function handleBrandClick(id: string) {
     if (selected === id) {
       setSelected(null);
-      setPaused(false);
+      pausedRef.current = false;
     } else {
       setSelected(id);
-      setPaused(true);
+      pausedRef.current = true;
     }
   }
 
   const selectedBrand = brands.find((b) => b.id === selected);
-  const orbitRadius = 220; // px from center
 
   return (
     <section id="vehicles" className="relative py-28 overflow-hidden bg-primary-deep">
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
-        {/* Section header */}
+        {/* Header */}
         <div className="text-center mb-6">
           <span className="text-xs font-bold uppercase tracking-[0.3em] text-accent">Compatible Models</span>
           <h2 className="mt-3 font-display text-[clamp(1.8rem,3.5vw,3rem)] font-black text-white">
             可維修車款一覽
           </h2>
-          <p className="mt-2 text-sm text-white/40">
-            點擊品牌查看可維修車款
-          </p>
+          <p className="mt-2 text-sm text-white/40">點擊品牌查看可維修車款</p>
         </div>
 
-        <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-0">
-          {/* Left panel - brand detail (shows when selected) */}
-          <div className={`w-full lg:w-[340px] shrink-0 transition-all duration-700 ${selected ? "opacity-100 translate-x-0" : "opacity-0 lg:-translate-x-10 pointer-events-none"}`}>
+        <div className="relative">
+          {/* Left panel - overlaid, doesn't push orbit */}
+          <div className={`lg:absolute lg:left-0 lg:top-1/2 lg:-translate-y-1/2 z-20 w-full lg:w-[340px] transition-all duration-700 ${selected ? "opacity-100 translate-x-0" : "opacity-0 lg:-translate-x-10 pointer-events-none h-0 lg:h-auto"}`}>
             {selectedBrand && (
               <div className="rounded-2xl border border-white/[0.08] bg-surface/30 p-6 backdrop-blur-sm">
                 <div className="flex items-center gap-3 mb-5">
                   <div
-                    className="flex h-10 w-10 items-center justify-center rounded-xl text-white font-bold text-sm"
+                    className="flex h-10 w-10 items-center justify-center rounded-xl font-bold text-sm"
                     style={{ backgroundColor: selectedBrand.color + "30", color: selectedBrand.color }}
                   >
                     {selectedBrand.name.slice(0, 2)}
@@ -115,11 +138,8 @@ export default function VehicleOrbit() {
                   {selectedBrand.models.map((model) => (
                     <span
                       key={model}
-                      className="rounded-full px-3 py-1.5 text-xs font-medium text-white/80 border transition-all duration-300"
-                      style={{
-                        borderColor: selectedBrand.color + "30",
-                        backgroundColor: selectedBrand.color + "10",
-                      }}
+                      className="rounded-full px-3 py-1.5 text-xs font-medium text-white/80 border"
+                      style={{ borderColor: selectedBrand.color + "30", backgroundColor: selectedBrand.color + "10" }}
                     >
                       {model}
                     </span>
@@ -127,7 +147,7 @@ export default function VehicleOrbit() {
                 </div>
                 <button
                   type="button"
-                  onClick={() => { setSelected(null); setPaused(false); }}
+                  onClick={() => { setSelected(null); pausedRef.current = false; }}
                   className="mt-5 text-xs text-text-dim hover:text-accent transition-colors"
                 >
                   ← 返回瀏覽全部品牌
@@ -136,42 +156,55 @@ export default function VehicleOrbit() {
             )}
           </div>
 
-          {/* Orbit container */}
-          <div className="flex-1 flex justify-center">
-            <div className="relative" style={{ width: orbitRadius * 2 + 120, height: orbitRadius * 2 + 120 }}>
-              {/* Orbit rings */}
-              <svg className="absolute inset-0 w-full h-full" viewBox={`0 0 ${orbitRadius * 2 + 120} ${orbitRadius * 2 + 120}`}>
-                {/* Outer hexagonal orbit */}
-                <HexPath cx={orbitRadius + 60} cy={orbitRadius + 60} r={orbitRadius} className="stroke-white/[0.06] fill-none" strokeWidth={1} />
-                <HexPath cx={orbitRadius + 60} cy={orbitRadius + 60} r={orbitRadius * 0.7} className="stroke-white/[0.04] fill-none" strokeWidth={1} />
-                <HexPath cx={orbitRadius + 60} cy={orbitRadius + 60} r={orbitRadius * 0.4} className="stroke-white/[0.03] fill-none" strokeWidth={1} />
-                {/* Accent dots on orbits */}
-                <circle cx={orbitRadius + 60 + orbitRadius * 0.7} cy={orbitRadius + 60} r={2} className="fill-accent/30" />
-                <circle cx={orbitRadius + 60} cy={orbitRadius + 60 - orbitRadius * 0.7} r={2} className="fill-white/10" />
+          {/* Orbit area - always centered */}
+          <div className="flex justify-center">
+            <div className="relative" style={{ width: 560, height: 520 }}>
+              {/* Orbit trail rings (irregular ellipses) */}
+              <svg className="absolute inset-0 w-full h-full opacity-[0.07]" viewBox="0 0 560 520">
+                {brands.map((brand, i) => (
+                  <ellipse
+                    key={brand.id}
+                    cx={280}
+                    cy={260}
+                    rx={brand.orbit.rx}
+                    ry={brand.orbit.ry}
+                    fill="none"
+                    stroke="white"
+                    strokeWidth={0.5}
+                    strokeDasharray="4 8"
+                    transform={`rotate(${i * 12} 280 260)`}
+                  />
+                ))}
               </svg>
 
-              {/* Center - 北大 text */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className={`relative flex flex-col items-center justify-center transition-all duration-500 ${paused ? "scale-90 opacity-70" : "scale-100 opacity-100"}`}>
-                  {/* Glow */}
-                  <div className="absolute inset-0 rounded-full bg-accent/[0.06] blur-[80px] scale-[2]" />
-                  <div className="relative text-center">
-                    <div className="font-display text-6xl font-black text-white tracking-tight leading-none" style={{ textShadow: "0 0 40px rgba(220,60,40,0.3), 0 0 80px rgba(220,60,40,0.1)" }}>
+              {/* Decorative dots */}
+              <div className="absolute top-[20%] left-[15%] h-1 w-1 rounded-full bg-accent/20" />
+              <div className="absolute top-[60%] right-[20%] h-1.5 w-1.5 rounded-full bg-white/10" />
+              <div className="absolute bottom-[25%] left-[30%] h-1 w-1 rounded-full bg-accent/15" />
+
+              {/* Center text */}
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className={`text-center transition-all duration-500 ${selected ? "scale-90 opacity-50" : "scale-100 opacity-100"}`}>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="h-40 w-40 rounded-full bg-accent/[0.04] blur-[60px]" />
+                  </div>
+                  <div className="relative">
+                    <div
+                      className="font-display text-7xl font-black text-white leading-none"
+                      style={{ textShadow: "0 0 60px rgba(220,60,40,0.2), 0 2px 4px rgba(0,0,0,0.3)" }}
+                    >
                       北大
                     </div>
-                    <div className="text-xs font-bold text-accent/70 tracking-[0.4em] mt-2 uppercase">
+                    <div className="text-xs font-bold text-accent/60 tracking-[0.5em] mt-3 uppercase">
                       Bei Da
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Orbiting brand icons */}
+              {/* Brand icons */}
               {brands.map((brand, i) => {
-                const brandAngle = angle + (i * 360) / brands.length;
-                const rad = (brandAngle * Math.PI) / 180;
-                const x = Math.cos(rad) * orbitRadius + orbitRadius + 60;
-                const y = Math.sin(rad) * orbitRadius + orbitRadius + 60;
+                const pos = positions[i];
                 const isSelected = selected === brand.id;
 
                 return (
@@ -179,31 +212,27 @@ export default function VehicleOrbit() {
                     key={brand.id}
                     type="button"
                     onClick={() => handleBrandClick(brand.id)}
-                    className={`absolute flex flex-col items-center justify-center transition-all duration-300 -translate-x-1/2 -translate-y-1/2 group ${isSelected ? "z-20 scale-125" : "z-10 hover:scale-110"}`}
-                    style={{ left: x, top: y }}
+                    className={`absolute flex flex-col items-center justify-center transition-all duration-500 -translate-x-1/2 -translate-y-1/2 group ${isSelected ? "z-20 scale-125" : "z-10 hover:scale-110"}`}
+                    style={{ left: pos.x, top: pos.y }}
                   >
-                    {/* Icon circle */}
                     <div
-                      className={`flex h-14 w-14 items-center justify-center rounded-full border-2 backdrop-blur-sm transition-all duration-300 ${
-                        isSelected
-                          ? "shadow-[0_0_25px_var(--glow)]"
-                          : "hover:shadow-[0_0_20px_var(--glow)]"
+                      className={`flex h-12 w-12 items-center justify-center rounded-full border-2 backdrop-blur-sm transition-all duration-300 ${
+                        isSelected ? "shadow-[0_0_30px_var(--glow)]" : "hover:shadow-[0_0_20px_var(--glow)]"
                       }`}
                       style={{
                         "--glow": brand.color + "50",
                         borderColor: isSelected ? brand.color : brand.color + "40",
-                        backgroundColor: isSelected ? brand.color + "25" : "rgba(0,0,0,0.5)",
+                        backgroundColor: isSelected ? brand.color + "25" : "rgba(0,0,0,0.6)",
                       } as React.CSSProperties}
                     >
-                      <span
-                        className="font-bold text-xs"
-                        style={{ color: brand.color }}
-                      >
+                      <span className="font-bold text-[10px]" style={{ color: brand.color }}>
                         {brand.name.length > 4 ? brand.name.slice(0, 3) : brand.name}
                       </span>
                     </div>
-                    {/* Label */}
-                    <span className={`mt-1.5 text-[10px] font-medium whitespace-nowrap transition-opacity duration-300 ${isSelected ? "opacity-100" : "opacity-60 group-hover:opacity-100"}`} style={{ color: brand.color }}>
+                    <span
+                      className={`mt-1 text-[9px] font-medium whitespace-nowrap transition-opacity duration-300 ${isSelected ? "opacity-100" : "opacity-50 group-hover:opacity-100"}`}
+                      style={{ color: brand.color }}
+                    >
                       {brand.sub}
                     </span>
                   </button>
@@ -213,29 +242,13 @@ export default function VehicleOrbit() {
           </div>
         </div>
 
-        {/* Footer note */}
-        <div className="mt-10 text-center">
+        {/* Footer */}
+        <div className="mt-8 text-center">
           <p className="text-xs text-text-dim">
             ⚠️ 僅服務一般機車儀表，重機與汽車恕不服務 ｜ 114.07.27 更新 ｜ 持續新增中
           </p>
         </div>
       </div>
     </section>
-  );
-}
-
-/* Hexagonal path SVG */
-function HexPath({ cx, cy, r, className, strokeWidth }: { cx: number; cy: number; r: number; className?: string; strokeWidth?: number }) {
-  const points = [];
-  for (let i = 0; i < 6; i++) {
-    const a = (Math.PI / 3) * i - Math.PI / 2;
-    points.push(`${cx + r * Math.cos(a)},${cy + r * Math.sin(a)}`);
-  }
-  return (
-    <polygon
-      points={points.join(" ")}
-      className={className}
-      strokeWidth={strokeWidth}
-    />
   );
 }
