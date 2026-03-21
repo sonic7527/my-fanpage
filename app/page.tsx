@@ -479,7 +479,7 @@ function ContactSection() {
             <div className="rounded-xl border border-border bg-surface/50 p-10">
               <h3 className="font-display text-lg font-bold text-text">寄件維修流程</h3>
               <div className="mt-8 space-y-8">
-                <FlowStep num="1" title="聯繫我們" desc="透過 LINE、Telegram 或網站聊天告知您的儀表問題與車款資訊。" />
+                <FlowStep num="1" title="聯繫我們" desc="透過 LINE 告知您的儀表問題與車款資訊。" />
                 <FlowStep num="2" title="寄送儀表" desc="將儀表妥善包裝（建議用氣泡紙），透過宅配或超商寄送至我們的地址。" />
                 <FlowStep num="3" title="檢測報價" desc="收到後 1-2 個工作天內完成檢測，拍照回報問題並提供詳細報價。" />
                 <FlowStep num="4" title="維修交件" desc="確認報價後進行維修，完成後寄回給您。全程可透過 LINE 追蹤進度。" />
