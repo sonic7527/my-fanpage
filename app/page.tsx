@@ -54,7 +54,6 @@ export default function HomePage() {
       <StatusBanner />
       <ServicesSection />
       <WhyUsSection />
-      <ArticlesSection posts={posts} />
       <FaqSection />
       <ContactSection />
     </>

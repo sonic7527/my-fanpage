@@ -47,18 +47,21 @@ const layerSpeeds = [14, -10, 6];
 // Radii for each octagon layer
 const layerOctagons = [165, 235, 310];
 
-// Corner rounding ratio (0 = sharp octagon, 1 = circle)
-const CORNER_ROUND = 0.55;
+// How much of each edge is rounded at corners (0.15 = 15% each end is curved, 70% straight)
+const ROUND_FRAC = 0.22;
 
 // Get the 8 vertices of an octagon at given radius
 function getOctagonVertices(r: number, cx: number, cy: number): [number, number][] {
   return Array.from({ length: 8 }, (_, i) => {
-    const angle = (i * 45 - 90) * Math.PI / 180; // start from top
+    const angle = (i * 45 - 90) * Math.PI / 180;
     return [cx + Math.cos(angle) * r, cy + Math.sin(angle) * r] as [number, number];
   });
 }
 
-// Get point on rounded octagon at normalized position t (0-1)
+// Lerp helper
+function lerp(a: number, b: number, t: number) { return a + (b - a) * t; }
+
+// Get point on rounded octagon at angle (degrees)
 function getOrbitPoint(layer: number, angleDeg: number, cx: number, cy: number): [number, number] {
   const r = layerOctagons[layer];
   const verts = getOctagonVertices(r, cx, cy);
@@ -70,42 +73,11 @@ function getOrbitPoint(layer: number, angleDeg: number, cx: number, cy: number):
 
   const curr = verts[i];
   const next = verts[(i + 1) % n];
-  const midX = (curr[0] + next[0]) / 2;
-  const midY = (curr[1] + next[1]) / 2;
 
-  // Each segment: straight middle portion + curved corners
-  // frac 0→0.5 = from corner(curr) to midpoint, frac 0.5→1 = midpoint to corner(next)
-  if (frac <= 0.5) {
-    // Curve from prev-midpoint through vertex to next-midpoint
-    const prev = verts[(i - 1 + n) % n];
-    const prevMidX = (prev[0] + curr[0]) / 2;
-    const prevMidY = (prev[1] + curr[1]) / 2;
-    const ct = frac * 2; // 0→1
-    // Quadratic bezier: prevMid → curr(control) → mid
-    const cPrevMid = [prevMidX + (curr[0] - prevMidX) * CORNER_ROUND, prevMidY + (curr[1] - prevMidY) * CORNER_ROUND];
-    const cMid = [midX + (curr[0] - midX) * CORNER_ROUND, midY + (curr[1] - midY) * CORNER_ROUND];
-    const x = (1 - ct) * (1 - ct) * (prevMidX + (cPrevMid[0] - prevMidX) * (1 - CORNER_ROUND)) +
-              2 * (1 - ct) * ct * curr[0] * (1 - CORNER_ROUND) +
-              ct * ct * (midX + (cMid[0] - midX) * (1 - CORNER_ROUND));
-    const y = (1 - ct) * (1 - ct) * (prevMidY + (cPrevMid[1] - prevMidY) * (1 - CORNER_ROUND)) +
-              2 * (1 - ct) * ct * curr[1] * (1 - CORNER_ROUND) +
-              ct * ct * (midY + (cMid[1] - midY) * (1 - CORNER_ROUND));
-    // Blend between sharp octagon interpolation and bezier curve
-    const sharpX = curr[0] + (midX - curr[0]) * frac * 2;
-    const sharpY = curr[1] + (midY - curr[1]) * frac * 2;
-    return [sharpX * (1 - CORNER_ROUND) + x * CORNER_ROUND, sharpY * (1 - CORNER_ROUND) + y * CORNER_ROUND];
-  } else {
-    const ft = (frac - 0.5) * 2; // 0→1
-    const x = midX + (next[0] - midX) * ft;
-    const y = midY + (next[1] - midY) * ft;
-    // Blend toward next corner with rounding
-    const nextNext = verts[(i + 2) % n];
-    const nextMidX = (next[0] + nextNext[0]) / 2;
-    const nextMidY = (next[1] + nextNext[1]) / 2;
-    const bx = (1 - ft) * (1 - ft) * midX + 2 * (1 - ft) * ft * next[0] + ft * ft * nextMidX;
-    const by = (1 - ft) * (1 - ft) * midY + 2 * (1 - ft) * ft * next[1] + ft * ft * nextMidY;
-    return [x * (1 - CORNER_ROUND) + bx * CORNER_ROUND, y * (1 - CORNER_ROUND) + by * CORNER_ROUND];
-  }
+  // Simple: interpolate linearly along the edge
+  const x = lerp(curr[0], next[0], frac);
+  const y = lerp(curr[1], next[1], frac);
+  return [x, y];
 }
 
 // Rotate (px, py) around (cx, cy) by angleDeg degrees
@@ -115,28 +87,36 @@ function rotateAround(px: number, py: number, cx: number, cy: number, angleDeg: 
   return [cx + dx * Math.cos(rad) - dy * Math.sin(rad), cy + dx * Math.sin(rad) + dy * Math.cos(rad)];
 }
 
-// Build SVG path for rounded octagon
+// Build SVG path: straight edges with rounded corners
 function buildOrbitPath(layer: number, cx: number, cy: number): string {
   const r = layerOctagons[layer];
   const verts = getOctagonVertices(r, cx, cy);
   const n = 8;
+  const rf = ROUND_FRAC;
   const parts: string[] = [];
 
   for (let i = 0; i < n; i++) {
     const curr = verts[i];
     const next = verts[(i + 1) % n];
-    const midX = (curr[0] + next[0]) / 2;
-    const midY = (curr[1] + next[1]) / 2;
+    // Points along the edge: start of straight (after prev corner) and end of straight (before next corner)
+    const startX = lerp(curr[0], next[0], rf);
+    const startY = lerp(curr[1], next[1], rf);
+    const endX = lerp(curr[0], next[0], 1 - rf);
+    const endY = lerp(curr[1], next[1], 1 - rf);
 
     if (i === 0) {
-      const prev = verts[n - 1];
-      const prevMidX = (prev[0] + curr[0]) / 2;
-      const prevMidY = (prev[1] + curr[1]) / 2;
-      parts.push(`M ${prevMidX.toFixed(1)} ${prevMidY.toFixed(1)}`);
+      parts.push(`M ${startX.toFixed(1)} ${startY.toFixed(1)}`);
     }
 
-    // Quadratic bezier curve through vertex (rounded corner)
-    parts.push(`Q ${curr[0].toFixed(1)} ${curr[1].toFixed(1)} ${midX.toFixed(1)} ${midY.toFixed(1)}`);
+    // Straight line along edge
+    parts.push(`L ${endX.toFixed(1)} ${endY.toFixed(1)}`);
+
+    // Rounded corner: Q bezier with next vertex as control point
+    const nextVert = verts[(i + 1) % n];
+    const nextNext = verts[(i + 2) % n];
+    const cornerEndX = lerp(nextVert[0], nextNext[0], rf);
+    const cornerEndY = lerp(nextVert[1], nextNext[1], rf);
+    parts.push(`Q ${nextVert[0].toFixed(1)} ${nextVert[1].toFixed(1)} ${cornerEndX.toFixed(1)} ${cornerEndY.toFixed(1)}`);
   }
 
   parts.push("Z");
@@ -347,7 +327,7 @@ export default function VehicleOrbit() {
                   <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[60px] h-[60px] rounded-full" style={{ background: "radial-gradient(circle, rgba(255,200,180,0.35) 0%, rgba(220,100,180,0.2) 40%, transparent 70%)", filter: "blur(8px)" }} />
                   {/* Calligraphy image */}
                   <div className="relative flex items-center justify-center">
-                    <img src="/北大旋轉書法.png" alt="北大" className="w-[220px] h-auto drop-shadow-[0_0_50px_rgba(150,50,200,0.5)] mix-blend-lighten" draggable={false} />
+                    <img src="/北大旋轉書法.png" alt="北大" className="w-[220px] h-auto drop-shadow-[0_0_50px_rgba(150,50,200,0.5)] mix-blend-screen" draggable={false} />
                   </div>
                 </div>
               </div>
