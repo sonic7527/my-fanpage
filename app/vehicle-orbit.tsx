@@ -19,7 +19,7 @@ const brands = [
     id: "yamaha", name: "YAM", sub: "山葉", color: "#0EA5E9",
     orbit: { layer: 0, fixedAngle: 310 },
     size: 62,
-    models: ["BWS'X", "BWS'R", "CUXI", "NEW CUXI", "CUXI 115", "FORCE", "GTR", "LIMI", "RSZ", "RS-ZERO", "S-MAX", "勁戰2代"],
+    models: ["BWS'X", "BWS'R", "CUXI", "NEW CUXI", "CUXI 115", "FORCE", "GTR", "LIMI", "RS-ZERO", "S-MAX", "勁戰2代"],
   },
   {
     id: "pgo", name: "PGO", sub: "比雅久", color: "#F97316",
