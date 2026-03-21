@@ -42,13 +42,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 function Nav() {
   return (
     <nav className="nav-bar fixed top-0 left-0 right-0 z-50 border-b border-white/[0.06] bg-primary-deep/70 backdrop-blur-2xl transition-all duration-500">
-      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 lg:px-10">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-10">
         {/* Logo — 左上 */}
         <a href="/" className="flex items-center gap-3 group shrink-0">
           <img
             src="/images/logo-nav-white.png"
             alt="北大液晶儀表維修"
-            className="h-20 w-auto opacity-90 transition-all duration-300 group-hover:opacity-100 group-hover:scale-105"
+            className="h-12 w-auto opacity-90 transition-all duration-300 group-hover:opacity-100 group-hover:scale-105"
           />
         </a>
 
