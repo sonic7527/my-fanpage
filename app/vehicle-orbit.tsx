@@ -71,7 +71,7 @@ function getOrbitPoint(layer: number, angleDeg: number, cx: number, cy: number):
     frac
   );
   const rad = (a * Math.PI) / 180;
-  return [cx + Math.cos(rad) * r, cy + Math.sin(rad) * r * 0.85];
+  return [cx + Math.cos(rad) * r, cy + Math.sin(rad) * r];
 }
 
 // Rotate (px, py) around (cx, cy) by angleDeg degrees
@@ -111,8 +111,8 @@ export default function VehicleOrbit() {
   // For "spin then pause" transition when switching brands
   const transitionRef = useRef<{ active: boolean; remaining: number }>({ active: false, remaining: 0 });
 
-  const CX = 400, CY = 370;
-  const W = 800, H = 740;
+  const CX = 400, CY = 400;
+  const W = 800, H = 800;
 
   const animate = useCallback((now: number) => {
     if (!startTimeRef.current) startTimeRef.current = now;
