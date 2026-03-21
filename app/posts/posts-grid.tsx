@@ -467,6 +467,9 @@ export default function PostsGrid({
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const containerRef = useScrollReveal();
 
+  /* Combine pinned + regular for accurate category counts */
+  const allPosts = [...pinnedPosts, ...posts];
+
   const filteredPosts =
     activeCategory === "all"
       ? posts
@@ -530,8 +533,8 @@ export default function PostsGrid({
           const isActive = activeCategory === cat.value;
           const count =
             cat.value === "all"
-              ? posts.length
-              : posts.filter((p) => p.category === cat.value).length;
+              ? allPosts.length
+              : allPosts.filter((p) => p.category === cat.value).length;
 
           return (
             <button
