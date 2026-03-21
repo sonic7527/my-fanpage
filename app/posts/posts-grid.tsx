@@ -21,7 +21,6 @@ export interface PostItem {
 const CATEGORIES: { label: string; value: string }[] = [
   { label: "全部", value: "all" },
   { label: "維修實錄", value: "repair" },
-  { label: "整新品", value: "refurbished" },
   { label: "新品上架", value: "new-product" },
   { label: "教學Q&A", value: "tutorial" },
   { label: "公告", value: "announcement" },
