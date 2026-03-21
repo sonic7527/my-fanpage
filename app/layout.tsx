@@ -54,16 +54,16 @@ function Nav() {
 
         {/* 桌面導航 — 中間 */}
         <div className="hidden items-center gap-1 md:flex">
-          <NavLink href="#services">服務項目</NavLink>
-          <NavLink href="#articles">維修案例</NavLink>
-          <NavLink href="#faq">常見問題</NavLink>
-          <NavLink href="#contact">聯絡我們</NavLink>
+          <NavLink href="/#services">服務項目</NavLink>
+          <NavLink href="/posts">維修案例</NavLink>
+          <NavLink href="/#faq">常見問題</NavLink>
+          <NavLink href="/#contact">聯絡我們</NavLink>
         </div>
 
         {/* CTA — 右邊 */}
         <div className="hidden items-center gap-4 md:flex">
           <a
-            href="#contact"
+            href="/#contact"
             className="group relative inline-flex items-center gap-2 rounded-full bg-accent px-6 py-2.5 text-sm font-bold text-white overflow-hidden transition-all duration-300 hover:shadow-[0_0_24px_rgba(220,60,40,0.4)] hover:scale-[1.02]"
           >
             <span className="relative z-10">預約諮詢</span>

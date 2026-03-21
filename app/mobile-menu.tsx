@@ -15,10 +15,10 @@ export default function MobileMenu() {
   }, [open]);
 
   const links = [
-    { href: "#services", label: "服務項目" },
-    { href: "#articles", label: "維修案例" },
-    { href: "#faq", label: "常見問題" },
-    { href: "#contact", label: "聯絡我們" },
+    { href: "/#services", label: "服務項目" },
+    { href: "/posts", label: "維修案例" },
+    { href: "/#faq", label: "常見問題" },
+    { href: "/#contact", label: "聯絡我們" },
   ];
 
   return (
@@ -82,7 +82,7 @@ export default function MobileMenu() {
           ))}
 
           <a
-            href="#contact"
+            href="/#contact"
             onClick={() => setOpen(false)}
             className={`mt-8 inline-flex items-center gap-2 rounded-full bg-accent px-8 py-4 text-base font-bold text-white transition-all duration-500 hover:scale-105 ${
               open ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
