@@ -47,7 +47,6 @@ const INITIAL_SUGGESTIONS = [
   "寄件維修",
   "營業時間",
   "保固說明",
-  "可維修車種",
 ];
 
 export default function ChatWidget() {
@@ -114,7 +113,7 @@ export default function ChatWidget() {
           { role: "assistant", text: data.reply, forwarded: data.forwarded },
         ]);
         if (data.suggestions) {
-          setSuggestions(data.suggestions.slice(0, 4));
+          setSuggestions(data.suggestions.slice(0, 6));
         }
       } catch {
         setMessages((prev) => [
@@ -349,7 +348,7 @@ function ChatWidgetInner({ onClose }: { onClose: () => void }) {
           { role: "assistant", text: data.reply, forwarded: data.forwarded },
         ]);
         if (data.suggestions) {
-          setSuggestions(data.suggestions.slice(0, 4));
+          setSuggestions(data.suggestions.slice(0, 6));
         }
       } catch {
         setMessages((prev) => [
