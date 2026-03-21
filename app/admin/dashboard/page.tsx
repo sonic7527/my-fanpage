@@ -63,9 +63,10 @@ export default function AdminDashboard() {
     if (res.ok) {
       setPosts((prev) => prev.filter((p) => p.slug !== slug));
       if (viewing === slug) { setViewing(null); setDetail(null); }
+      alert("✅ 已刪除，網站將在約30秒後自動更新");
     } else {
-      const data = await res.json();
-      alert(data.error || "刪除失敗");
+      const data = await res.json().catch(() => ({ error: "未知錯誤" }));
+      alert(`❌ 刪除失敗: ${data.error}`);
     }
     setDeleting(null);
     setConfirmSlug(null);
@@ -99,10 +100,11 @@ export default function AdminDashboard() {
     if (res.ok) {
       setDetail(editForm);
       setEditing(false);
-      // Update list
       setPosts((prev) => prev.map((p) => p.slug === editForm.slug ? { ...p, title: editForm.title, date: editForm.date, category: editForm.category, pinned: editForm.pinned } : p));
+      alert("✅ 已儲存，網站將在約30秒後自動更新");
     } else {
-      alert("儲存失敗");
+      const err = await res.json().catch(() => ({ error: "未知錯誤" }));
+      alert(`❌ 儲存失敗: ${err.error || res.statusText}`);
     }
     setSaving(false);
   }
@@ -119,9 +121,10 @@ export default function AdminDashboard() {
       setCreating(false);
       setNewPost({ title: "", date: new Date().toISOString().slice(0, 10), category: "repair", content: "" });
       fetchPosts();
+      alert("✅ 文章已新增，網站將在約30秒後自動更新");
     } else {
-      const data = await res.json();
-      alert(data.error || "新增失敗");
+      const data = await res.json().catch(() => ({ error: "未知錯誤" }));
+      alert(`❌ 新增失敗: ${data.error}`);
     }
     setSaving(false);
   }
