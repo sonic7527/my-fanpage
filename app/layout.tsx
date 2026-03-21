@@ -67,9 +67,7 @@ function Nav() {
 
         {/* 右欄：維修問答 + 手機選單 */}
         <div className="justify-self-end flex items-center gap-4">
-          <div className="hidden md:block">
-            <ChatButton />
-          </div>
+          <ChatButton />
           <MobileMenu />
         </div>
       </div>
