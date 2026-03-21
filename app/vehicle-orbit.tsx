@@ -235,7 +235,7 @@ export default function VehicleOrbit() {
   const selectedBrand = brands.find((b) => b.id === selected);
 
   return (
-    <section id="vehicles" className="relative py-28 overflow-hidden bg-primary-deep">
+    <section id="vehicles" className="relative py-16 md:py-28 overflow-hidden bg-primary-deep">
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
         <div className="text-center mb-6">
           <span className="text-xs font-bold uppercase tracking-[0.3em] text-accent">Compatible Models</span>
@@ -247,7 +247,7 @@ export default function VehicleOrbit() {
           {/* Left panel */}
           <div className={`lg:absolute lg:-left-32 lg:top-1/2 lg:-translate-y-1/2 z-30 w-full lg:w-[360px] transition-all duration-500 ${selected ? "opacity-100 translate-x-0" : "opacity-0 lg:-translate-x-10 pointer-events-none h-0 lg:h-auto"}`}>
             {selectedBrand && (
-              <div className="rounded-2xl border border-white/[0.08] bg-primary-deep/95 backdrop-blur-xl p-8 shadow-2xl">
+              <div className="rounded-2xl border border-white/[0.08] bg-primary-deep/95 backdrop-blur-xl p-5 md:p-8 shadow-2xl">
                 <h3 className="font-bold text-2xl mb-2" style={{ color: selectedBrand.color }}>
                   {selectedBrand.id === "yamaha" ? "YAMAHA" : selectedBrand.id === "suzuki" ? "SUZUKI" : selectedBrand.id === "vespa" ? "Vespa" : selectedBrand.name} {selectedBrand.sub}
                 </h3>
@@ -270,6 +270,7 @@ export default function VehicleOrbit() {
 
           {/* Orbit container */}
           <div className="flex justify-center">
+            <div className="scale-[0.42] sm:scale-[0.55] md:scale-100 origin-center -my-48 sm:-my-36 md:my-0">
             <div ref={containerRef} className="relative" style={{ width: W, height: H }}>
 
               {/* SVG orbit rings */}
@@ -364,6 +365,7 @@ export default function VehicleOrbit() {
                 );
               })}
             </div>
+          </div>
           </div>
         </div>
 

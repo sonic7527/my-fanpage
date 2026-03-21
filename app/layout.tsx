@@ -53,7 +53,7 @@ function Nav() {
             <img
               src="/images/logo-nav-white.png"
               alt="北大液晶儀表維修"
-              className="h-44 w-auto transition-all duration-300 group-hover:scale-105"
+              className="h-20 md:h-44 w-auto transition-all duration-300 group-hover:scale-105"
             />
           </a>
         </div>
@@ -102,11 +102,11 @@ function Footer() {
         <div className="absolute bottom-0 right-1/4 h-[400px] w-[400px] rounded-full bg-gold blur-[150px]" />
       </div>
 
-      <div className="relative mx-auto max-w-7xl px-6 lg:px-10 py-20">
-        <div className="grid gap-12 md:grid-cols-[1.5fr_1fr_1fr_1fr]">
+      <div className="relative mx-auto max-w-7xl px-6 lg:px-10 py-12 md:py-20">
+        <div className="grid gap-8 md:gap-12 md:grid-cols-[1.5fr_1fr_1fr_1fr]">
           {/* 品牌欄 */}
           <div>
-            <img src="/images/logo-nav-white.png" alt="北大液晶儀表維修" className="mb-5 h-28 w-auto opacity-80" />
+            <img src="/images/logo-nav-white.png" alt="北大液晶儀表維修" className="mb-5 h-20 md:h-28 w-auto opacity-80" />
             <p className="text-sm leading-relaxed text-text-muted max-w-xs">
               專注一般機車液晶儀表維修，不換偏光片，直接更換全新液晶。高雄、屏東雙據點，採預約制服務。
             </p>
@@ -148,7 +148,7 @@ function Footer() {
           </div>
         </div>
 
-        <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-white/[0.06] pt-8 sm:flex-row">
+        <div className="mt-10 md:mt-16 flex flex-col items-center justify-between gap-4 border-t border-white/[0.06] pt-8 sm:flex-row">
           <p className="text-xs text-white/30">© {new Date().getFullYear()} 北大液晶儀表維修工作室. All rights reserved.</p>
           <p className="text-xs text-white/20">Bei Da LCD Dashboard Maintenance</p>
         </div>

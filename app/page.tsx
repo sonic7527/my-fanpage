@@ -77,7 +77,7 @@ function HeroSection() {
       <div className="absolute inset-0 hero-grid opacity-[0.04]" />
 
       {/* 內容 */}
-      <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-10 pt-28 pb-20">
+      <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-10 pt-20 md:pt-28 pb-16 md:pb-20">
         <div className="max-w-3xl">
           <div className="animate-fade-up mb-8 flex items-center gap-3">
             <span className="h-px w-16 bg-gradient-to-r from-accent to-transparent" />
@@ -99,15 +99,15 @@ function HeroSection() {
             </span>
           </h1>
 
-          <p className="animate-fade-up-delay-2 mt-10 max-w-xl text-lg leading-relaxed text-white/60">
+          <p className="animate-fade-up-delay-2 mt-6 md:mt-10 max-w-xl text-base md:text-lg leading-relaxed text-white/60">
             專注一般機車液晶儀表維修 — 液晶淡化、斷字、按鍵故障。
             效果更好、壽命更長。高雄、屏東雙據點，採預約制服務。
           </p>
 
-          <div className="animate-fade-up-delay-3 mt-12 flex flex-wrap items-center gap-4">
+          <div className="animate-fade-up-delay-3 mt-8 md:mt-12 flex flex-wrap items-center gap-3 md:gap-4">
             <a
               href="#contact"
-              className="group relative inline-flex items-center gap-2 rounded-full bg-accent px-8 py-4 text-sm font-bold text-white overflow-hidden transition-all duration-300 hover:shadow-[0_0_32px_rgba(220,60,40,0.5)] hover:scale-[1.03] hover:gap-3"
+              className="group relative inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 md:px-8 md:py-4 text-sm font-bold text-white overflow-hidden transition-all duration-300 hover:shadow-[0_0_32px_rgba(220,60,40,0.5)] hover:scale-[1.03] hover:gap-3"
             >
               <span className="relative z-10">預約維修諮詢</span>
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="relative z-10 transition-transform duration-300 group-hover:translate-x-1">
@@ -116,7 +116,7 @@ function HeroSection() {
             </a>
             <a
               href="#services"
-              className="inline-flex items-center gap-2 rounded-full border border-white/15 px-8 py-4 text-sm font-medium text-white/70 transition-all duration-300 hover:border-white/30 hover:text-white hover:bg-white/[0.04]"
+              className="inline-flex items-center gap-2 rounded-full border border-white/15 px-6 py-3 md:px-8 md:py-4 text-sm font-medium text-white/70 transition-all duration-300 hover:border-white/30 hover:text-white hover:bg-white/[0.04]"
             >
               瀏覽服務項目
             </a>
@@ -140,7 +140,7 @@ function StatusBanner() {
     <div className="relative overflow-hidden border-y border-border bg-surface/50 py-3">
       <div className="flex animate-ticker whitespace-nowrap">
         {[1, 2].map((copy) => (
-          <div key={copy} className="flex shrink-0 items-center gap-12 px-6">
+          <div key={copy} className="flex shrink-0 items-center gap-6 px-4 md:gap-12 md:px-6">
             <BannerItem status="ok" text="目前正常收件中 — 現場約 1 小時，郵寄 3 個工作天內寄回" />
             <BannerItem status="info" text="全新液晶更換服務，不換偏光片，效果更持久" />
             <BannerItem status="ok" text="寄件維修全台皆可服務，歡迎透過 LINE 詢問" />
@@ -190,12 +190,12 @@ function ServicesSection() {
   ];
 
   return (
-    <section id="services" className="relative py-32">
+    <section id="services" className="relative py-16 md:py-32">
       <div className="absolute inset-0 bg-surface/20" />
       <div className="absolute inset-0 stripe-accent opacity-50" />
       <div className="relative mx-auto max-w-7xl px-6 lg:px-10">
         <ScrollReveal>
-          <div className="mb-20 max-w-2xl">
+          <div className="mb-12 md:mb-20 max-w-2xl">
             <span className="flex items-center gap-3 text-xs font-bold uppercase tracking-[0.3em] text-accent">
               <span className="h-px w-10 bg-accent" /> Services
             </span>
@@ -216,7 +216,7 @@ function ServicesSection() {
           {services.map((s) => (
             <div
               key={s.num}
-              className="reveal group relative rounded-2xl border border-white/[0.06] bg-primary-deep/60 p-8 backdrop-blur-sm transition-all duration-500 hover:border-accent/30 hover:bg-surface/40 hover:shadow-[0_0_40px_rgba(220,60,40,0.08)] hover:-translate-y-1"
+              className="reveal group relative rounded-2xl border border-white/[0.06] bg-primary-deep/60 p-5 md:p-8 backdrop-blur-sm transition-all duration-500 hover:border-accent/30 hover:bg-surface/40 hover:shadow-[0_0_40px_rgba(220,60,40,0.08)] hover:-translate-y-1"
             >
               {/* 序號 */}
               <span className="absolute top-6 right-6 font-display text-6xl font-black text-white/[0.04] transition-all duration-500 group-hover:text-accent/10">
@@ -277,13 +277,13 @@ function WhyUsSection() {
   ];
 
   return (
-    <section className="relative bg-primary-deep py-32 overflow-hidden">
+    <section className="relative bg-primary-deep py-16 md:py-32 overflow-hidden">
       {/* 背景光暈 */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[600px] rounded-full bg-accent/[0.03] blur-[120px]" />
 
       <div className="relative mx-auto max-w-7xl px-6 lg:px-10">
         <ScrollReveal>
-          <div className="mb-20 text-center">
+          <div className="mb-12 md:mb-20 text-center">
             <span className="flex items-center justify-center gap-3 text-xs font-bold uppercase tracking-[0.3em] text-accent">
               <span className="h-px w-10 bg-accent/50" /> Why Choose Us <span className="h-px w-10 bg-accent/50" />
             </span>
@@ -298,7 +298,7 @@ function WhyUsSection() {
 
         <ScrollRevealGroup className="grid gap-6 md:grid-cols-3">
           {reasons.map((r) => (
-            <div key={r.title} className="reveal group relative rounded-2xl border border-white/[0.06] bg-white/[0.02] p-10 transition-all duration-500 hover:border-accent/20 hover:bg-white/[0.04] hover:-translate-y-2">
+            <div key={r.title} className="reveal group relative rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 md:p-10 transition-all duration-500 hover:border-accent/20 hover:bg-white/[0.04] hover:-translate-y-2">
               <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-accent/20 to-accent/5 text-accent ring-1 ring-accent/10">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d={r.icon} />
@@ -324,10 +324,10 @@ function ArticlesSection({ posts }: { posts: Post[] }) {
   const revealClasses = ["reveal-left", "reveal-right", "reveal-scale", "reveal"];
 
   return (
-    <section id="articles" className="py-28">
+    <section id="articles" className="py-16 md:py-28">
       <div className="mx-auto max-w-7xl px-6">
         <ScrollReveal>
-          <div className="mb-16 flex items-end justify-between">
+          <div className="mb-10 md:mb-16 flex items-end justify-between">
             <div>
               <span className="text-xs font-bold uppercase tracking-[0.25em] text-accent">Repair Cases</span>
               <h2 className="mt-3 font-display text-[clamp(2rem,4vw,3.2rem)] font-black leading-tight text-text">
@@ -341,7 +341,7 @@ function ArticlesSection({ posts }: { posts: Post[] }) {
         </ScrollReveal>
 
         {/* Grid — cards fly in from different directions on scroll */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           {posts.map((post, i) => (
             <ScrollReveal key={post.slug} className={revealClasses[i % 4]}>
               <Link
@@ -433,9 +433,9 @@ function FaqSection() {
    ═══════════════════════════════════════════ */
 function ContactSection() {
   return (
-    <section id="contact" className="relative border-t border-border bg-surface/30 py-28">
+    <section id="contact" className="relative border-t border-border bg-surface/30 py-16 md:py-28">
       <div className="mx-auto max-w-6xl px-6">
-        <div className="grid gap-16 lg:grid-cols-[1fr_1.2fr]">
+        <div className="grid gap-10 md:gap-16 lg:grid-cols-[1fr_1.2fr]">
           <ScrollReveal className="reveal-left">
             <div>
               <span className="text-xs font-bold uppercase tracking-[0.25em] text-accent">Contact</span>
@@ -476,7 +476,7 @@ function ContactSection() {
           </ScrollReveal>
 
           <ScrollReveal className="reveal-right">
-            <div className="rounded-xl border border-border bg-surface/50 p-10">
+            <div className="rounded-xl border border-border bg-surface/50 p-5 md:p-10">
               <h3 className="font-display text-lg font-bold text-text">寄件維修流程</h3>
               <div className="mt-8 space-y-8">
                 <FlowStep num="1" title="聯繫我們" desc="透過 LINE 告知您的儀表問題與車款資訊。" />

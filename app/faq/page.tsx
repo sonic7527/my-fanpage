@@ -61,9 +61,9 @@ const faqs = [
 
 export default function FaqPage() {
   return (
-    <div className="min-h-screen pt-24 pb-20">
-      <div className="mx-auto max-w-3xl px-6">
-        <header className="mb-16">
+    <div className="min-h-screen pt-20 md:pt-24 pb-16 md:pb-20">
+      <div className="mx-auto max-w-3xl px-4 md:px-6">
+        <header className="mb-10 md:mb-16">
           <span className="text-xs font-bold uppercase tracking-[0.25em] text-accent">
             FAQ
           </span>

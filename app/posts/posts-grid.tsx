@@ -128,7 +128,7 @@ function LayoutHero({ post, index }: { post: PostItem; index: number }) {
         <div className="relative aspect-[21/9] overflow-hidden rounded-2xl bg-surface">
           <PostImage src={post.image} alt={post.title} className="transition-transform duration-700 group-hover:scale-105" />
           <div className="absolute inset-0 bg-gradient-to-t from-primary-deep via-primary-deep/40 to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12">
+          <div className="absolute bottom-0 left-0 right-0 p-4 md:p-12">
             <div className="flex items-center gap-3 mb-3">
               <CategoryBadge category={post.category} />
               <time className="text-xs font-medium text-gold">{post.date}</time>
@@ -210,7 +210,7 @@ function LayoutCard({ post, index }: { post: PostItem; index: number }) {
             </svg>
           </div>
         </div>
-        <div className="flex flex-1 flex-col p-5">
+        <div className="flex flex-1 flex-col p-3 md:p-5">
           <time className="text-xs font-medium text-gold">{post.date}</time>
           <h3 className="mt-2 font-display text-base font-bold leading-snug text-text transition-colors duration-300 group-hover:text-accent line-clamp-2">
             {post.title}
@@ -487,7 +487,7 @@ export default function PostsGrid({
     <div ref={containerRef}>
       {/* ── Pinned posts ── */}
       {pinnedPosts.length > 0 && (
-        <section className="mb-16">
+        <section className="mb-10 md:mb-16">
           <div className="mb-6 flex items-center gap-3">
             <span className="h-px w-8 bg-accent" />
             <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-accent">置頂文章</h2>
@@ -511,14 +511,14 @@ export default function PostsGrid({
             </div>
           )}
           {pinnedPosts.length === 4 && (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-5">
               {pinnedPosts.map((post, idx) => (
                 <PinnedGridCard key={post.slug} post={post} index={idx} />
               ))}
             </div>
           )}
           {pinnedPosts.length >= 5 && (
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3 md:gap-5">
               {pinnedPosts.map((post, idx) => (
                 <PinnedGridCard key={post.slug} post={post} index={idx} />
               ))}
@@ -528,7 +528,7 @@ export default function PostsGrid({
       )}
 
       {/* ── Category filter ── */}
-      <div className="mb-12 flex flex-wrap gap-2">
+      <div className="mb-8 md:mb-12 flex flex-wrap gap-1.5 md:gap-2">
         {CATEGORIES.map((cat) => {
           const isActive = activeCategory === cat.value;
           const count =
@@ -541,7 +541,7 @@ export default function PostsGrid({
               type="button"
               key={cat.value}
               onClick={() => handleCategoryChange(cat.value)}
-              className={`rounded-full px-5 py-2 text-sm font-medium transition-all duration-300 ${
+              className={`rounded-full px-3 py-1.5 text-xs md:px-5 md:py-2 md:text-sm font-medium transition-all duration-300 ${
                 isActive
                   ? "bg-accent text-white shadow-[0_0_20px_rgba(220,60,40,0.3)]"
                   : "border border-white/[0.08] text-text-muted hover:border-white/20 hover:text-white hover:bg-white/[0.04]"

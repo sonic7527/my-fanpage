@@ -69,7 +69,7 @@ export default function MobileMenu() {
               key={link.href}
               href={link.href}
               onClick={() => setOpen(false)}
-              className={`block py-4 text-center text-3xl font-bold text-white/80 transition-all duration-500 hover:text-accent ${
+              className={`block py-4 text-center text-2xl sm:text-3xl font-bold text-white/80 transition-all duration-500 hover:text-accent ${
                 open
                   ? "opacity-100 translate-y-0"
                   : "opacity-0 translate-y-8"

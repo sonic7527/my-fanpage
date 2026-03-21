@@ -42,8 +42,8 @@ export default async function PostPage({
   const { data, content } = matter(raw);
 
   return (
-    <article className="min-h-screen pt-24 pb-20">
-      <div className="mx-auto max-w-3xl px-6">
+    <article className="min-h-screen pt-20 md:pt-24 pb-16 md:pb-20">
+      <div className="mx-auto max-w-3xl px-4 md:px-6">
         {/* Back link */}
         <Link
           href="/#articles"
@@ -62,7 +62,7 @@ export default async function PostPage({
         </Link>
 
         {/* Header */}
-        <header className="mb-12">
+        <header className="mb-8 md:mb-12">
           <time className="text-xs font-medium text-gold">{data.date}</time>
           <h1 className="mt-3 font-display text-[clamp(1.8rem,4vw,2.8rem)] font-black leading-tight text-text">
             {data.title}
@@ -81,7 +81,7 @@ export default async function PostPage({
 
         {/* Featured image */}
         {data.image && (
-          <div className="mb-12 overflow-hidden rounded-sm">
+          <div className="mb-8 md:mb-12 overflow-hidden rounded-sm">
             <img
               src={data.image}
               alt={data.title}

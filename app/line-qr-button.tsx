@@ -40,7 +40,7 @@ export default function LineQrButton() {
           />
 
           {/* Panel */}
-          <div className="fixed bottom-24 left-6 z-50 w-72 rounded-2xl border border-border bg-surface p-6 shadow-2xl animate-fade-up">
+          <div className="fixed bottom-24 left-6 z-50 w-[calc(100vw-3rem)] max-w-72 rounded-2xl border border-border bg-surface p-5 md:p-6 shadow-2xl animate-fade-up">
             <div className="mb-4 text-center">
               <h3 className="text-base font-bold text-text">加入 LINE 官方帳號</h3>
               <p className="mt-1 text-xs text-text-muted">
@@ -49,7 +49,7 @@ export default function LineQrButton() {
             </div>
 
             {/* QR Code 圖片 */}
-            <div className="mx-auto mb-4 flex h-48 w-48 items-center justify-center overflow-hidden rounded-lg bg-white p-3">
+            <div className="mx-auto mb-4 flex h-40 w-40 md:h-48 md:w-48 items-center justify-center overflow-hidden rounded-lg bg-white p-3">
               <img
                 src={qrImage}
                 alt="LINE 官方帳號 QR Code"
