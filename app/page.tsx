@@ -138,7 +138,7 @@ function HeroSection() {
           </div>
 
           <div className="animate-fade-up-delay-3 mt-20 flex gap-16 border-t border-white/[0.08] pt-10">
-            <StatItem value="10+" label="年維修經驗" />
+            <StatItem value="多年" label="維修經驗" />
             <StatItem value="3000+" label="成功案例" />
             <StatItem value="98%" label="客戶滿意度" />
           </div>
@@ -318,7 +318,7 @@ function WhyUsSection() {
               為什麼選擇我們
             </h2>
             <p className="mt-4 text-base text-white/40 max-w-lg mx-auto">
-              十年以上維修經驗，堅持使用最好的材料與最專業的技術
+              多年的維修經驗，堅持使用最好的材料與熱誠的服務
             </p>
           </div>
         </ScrollReveal>
