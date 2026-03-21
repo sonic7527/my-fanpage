@@ -169,7 +169,7 @@ function StatusBanner() {
       <div className="flex animate-ticker whitespace-nowrap">
         {[1, 2].map((copy) => (
           <div key={copy} className="flex shrink-0 items-center gap-12 px-6">
-            <BannerItem status="ok" text="目前正常收件中 — 預估交件時間 3-5 個工作天" />
+            <BannerItem status="ok" text="目前正常收件中 — 現場約 1 小時，郵寄 3 個工作天內寄回" />
             <BannerItem status="info" text="全新液晶更換服務，不換偏光片，效果更持久" />
             <BannerItem status="ok" text="寄件維修全台皆可服務，歡迎透過 LINE 詢問" />
           </div>
