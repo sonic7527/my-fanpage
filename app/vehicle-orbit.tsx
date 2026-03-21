@@ -47,8 +47,8 @@ const layerSpeeds = [14, -10, 6];
 // Radii for each octagon layer
 const layerOctagons = [165, 235, 310];
 
-// How much of each edge is rounded at corners (0.15 = 15% each end is curved, 70% straight)
-const ROUND_FRAC = 0.22;
+// How much of each edge is rounded at corners (smaller = sharper octagon)
+const ROUND_FRAC = 0.10;
 
 // Get the 8 vertices of an octagon at given radius
 function getOctagonVertices(r: number, cx: number, cy: number): [number, number][] {
