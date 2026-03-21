@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import TawkWidget from "./tawk-widget";
 import LineQrButton from "./line-qr-button";
 import MobileMenu from "./mobile-menu";
 import NavScrollEffect from "./nav-scroll";
+import ChatButton from "./chat-button";
+import { ChatWidgetWrapper } from "./chat-widget";
 
 export const metadata: Metadata = {
   title: "北大液晶儀表維修 — 專業機車液晶儀表更換服務",
@@ -31,8 +32,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <main>{children}</main>
         <Footer />
         <NavScrollEffect />
-        <TawkWidget />
         <LineQrButton />
+        <ChatWidgetWrapper />
       </body>
     </html>
   );
@@ -63,17 +64,11 @@ function Nav() {
           <NavLink href="/#contact">聯絡我們</NavLink>
         </div>
 
-        {/* 右欄：CTA + 手機選單 */}
+        {/* 右欄：維修問答 + 手機選單 */}
         <div className="justify-self-end flex items-center gap-4">
-          <a
-            href="/#contact"
-            className="hidden md:inline-flex group relative items-center gap-2 rounded-full bg-accent px-6 py-2.5 text-sm font-bold text-white overflow-hidden transition-all duration-300 hover:shadow-[0_0_24px_rgba(220,60,40,0.4)] hover:scale-[1.02]"
-          >
-            <span className="relative z-10">預約諮詢</span>
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" className="relative z-10 transition-transform duration-300 group-hover:translate-x-0.5">
-              <path d="M3 8h10m0 0L9 4m4 4L9 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </a>
+          <div className="hidden md:block">
+            <ChatButton />
+          </div>
           <MobileMenu />
         </div>
       </div>
