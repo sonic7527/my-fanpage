@@ -454,7 +454,7 @@ function ContactSection() {
 
               <div className="mt-8 space-y-5">
                 <ContactRow label="高雄據點" value="高雄市苓雅區建國一路64巷59號2樓" />
-                <ContactRow label="屏東據點" value="屏東市頂柳路539巷76號" />
+                <ContactRow label="屏東據點" value="屏東市頂柳路539巷78號" />
                 <ContactRow label="營業時間" value="10:30 – 18:00｜週六、日公休｜特殊時段可提前預約" />
                 <ContactRow label="電話" value="0958-320-153" />
               </div>
