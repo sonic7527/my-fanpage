@@ -2,6 +2,36 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 
+function WelcomeMessage() {
+  return (
+    <div className="space-y-3">
+      <p>您好🐻！</p>
+      <p>感謝您來參觀北大液晶儀表維修工作室的網站！</p>
+      <p>一般問題，可點選下方快速問答。如有維修方面的問題，請加入我們的官方 LINE，阿浩會盡速回覆您。</p>
+      <div className="mt-3 rounded-xl overflow-hidden bg-white p-3 inline-block">
+        <img
+          src="/images/line-qr.png"
+          alt="LINE 官方帳號 QR Code"
+          className="w-36 h-36 object-contain"
+        />
+      </div>
+      <div className="mt-1">
+        <a
+          href="https://line.me/R/ti/p/@777xvkrg"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 text-[#06C755] font-medium text-xs hover:underline"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" />
+          </svg>
+          加入 LINE 好友 @777xvkrg
+        </a>
+      </div>
+    </div>
+  );
+}
+
 interface Message {
   role: "user" | "assistant";
   text: string;
@@ -9,7 +39,7 @@ interface Message {
 }
 
 const WELCOME_MESSAGE =
-  "您好！我是北大液晶儀表維修的線上助理 🔧\n有什麼我可以幫您的嗎？\n您可以直接輸入問題，或點選下方快速選項。";
+  "WELCOME_WITH_QR";
 
 const INITIAL_SUGGESTIONS = [
   "維修費用",
@@ -152,7 +182,11 @@ export default function ChatWidget() {
                     : "bg-surface/60 text-text-muted rounded-bl-sm"
                 }`}
               >
-                {msg.text}
+                {msg.text === "WELCOME_WITH_QR" ? (
+                  <WelcomeMessage />
+                ) : (
+                  msg.text
+                )}
                 {msg.forwarded && (
                   <div className="mt-2 pt-2 border-t border-white/10 text-[11px] text-text-dim flex items-center gap-1.5">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" className="text-[#06C755]">
@@ -376,7 +410,11 @@ function ChatWidgetInner({ onClose }: { onClose: () => void }) {
                     : "bg-surface/60 text-text-muted rounded-bl-sm"
                 }`}
               >
-                {msg.text}
+                {msg.text === "WELCOME_WITH_QR" ? (
+                  <WelcomeMessage />
+                ) : (
+                  msg.text
+                )}
                 {msg.forwarded && (
                   <div className="mt-2 pt-2 border-t border-white/10 text-[11px] text-text-dim flex items-center gap-1.5">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" className="text-[#06C755]">
