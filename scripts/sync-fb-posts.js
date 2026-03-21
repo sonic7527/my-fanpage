@@ -1,8 +1,10 @@
 /**
- * FB 粉專文章增量同步腳本
+ * FB 粉專文章同步腳本（新增 + 更新）
  *
- * 由 GitHub Actions 定時執行，僅下載新文章
- * 如有新文章會 commit & push，觸發 Vercel 重新部署
+ * 由 GitHub Actions 定時執行
+ * - 新文章：建立 markdown 檔案
+ * - 已存在的文章：更新內容（保留 pinned、category 等手動設定）
+ * 如有變更會 commit & push，觸發 Vercel 重新部署
  *
  * 使用方式：npm run sync-fb
  * 環境變數：FB_PAGE_ID, FB_PAGE_TOKEN（GitHub Actions Secrets）
@@ -60,20 +62,45 @@ function toSlug(text, date) {
   return `${date}-${clean || "post"}`;
 }
 
-// 取得已有文章的 fb_id 清單
-function getExistingFbIds() {
+/**
+ * 取得已有文章的 fb_id → { filename, content } 對應表
+ * 用來判斷哪些文章需要更新
+ */
+function getExistingPosts() {
   const postsDir = path.join(__dirname, "..", "content", "posts");
-  if (!fs.existsSync(postsDir)) return new Set();
+  if (!fs.existsSync(postsDir)) return new Map();
 
-  const ids = new Set();
+  const map = new Map();
   fs.readdirSync(postsDir)
     .filter((f) => f.endsWith(".md"))
     .forEach((f) => {
       const content = fs.readFileSync(path.join(postsDir, f), "utf-8");
       const match = content.match(/fb_id:\s*"([^"]+)"/);
-      if (match) ids.add(match[1]);
+      if (match) {
+        map.set(match[1], { filename: f, content });
+      }
     });
-  return ids;
+  return map;
+}
+
+/**
+ * 從現有 frontmatter 中提取手動設定的欄位（不被 FB 同步覆蓋）
+ */
+function extractManualFields(existingContent) {
+  const fields = {};
+  const pinnedMatch = existingContent.match(/pinned:\s*(true|false)/);
+  if (pinnedMatch) fields.pinned = pinnedMatch[1];
+
+  const categoryMatch = existingContent.match(/category:\s*"([^"]*)"/);
+  if (categoryMatch) fields.category = categoryMatch[1];
+
+  const modelMatch = existingContent.match(/model:\s*"([^"]*)"/);
+  if (modelMatch) fields.model = modelMatch[1];
+
+  const orderMatch = existingContent.match(/order:\s*(\d+)/);
+  if (orderMatch) fields.order = orderMatch[1];
+
+  return fields;
 }
 
 async function main() {
@@ -90,11 +117,11 @@ async function main() {
   fs.mkdirSync(postsDir, { recursive: true });
   fs.mkdirSync(imagesDir, { recursive: true });
 
-  const existingIds = getExistingFbIds();
-  console.log(`📋 已有 ${existingIds.size} 篇文章\n`);
+  const existingPosts = getExistingPosts();
+  console.log(`📋 已有 ${existingPosts.size} 篇 FB 文章\n`);
 
-  // 只取最近 20 篇（同步用，不需要全部）
-  const fields = "id,message,full_picture,created_time,permalink_url";
+  // 取最近 20 篇
+  const fields = "id,message,full_picture,created_time,permalink_url,updated_time";
   const url = `https://graph.facebook.com/v19.0/${PAGE_ID}/posts?fields=${fields}&limit=20&access_token=${TOKEN}`;
   const data = await fetchJSON(url);
 
@@ -105,58 +132,113 @@ async function main() {
 
   const posts = data.data || [];
   let newCount = 0;
+  let updateCount = 0;
 
   for (const post of posts) {
     if (!post.message) continue;
-    if (existingIds.has(post.id)) continue;
 
     const date = post.created_time.split("T")[0];
     const title = post.message.split("\n")[0].slice(0, 80) || "粉專貼文";
-    const slug = toSlug(title, date);
     const excerpt = post.message.replace(/\n/g, " ").slice(0, 120);
 
-    let image = "";
-    if (post.full_picture) {
-      image = `/images/posts/${slug}.jpg`;
-    }
+    const existing = existingPosts.get(post.id);
 
-    const markdown = [
-      "---",
-      `title: "${title.replace(/"/g, '\\"')}"`,
-      `date: "${date}"`,
-      `excerpt: "${excerpt.replace(/"/g, '\\"')}"`,
-      `fb_id: "${post.id}"`,
-      `fb_permalink: "${post.permalink_url || ""}"`,
-      `image: "${image}"`,
-      "---",
-      "",
-      post.message,
-    ].join("\n");
+    if (existing) {
+      // === 更新已存在的文章 ===
+      // 比對內容是否有變化（只比對 FB 的 message 部分）
+      const oldBodyMatch = existing.content.split("---").slice(2).join("---").trim();
+      const newBody = post.message.trim();
 
-    fs.writeFileSync(path.join(postsDir, `${slug}.md`), markdown, "utf-8");
-    console.log(`📝 新文章: ${slug}`);
+      if (oldBodyMatch === newBody) continue; // 內容沒變，跳過
 
-    if (post.full_picture) {
-      try {
-        await downloadFile(
-          post.full_picture,
-          path.join(imagesDir, `${slug}.jpg`)
-        );
-        console.log(`🖼 圖片已下載`);
-      } catch (err) {
-        console.log(`⚠ 圖片下載失敗: ${err.message}`);
+      // 保留手動設定的欄位
+      const manual = extractManualFields(existing.content);
+      const slug = existing.filename.replace(/\.md$/, "");
+
+      let image = "";
+      if (post.full_picture) {
+        image = `/images/posts/${slug}.jpg`;
       }
-    }
 
-    newCount++;
+      const markdown = [
+        "---",
+        `title: "${title.replace(/"/g, '\\"')}"`,
+        `date: "${date}"`,
+        `excerpt: "${excerpt.replace(/"/g, '\\"')}"`,
+        `fb_id: "${post.id}"`,
+        `fb_permalink: "${post.permalink_url || ""}"`,
+        `image: "${image}"`,
+        `category: "${manual.category || ""}"`,
+        `model: "${manual.model || ""}"`,
+        `pinned: ${manual.pinned || "false"}`,
+        `order: ${manual.order || "0"}`,
+        "---",
+        "",
+        post.message,
+      ].join("\n");
+
+      fs.writeFileSync(path.join(postsDir, existing.filename), markdown, "utf-8");
+      console.log(`🔄 已更新: ${slug}`);
+
+      // 更新圖片
+      if (post.full_picture) {
+        try {
+          await downloadFile(post.full_picture, path.join(imagesDir, `${slug}.jpg`));
+        } catch (err) {
+          console.log(`⚠ 圖片更新失敗: ${err.message}`);
+        }
+      }
+
+      updateCount++;
+    } else {
+      // === 新文章 ===
+      const slug = toSlug(title, date);
+
+      let image = "";
+      if (post.full_picture) {
+        image = `/images/posts/${slug}.jpg`;
+      }
+
+      const markdown = [
+        "---",
+        `title: "${title.replace(/"/g, '\\"')}"`,
+        `date: "${date}"`,
+        `excerpt: "${excerpt.replace(/"/g, '\\"')}"`,
+        `fb_id: "${post.id}"`,
+        `fb_permalink: "${post.permalink_url || ""}"`,
+        `image: "${image}"`,
+        `category: ""`,
+        `model: ""`,
+        `pinned: false`,
+        `order: 0`,
+        "---",
+        "",
+        post.message,
+      ].join("\n");
+
+      fs.writeFileSync(path.join(postsDir, `${slug}.md`), markdown, "utf-8");
+      console.log(`📝 新文章: ${slug}`);
+
+      if (post.full_picture) {
+        try {
+          await downloadFile(post.full_picture, path.join(imagesDir, `${slug}.jpg`));
+          console.log(`🖼 圖片已下載`);
+        } catch (err) {
+          console.log(`⚠ 圖片下載失敗: ${err.message}`);
+        }
+      }
+
+      newCount++;
+    }
   }
 
-  if (newCount === 0) {
-    console.log("✅ 沒有新文章需要同步");
+  const totalChanges = newCount + updateCount;
+  if (totalChanges === 0) {
+    console.log("✅ 沒有需要同步的變更");
     return;
   }
 
-  console.log(`\n🎉 同步了 ${newCount} 篇新文章`);
+  console.log(`\n🎉 同步完成：${newCount} 篇新文章，${updateCount} 篇已更新`);
 
   // 在 GitHub Actions 環境中自動 commit & push
   if (process.env.GITHUB_ACTIONS) {
@@ -165,7 +247,10 @@ async function main() {
       execSync('git config user.name "FB Sync Bot"');
       execSync('git config user.email "bot@noreply.github.com"');
       execSync("git add content/posts/ public/images/posts/");
-      execSync(`git commit -m "sync: 同步 ${newCount} 篇 FB 新文章"`);
+      const msg = [];
+      if (newCount > 0) msg.push(`新增 ${newCount} 篇`);
+      if (updateCount > 0) msg.push(`更新 ${updateCount} 篇`);
+      execSync(`git commit -m "sync: ${msg.join("、")} FB 文章"`);
       execSync("git push");
       console.log("✅ 推送完成，Vercel 將自動重新部署");
     } catch (err) {
