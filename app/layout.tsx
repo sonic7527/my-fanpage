@@ -42,48 +42,43 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 function Nav() {
   return (
     <nav className="nav-bar fixed top-0 left-0 right-0 z-50 transition-all duration-500">
-      {/* 上層：Logo 獨立區域，比導航列更大 */}
-      <div className="relative">
-        <div className="mx-auto flex max-w-7xl items-end justify-between px-6 lg:px-10">
-          {/* Logo — 左上，突出導航列 */}
-          <a href="/" className="group relative z-10 shrink-0 -mb-4">
+      {/* 三欄 grid：Logo 左 ｜ 導航置中 ｜ CTA 右 */}
+      <div className="relative grid grid-cols-[1fr_auto_1fr] items-center px-6 lg:px-10">
+        {/* 左欄：Logo — 獨立空間，可以比導航列高 */}
+        <div className="justify-self-start">
+          <a href="/" className="group inline-block">
             <img
               src="/images/logo-nav-white.png"
               alt="北大液晶儀表維修"
-              className="h-24 w-auto drop-shadow-[0_0_20px_rgba(100,160,255,0.15)] transition-all duration-300 group-hover:drop-shadow-[0_0_30px_rgba(100,160,255,0.3)] group-hover:scale-105"
+              className="h-20 w-auto drop-shadow-[0_0_20px_rgba(100,160,255,0.15)] transition-all duration-300 group-hover:drop-shadow-[0_0_30px_rgba(100,160,255,0.3)] group-hover:scale-105"
             />
           </a>
+        </div>
 
-          {/* 右側：導航 + CTA */}
-          <div className="flex items-center gap-8 py-5">
-            {/* 桌面導航 */}
-            <div className="hidden items-center gap-1 md:flex">
-              <NavLink href="/#services">服務項目</NavLink>
-              <NavLink href="/posts">維修案例</NavLink>
-              <NavLink href="/#faq">常見問題</NavLink>
-              <NavLink href="/#contact">聯絡我們</NavLink>
-            </div>
+        {/* 中欄：導航連結 — 永遠置中 */}
+        <div className="hidden items-center gap-1 md:flex">
+          <NavLink href="/#services">服務項目</NavLink>
+          <NavLink href="/posts">維修案例</NavLink>
+          <NavLink href="/#faq">常見問題</NavLink>
+          <NavLink href="/#contact">聯絡我們</NavLink>
+        </div>
 
-            {/* CTA */}
-            <div className="hidden items-center gap-4 md:flex">
-              <a
-                href="/#contact"
-                className="group relative inline-flex items-center gap-2 rounded-full bg-accent px-6 py-2.5 text-sm font-bold text-white overflow-hidden transition-all duration-300 hover:shadow-[0_0_24px_rgba(220,60,40,0.4)] hover:scale-[1.02]"
-              >
-                <span className="relative z-10">預約諮詢</span>
-                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" className="relative z-10 transition-transform duration-300 group-hover:translate-x-0.5">
-                  <path d="M3 8h10m0 0L9 4m4 4L9 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </a>
-            </div>
-
-            {/* 手機漢堡選單 */}
-            <MobileMenu />
-          </div>
+        {/* 右欄：CTA + 手機選單 */}
+        <div className="justify-self-end flex items-center gap-4">
+          <a
+            href="/#contact"
+            className="hidden md:inline-flex group relative items-center gap-2 rounded-full bg-accent px-6 py-2.5 text-sm font-bold text-white overflow-hidden transition-all duration-300 hover:shadow-[0_0_24px_rgba(220,60,40,0.4)] hover:scale-[1.02]"
+          >
+            <span className="relative z-10">預約諮詢</span>
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" className="relative z-10 transition-transform duration-300 group-hover:translate-x-0.5">
+              <path d="M3 8h10m0 0L9 4m4 4L9 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </a>
+          <MobileMenu />
         </div>
       </div>
 
-      {/* 導航列底線 */}
+      {/* 底線 + 背景 */}
       <div className="absolute bottom-0 left-0 right-0 h-px bg-white/[0.06]" />
       <div className="absolute inset-0 -z-10 bg-primary-deep/70 backdrop-blur-2xl" />
     </nav>
