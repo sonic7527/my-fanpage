@@ -289,7 +289,43 @@ function LayoutList({ post, index }: { post: PostItem; index: number }) {
 }
 
 /* ═══════════════════════════════════════════════════════
-   Pinned post card
+   Pinned grid card (equal-size cards for 2-5 pinned posts)
+   ═══════════════════════════════════════════════════════ */
+function PinnedGridCard({ post, index }: { post: PostItem; index: number }) {
+  return (
+    <div
+      data-reveal
+      data-reveal-delay={index * 100}
+      style={{ opacity: 0, transform: "translateY(30px)", transition: "all 0.7s cubic-bezier(0.16,1,0.3,1)" }}
+    >
+      <Link
+        href={`/posts/${post.slug}`}
+        className="group block overflow-hidden rounded-xl border border-accent/20 bg-gradient-to-br from-accent/[0.06] to-primary-deep/80 transition-all duration-300 hover:border-accent/40 hover:shadow-[0_0_30px_rgba(220,60,40,0.1)] hover:-translate-y-1"
+      >
+        <div className="relative aspect-[16/10] overflow-hidden bg-surface">
+          <PostImage src={post.image} alt={post.title} className="transition-transform duration-500 group-hover:scale-105" />
+          <div className="absolute top-2 right-2 flex items-center gap-1 rounded-full bg-accent/20 px-2 py-0.5 text-[10px] font-bold text-accent backdrop-blur-sm">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z" /></svg>
+            置頂
+          </div>
+        </div>
+        <div className="p-4">
+          <div className="flex items-center gap-2">
+            <CategoryBadge category={post.category} />
+            <time className="text-[11px] text-gold">{post.date}</time>
+          </div>
+          <h4 className="mt-2 font-display text-sm font-bold leading-snug text-text group-hover:text-accent transition-colors line-clamp-2">
+            {post.title}
+          </h4>
+          <p className="mt-1.5 text-xs leading-relaxed text-text-muted line-clamp-2">{post.excerpt}</p>
+        </div>
+      </Link>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════
+   Pinned post card (large, for single pinned post)
    ═══════════════════════════════════════════════════════ */
 function PinnedPostCard({ post, index }: { post: PostItem; index: number }) {
   return (
@@ -453,40 +489,35 @@ export default function PostsGrid({
             <span className="h-px w-8 bg-accent" />
             <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-accent">置頂文章</h2>
           </div>
-          {/* First pinned post: large card */}
-          <PinnedPostCard post={pinnedPosts[0]} index={0} />
-          {/* Remaining pinned posts: 2-3 column grid */}
-          {pinnedPosts.length > 1 && (
-            <div className="mt-6 grid grid-cols-2 lg:grid-cols-3 gap-4">
-              {pinnedPosts.slice(1).map((post, idx) => (
-                <div
-                  key={post.slug}
-                  data-reveal
-                  data-reveal-delay={(idx + 1) * 100}
-                  style={{ opacity: 0, transform: "translateY(30px)", transition: "all 0.7s cubic-bezier(0.16,1,0.3,1)" }}
-                >
-                  <Link
-                    href={`/posts/${post.slug}`}
-                    className="group block overflow-hidden rounded-xl border border-accent/20 bg-gradient-to-br from-accent/[0.06] to-primary-deep/80 transition-all duration-300 hover:border-accent/40 hover:shadow-[0_0_30px_rgba(220,60,40,0.1)] hover:-translate-y-1"
-                  >
-                    <div className="relative aspect-[16/10] overflow-hidden bg-surface">
-                      <PostImage src={post.image} alt={post.title} className="transition-transform duration-500 group-hover:scale-105" />
-                      <div className="absolute top-2 right-2 flex items-center gap-1 rounded-full bg-accent/20 px-2 py-0.5 text-[10px] font-bold text-accent backdrop-blur-sm">
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z" /></svg>
-                        置頂
-                      </div>
-                    </div>
-                    <div className="p-4">
-                      <div className="flex items-center gap-2">
-                        <CategoryBadge category={post.category} />
-                        <time className="text-[11px] text-gold">{post.date}</time>
-                      </div>
-                      <h4 className="mt-2 font-display text-sm font-bold leading-snug text-text group-hover:text-accent transition-colors line-clamp-2">
-                        {post.title}
-                      </h4>
-                    </div>
-                  </Link>
-                </div>
+          {/* Dynamic layout based on pinned post count */}
+          {pinnedPosts.length === 1 && (
+            <PinnedPostCard post={pinnedPosts[0]} index={0} />
+          )}
+          {pinnedPosts.length === 2 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {pinnedPosts.map((post, idx) => (
+                <PinnedGridCard key={post.slug} post={post} index={idx} />
+              ))}
+            </div>
+          )}
+          {pinnedPosts.length === 3 && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              {pinnedPosts.map((post, idx) => (
+                <PinnedGridCard key={post.slug} post={post} index={idx} />
+              ))}
+            </div>
+          )}
+          {pinnedPosts.length === 4 && (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+              {pinnedPosts.map((post, idx) => (
+                <PinnedGridCard key={post.slug} post={post} index={idx} />
+              ))}
+            </div>
+          )}
+          {pinnedPosts.length >= 5 && (
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-5">
+              {pinnedPosts.map((post, idx) => (
+                <PinnedGridCard key={post.slug} post={post} index={idx} />
               ))}
             </div>
           )}

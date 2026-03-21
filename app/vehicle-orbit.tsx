@@ -252,7 +252,7 @@ export default function VehicleOrbit() {
                   {selectedBrand.id === "yamaha" ? "YAMAHA" : selectedBrand.id === "suzuki" ? "SUZUKI" : selectedBrand.id === "vespa" ? "Vespa" : selectedBrand.name} {selectedBrand.sub}
                 </h3>
                 <p className="text-sm text-text-dim mb-5">{selectedBrand.models.length} 款可維修</p>
-                <ul className="space-y-0">
+                <ul className="space-y-0 max-h-[45vh] overflow-y-auto pr-1">
                   {selectedBrand.models.map((model, idx) => (
                     <li key={model} className="flex items-center gap-3 py-2.5 border-b border-white/[0.04] last:border-0 text-base text-text-muted">
                       <span className="text-xs font-mono w-6 text-text-dim text-right">{String(idx + 1).padStart(2, "0")}</span>
