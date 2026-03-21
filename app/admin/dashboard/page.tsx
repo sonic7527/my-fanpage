@@ -22,7 +22,7 @@ interface PostDetail {
   pinned: boolean;
 }
 
-const CATEGORIES = ["repair", "announcement", "promotion", "other"];
+const CATEGORIES = ["repair", "announcement", "new-product", "tutorial", "promotion", "other"];
 
 export default function AdminDashboard() {
   const [posts, setPosts] = useState<Post[]>([]);
