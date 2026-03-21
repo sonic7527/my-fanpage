@@ -73,7 +73,7 @@ function PostCard({ post }: { post: PostItem }) {
   return (
     <Link
       href={`/posts/${post.slug}`}
-      className="group relative flex flex-col overflow-hidden rounded-2xl border border-white/[0.06] bg-primary-deep/60 backdrop-blur-sm transition-all duration-500 hover:border-accent/30 hover:bg-surface/40 hover:shadow-[0_0_40px_rgba(220,60,40,0.08)] hover:-translate-y-1 animate-fade-up"
+      className="group relative flex flex-col overflow-hidden rounded-2xl border border-white/[0.06] bg-primary-deep/60 backdrop-blur-sm transition-all duration-500 hover:border-accent/30 hover:bg-surface/40 hover:shadow-[0_0_40px_rgba(220,60,40,0.08)] hover:-translate-y-1"
     >
       {/* Image */}
       <div className="relative aspect-[16/10] overflow-hidden bg-surface">
@@ -123,7 +123,7 @@ function PinnedPostCard({ post }: { post: PostItem }) {
   return (
     <Link
       href={`/posts/${post.slug}`}
-      className="group relative flex flex-col overflow-hidden rounded-2xl border border-accent/20 bg-gradient-to-br from-accent/[0.08] to-primary-deep/80 backdrop-blur-sm transition-all duration-500 hover:border-accent/40 hover:shadow-[0_0_50px_rgba(220,60,40,0.12)] hover:-translate-y-1 sm:flex-row animate-fade-up"
+      className="group relative flex flex-col overflow-hidden rounded-2xl border border-accent/20 bg-gradient-to-br from-accent/[0.08] to-primary-deep/80 backdrop-blur-sm transition-all duration-500 hover:border-accent/40 hover:shadow-[0_0_50px_rgba(220,60,40,0.12)] hover:-translate-y-1 sm:flex-row"
     >
       {/* Pinned indicator */}
       <div className="absolute top-3 right-3 z-10 flex items-center gap-1.5 rounded-full bg-accent/20 px-3 py-1 text-[10px] font-bold text-accent backdrop-blur-sm">
