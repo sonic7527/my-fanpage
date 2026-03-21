@@ -3,7 +3,7 @@ title: "\U0001F4CC 維修車款：KYMCO NEW Many"
 date: '2023-10-11'
 excerpt: "\U0001F4CC 維修車款：KYMCO NEW Many 光陽機車的 Many 系列一直都是熱銷車款，因為親民的價格\U0001F4B0 加上偏復古的造型，始終深受消費者的喜愛，至今 Many 家族總共有3款，分別為： ✺ Many 110 ✺ Many 125（羅密..."
 image: /images/posts/2023-10-11-kymco-new-many/1.jpg
-category: new-product
+category: repair
 model: KYMCO NEW Many
 pinned: false
 order: 0
