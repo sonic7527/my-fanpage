@@ -50,6 +50,7 @@ export default function HomePage() {
     <>
       <HeroSection />
       <StatusBanner />
+      <VehicleSection />
       <ServicesSection />
       <WhyUsSection />
       <ArticlesSection posts={posts} />
@@ -170,6 +171,91 @@ function BannerItem({ status, text }: { status: string; text: string }) {
       <span className={`inline-block h-2 w-2 rounded-full animate-pulse-glow ${status === "ok" ? "bg-emerald-400" : "bg-gold"}`} />
       {text}
     </span>
+  );
+}
+
+/* ═══════════════════════════════════════════
+   VEHICLE — 可維修車款一覽
+   ═══════════════════════════════════════════ */
+function VehicleSection() {
+  const brands = [
+    {
+      name: "SYM 三陽",
+      color: "text-blue-400 border-blue-400/20",
+      models: ["FIGHTER 5／JET EVO", "FIGHTER 6", "FNX", "GT 125", "GR 125", "JET-S／SR", "JET-POWER", "MIO 115", "MII 110", "NEW MII", "RX 110", "TL-508", "Z1／IRX"],
+    },
+    {
+      name: "KYMCO 光陽",
+      color: "text-emerald-400 border-emerald-400/20",
+      models: ["新名流", "GP 125", "G5 系列", "G6", "G6 50週年", "KIWI", "Like", "Many 110", "Many 125", "NEW Many", "Racing", "Racing King", "VJR 110", "VJR 125"],
+    },
+    {
+      name: "YAMAHA 山葉",
+      color: "text-sky-400 border-sky-400/20",
+      models: ["BWS'X", "BWS'R", "CUXI", "NEW CUXI", "CUXI 115", "FORCE", "GTR", "LIMI", "RSZ", "RS-ZERO", "S-MAX", "勁戰2代"],
+    },
+    {
+      name: "PGO 比雅久",
+      color: "text-orange-400 border-orange-400/20",
+      models: ["ALPHA MAX", "JBUBU 115", "JBUBU 125", "TIGRA 125", "TIGRA 150", "X-HOT"],
+    },
+    {
+      name: "SUZUKI 鈴木",
+      color: "text-yellow-400 border-yellow-400/20",
+      models: ["GSR／NEX", "SALUTO"],
+    },
+    {
+      name: "Vespa 偉士牌",
+      color: "text-teal-400 border-teal-400/20",
+      models: ["春天 Primavera"],
+    },
+  ];
+
+  return (
+    <section id="vehicles" className="py-24 bg-primary-deep relative overflow-hidden">
+      <div className="absolute inset-0 stripe-accent opacity-30" />
+      <div className="relative mx-auto max-w-7xl px-6 lg:px-10">
+        <ScrollReveal>
+          <div className="mb-14">
+            <span className="flex items-center gap-3 text-xs font-bold uppercase tracking-[0.3em] text-accent">
+              <span className="h-px w-10 bg-accent" /> Compatible Models
+            </span>
+            <h2 className="mt-4 font-display text-[clamp(2rem,4vw,3.5rem)] font-black leading-tight text-white">
+              可維修車款一覽
+            </h2>
+            <p className="mt-4 text-sm text-white/40">114.07.27 更新 ｜ 持續新增中 ｜ 未列出車款歡迎 LINE 詢問</p>
+          </div>
+        </ScrollReveal>
+
+        <ScrollRevealGroup className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {brands.map((brand) => (
+            <div
+              key={brand.name}
+              className={`reveal rounded-2xl border ${brand.color.split(" ")[1]} bg-white/[0.02] p-6 transition-all duration-500 hover:bg-white/[0.04]`}
+            >
+              <h3 className={`text-base font-bold ${brand.color.split(" ")[0]} mb-4`}>
+                {brand.name}
+                <span className="ml-2 text-xs font-normal text-white/30">({brand.models.length})</span>
+              </h3>
+              <div className="flex flex-wrap gap-1.5">
+                {brand.models.map((model) => (
+                  <span key={model} className="rounded-full bg-white/[0.06] px-3 py-1 text-xs text-text-muted">
+                    {model}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </ScrollRevealGroup>
+
+        <ScrollReveal>
+          <div className="mt-8 rounded-xl border border-accent/20 bg-accent/[0.06] px-5 py-3 inline-flex items-center gap-2 text-sm text-accent">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            僅服務一般機車儀表，重機與汽車儀表板恕不服務
+          </div>
+        </ScrollReveal>
+      </div>
+    </section>
   );
 }
 
