@@ -188,14 +188,13 @@ export default function VehicleOrbit() {
       setSelected(null);
       runningRef.current = true;
       transitionRef.current = { active: false, remaining: 0 };
-    } else if (selected) {
-      // Already viewing a brand → switch: spin briefly then pause
-      setSelected(id);
-      runningRef.current = true;
-      transitionRef.current = { active: true, remaining: 0.6 + Math.random() * 0.5 };
     } else {
-      // Nothing selected → pause immediately
+      // Select brand → quick shuffle all layer angles then pause
       setSelected(id);
+      // Rapidly jump to new random positions for visual punch
+      for (let l = 0; l < 3; l++) {
+        layerAnglesRef.current[l] = (layerAnglesRef.current[l] + 60 + Math.random() * 120) % 360;
+      }
       runningRef.current = false;
       transitionRef.current = { active: false, remaining: 0 };
     }
@@ -214,7 +213,7 @@ export default function VehicleOrbit() {
 
         <div className="relative">
           {/* Left panel */}
-          <div className={`lg:absolute lg:left-0 lg:top-1/2 lg:-translate-y-1/2 z-30 w-full lg:w-[320px] transition-all duration-500 ${selected ? "opacity-100 translate-x-0" : "opacity-0 lg:-translate-x-10 pointer-events-none h-0 lg:h-auto"}`}>
+          <div className={`lg:absolute lg:-left-16 lg:top-1/2 lg:-translate-y-1/2 z-30 w-full lg:w-[320px] transition-all duration-500 ${selected ? "opacity-100 translate-x-0" : "opacity-0 lg:-translate-x-10 pointer-events-none h-0 lg:h-auto"}`}>
             {selectedBrand && (
               <div className="rounded-2xl border border-white/[0.08] bg-primary-deep/95 backdrop-blur-xl p-6 shadow-2xl">
                 <h3 className="font-bold text-lg mb-1" style={{ color: selectedBrand.color }}>
