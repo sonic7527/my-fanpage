@@ -47,9 +47,9 @@ const layerSpeeds = [18, -12, 8];
 // Irregular polygon radii for each layer
 // Near-circular orbits with subtle irregularity (±3-5%)
 const layerRadii = [
-  [145, 148, 143, 150, 146, 149, 144, 148, 145, 147, 143, 146],
-  [205, 210, 202, 208, 204, 211, 203, 207, 206, 209, 202, 208],
-  [275, 280, 272, 278, 274, 282, 273, 279, 276, 281, 273, 277],
+  [165, 168, 163, 170, 166, 169, 164, 168, 165, 167, 163, 166],
+  [235, 240, 232, 238, 234, 241, 233, 237, 236, 239, 232, 238],
+  [310, 315, 307, 313, 309, 317, 308, 314, 311, 316, 308, 312],
 ];
 
 // Catmull-Rom spline for smooth curves
@@ -111,8 +111,8 @@ export default function VehicleOrbit() {
   // For "spin then pause" transition when switching brands
   const transitionRef = useRef<{ active: boolean; remaining: number }>({ active: false, remaining: 0 });
 
-  const CX = 350, CY = 320;
-  const W = 700, H = 640;
+  const CX = 400, CY = 370;
+  const W = 800, H = 740;
 
   const animate = useCallback((now: number) => {
     if (!startTimeRef.current) startTimeRef.current = now;
