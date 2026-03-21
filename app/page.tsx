@@ -331,7 +331,7 @@ function ArticlesSection({ posts }: { posts: Post[] }) {
             <div>
               <span className="text-xs font-bold uppercase tracking-[0.25em] text-accent">Repair Cases</span>
               <h2 className="mt-3 font-display text-[clamp(2rem,4vw,3.2rem)] font-black leading-tight text-text">
-                維修案例
+                公告事項與維修案例
               </h2>
             </div>
             <Link href="/posts" className="hidden text-sm font-medium text-text-muted hover:text-accent md:block">
