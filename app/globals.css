@@ -167,6 +167,16 @@ body {
   background-size: 60px 60px;
 }
 
+/* ─── Hero geometric grid ─── */
+.hero-grid {
+  background-image:
+    linear-gradient(30deg, oklch(0.62 0.22 15 / 0.15) 1px, transparent 1px),
+    linear-gradient(150deg, oklch(0.62 0.22 15 / 0.1) 1px, transparent 1px),
+    linear-gradient(to right, oklch(0.92 0.01 260 / 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, oklch(0.92 0.01 260 / 0.04) 1px, transparent 1px);
+  background-size: 80px 140px, 80px 140px, 120px 120px, 120px 120px;
+}
+
 /* ─── Diagonal stripe ─── */
 .stripe-accent {
   background-image: repeating-linear-gradient(
