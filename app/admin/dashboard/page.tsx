@@ -139,35 +139,36 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-[#0a0a14] text-white">
       {/* Top bar */}
       <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-[#0a0a14]/90 backdrop-blur-xl">
-        <div className="mx-auto max-w-6xl flex items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-3">
-            <h1 className="text-lg font-bold">北大後台</h1>
-            <span className="text-xs text-white/30 bg-white/5 px-2 py-0.5 rounded-full">{posts.length} 篇文章</span>
+        <div className="mx-auto max-w-6xl px-6 py-3">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-3">
+              <h1 className="text-lg font-bold">北大後台</h1>
+              <span className="text-xs text-white/30 bg-white/5 px-2 py-0.5 rounded-full">{posts.length} 篇文章</span>
+            </div>
+            <div className="flex items-center gap-4">
+              <a href="/" className="text-xs text-white/40 hover:text-white transition">← 前台</a>
+              <button onClick={handleLogout} className="text-xs text-red-400/70 hover:text-red-400 transition">登出</button>
+            </div>
           </div>
-          <div className="flex items-center gap-4">
-            <a href="/" className="text-xs text-white/40 hover:text-white transition">← 前台</a>
-            <button onClick={handleLogout} className="text-xs text-red-400/70 hover:text-red-400 transition">登出</button>
+          <div className="flex items-center gap-3">
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="flex-1 min-w-[200px] max-w-md rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-white/30 outline-none focus:border-orange-500/50 transition"
+              placeholder="搜尋標題、slug、分類..."
+            />
+            <button
+              onClick={() => setCreating(!creating)}
+              className="rounded-lg bg-orange-600 px-4 py-2 text-sm font-bold text-white hover:bg-orange-500 transition whitespace-nowrap"
+            >
+              + 新增文章
+            </button>
           </div>
         </div>
       </header>
 
-      <div className="mx-auto max-w-6xl px-6 py-8">
-        {/* Toolbar */}
-        <div className="mb-6 flex items-center gap-4 flex-wrap">
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="flex-1 min-w-[200px] max-w-md rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-white/30 outline-none focus:border-orange-500/50 transition"
-            placeholder="搜尋標題、slug、分類..."
-          />
-          <button
-            onClick={() => setCreating(!creating)}
-            className="rounded-lg bg-orange-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-orange-500 transition"
-          >
-            + 新增文章
-          </button>
-        </div>
+      <div className="mx-auto max-w-6xl px-6 py-6">
 
         {/* Create new post form */}
         {creating && (
