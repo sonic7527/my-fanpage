@@ -130,7 +130,16 @@ async function main() {
   }
 
   const TOKEN = page.access_token;
-  console.log(`✅ 已取得「${page.name}」的 Page Token\n`);
+  console.log(`✅ 已取得「${page.name}」的 Page Token`);
+  console.log(`   Page permissions: ${JSON.stringify(page.perms || page.tasks || [])}`);
+
+  // Debug: 檢查 token 權限
+  const debugUrl = `https://graph.facebook.com/v25.0/debug_token?input_token=${TOKEN}&access_token=${USER_TOKEN}`;
+  const debugData = await fetchJSON(debugUrl);
+  if (debugData.data) {
+    console.log(`   Token scopes: ${JSON.stringify(debugData.data.scopes || [])}`);
+  }
+  console.log("");
 
   const postsDir = path.join(__dirname, "..", "content", "posts");
   const imagesDir = path.join(__dirname, "..", "public", "images", "posts");
