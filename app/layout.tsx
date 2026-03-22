@@ -59,7 +59,7 @@ function Nav() {
         </div>
 
         {/* 中欄：導航連結 — 永遠置中 */}
-        <div className="hidden items-center gap-1 md:flex">
+        <div className="hidden items-center gap-6 md:flex">
           <NavLink href="/#services">服務項目</NavLink>
           <NavLink href="/posts">公告事項與維修案例</NavLink>
           <NavLink href="/#contact">聯絡我們</NavLink>
@@ -83,7 +83,7 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
   return (
     <a
       href={href}
-      className="relative px-4 py-2 text-sm font-medium text-text-muted transition-colors duration-300 hover:text-white after:absolute after:bottom-0 after:left-1/2 after:h-[2px] after:w-0 after:bg-accent after:transition-all after:duration-300 after:-translate-x-1/2 hover:after:w-6"
+      className="relative px-5 py-2 text-base font-medium tracking-wide text-text-muted transition-colors duration-300 hover:text-white after:absolute after:bottom-0 after:left-1/2 after:h-[2px] after:w-0 after:bg-accent after:transition-all after:duration-300 after:-translate-x-1/2 hover:after:w-6"
     >
       {children}
     </a>
