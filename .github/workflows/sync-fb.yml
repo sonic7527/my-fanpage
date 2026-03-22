@@ -2,8 +2,8 @@ name: Sync Facebook Posts
 
 on:
   schedule:
-    # 每 6 小時執行一次（UTC 0, 6, 12, 18 點 = 台灣 8, 14, 20, 2 點）
-    - cron: "0 */6 * * *"
+    # 每天一次（UTC 0:00 = 台灣 8:00）
+    - cron: "0 0 * * *"
   workflow_dispatch: # 允許手動觸發
 
 permissions:
