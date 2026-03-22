@@ -66,6 +66,20 @@ function toSlug(text, date) {
  * 取得已有文章的 fb_id → { filename, content } 對應表
  * 用來判斷哪些文章需要更新
  */
+/**
+ * 讀取忽略清單（已刪除不想再同步的 fb_id）
+ */
+function getIgnoredIds() {
+  const ignoreFile = path.join(__dirname, "..", "content", "posts", ".sync-ignore");
+  if (!fs.existsSync(ignoreFile)) return new Set();
+  return new Set(
+    fs.readFileSync(ignoreFile, "utf-8")
+      .split("\n")
+      .map((line) => line.trim())
+      .filter((line) => line && !line.startsWith("#"))
+  );
+}
+
 function getExistingPosts() {
   const postsDir = path.join(__dirname, "..", "content", "posts");
   if (!fs.existsSync(postsDir)) return new Map();
@@ -154,8 +168,14 @@ async function main() {
   let newCount = 0;
   let updateCount = 0;
 
+  const ignoredIds = getIgnoredIds();
+  if (ignoredIds.size > 0) {
+    console.log(`🚫 忽略清單有 ${ignoredIds.size} 篇文章\n`);
+  }
+
   for (const post of posts) {
     if (!post.message) continue;
+    if (ignoredIds.has(post.id)) continue;
 
     const date = post.created_time.split("T")[0];
     const title = post.message.split("\n")[0].slice(0, 80) || "粉專貼文";
