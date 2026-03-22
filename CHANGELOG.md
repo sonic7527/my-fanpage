@@ -2,6 +2,14 @@
 
 ## 2026-03-22
 
+### Facebook 自動同步正式上線
+- FB 開發者應用程式審查通過，正式發佈
+- 啟用 `pages_read_engagement` 權限（可供測試，管理員粉專可用）
+- 同步腳本改用 User Token + `/me/accounts` 自動取得 Page Token（FB 不允許直接產生 Page Token）
+- API endpoint 從 `/feed` 改為 `/posts`（`/feed` 需要 Page Public Content Access 審查，`/posts` 不需要）
+- 新增 `.sync-ignore` 忽略清單機制：刪除的文章把 `fb_id` 加到此檔案，同步時自動跳過
+- 完整 FB 設定步驟寫入 README
+
 ### 手機版響應式優化
 - 車款軌道動畫：手機上等比縮小，保留完整動畫與互動
 - 導覽列 Logo：手機上自動縮小，桌面版不變

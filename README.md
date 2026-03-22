@@ -7,6 +7,10 @@
 ## 更新日誌
 
 ### 2026-03-22
+- FB 自動同步功能正式上線（應用程式審查通過 + API 權限設定完成）
+- 同步腳本改用 User Token + `/me/accounts` 自動取得 Page Token
+- 新增 `.sync-ignore` 忽略清單，刪除的文章不會被重新同步
+- API endpoint 從 `/feed` 改為 `/posts`（不需要 Page Public Content Access 審查）
 - 手機版響應式優化（車款軌道等比縮小、Logo/間距/按鈕自動調整，桌面版不受影響）
 - 導覽列「維修案例」改為「公告事項與維修案例」
 - 置頂文章改為依數量動態排列（1～5篇自動切換版型）
@@ -95,9 +99,9 @@ ADMIN_JWT_SECRET=
 # GitHub API（後台文章操作）
 GITHUB_TOKEN=
 
-# Facebook 同步
-FB_PAGE_ID=
-FB_PAGE_TOKEN=
+# Facebook 同步（GitHub Secrets 設定，非 .env）
+FB_PAGE_ID=          # 粉專 ID（例如 106558851840335）
+FB_PAGE_TOKEN=       # User Access Token（非 Page Token，見下方說明）
 
 # LINE
 LINE_CHANNEL_SECRET=
@@ -105,6 +109,61 @@ LINE_CHANNEL_ACCESS_TOKEN=
 LINE_ADMIN_USER_ID=
 NEXT_PUBLIC_LINE_OA_URL=
 ```
+
+## Facebook 同步設定（完整步驟）
+
+FB 同步由 GitHub Actions 每小時自動執行，抓取粉專最新貼文轉為 Markdown。
+
+### 1. Facebook 開發者應用程式設定
+
+1. 到 [Facebook 開發者](https://developers.facebook.com/) 建立應用程式（類型：商業與粉絲專頁）
+2. 「應用程式設定」→「基本資料」填寫：
+   - 顯示名稱、隱私政策網址、服務條款網址、應用程式圖示、類別
+   - 聯絡電子郵件
+3. 「商家專用 Facebook 登入」→ 設定 → 完成快速入門
+4. 「發佈」應用程式（左側選單最下方）
+
+### 2. 啟用 API 權限
+
+1. 「使用案例」→「管理粉絲專頁的所有內容」→ 點「自訂」
+2. 在權限清單中，點「+ 新增」啟用以下權限：
+   - **`pages_read_engagement`**（必要：讀取粉專貼文）
+   - `pages_show_list`（列出管理的粉專）
+3. 啟用後狀態會顯示「可供測試」，對應用程式管理員自己的粉專即可使用
+
+### 3. 產生 User Access Token
+
+1. 到「工具」→「Graph API 測試工具」
+2. 選擇你的應用程式
+3. 勾選權限：`pages_read_engagement`、`pages_show_list`
+4. 點「產生存取權杖」→ 同意授權
+5. 複製產生的 Token
+
+> **注意**：此 Token 約 60 天過期。到期後需重新產生並更新 GitHub Secret。
+> 可到「存取權杖偵錯工具」查看到期日，或點「延伸存取權杖」延長效期。
+
+### 4. 設定 GitHub Secrets
+
+在 GitHub repo → Settings → Secrets and variables → Actions，設定：
+- `FB_PAGE_ID`：粉專 ID（例如 `106558851840335`）
+- `FB_PAGE_TOKEN`：上一步產生的 **User Access Token**
+
+### 5. 同步機制說明
+
+- 腳本會用 User Token 呼叫 `/me/accounts` 自動取得 Page Token
+- 再用 Page Token 呼叫 `/{PAGE_ID}/posts` 抓取最近 20 篇貼文
+- 新文章建立 `.md` 檔 + 下載圖片，已存在的文章比對內容更新
+- 不想同步的文章，把 `fb_id` 加到 `content/posts/.sync-ignore`（一行一個）
+- 手動觸發：GitHub Actions → Sync Facebook Posts → Run workflow
+
+### 6. 常見問題
+
+| 問題 | 原因 | 解法 |
+|------|------|------|
+| `pages_read_engagement` 權限錯誤 | Token 產生時沒勾選該權限 | 重新產生 Token 並勾選 |
+| `/feed` endpoint 被擋 | 需要 Page Public Content Access 審查 | 改用 `/posts` endpoint |
+| 刪除的文章被重新同步 | fb_id 不在忽略清單 | 加到 `.sync-ignore` |
+| Token 過期 | User Token 約 60 天過期 | 重新產生並更新 GitHub Secret |
 
 ## 開發
 
