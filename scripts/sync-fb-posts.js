@@ -122,7 +122,7 @@ async function main() {
 
   // 取最近 20 篇
   const fields = "id,message,full_picture,created_time,permalink_url,updated_time";
-  const url = `https://graph.facebook.com/v19.0/${PAGE_ID}/posts?fields=${fields}&limit=20&access_token=${TOKEN}`;
+  const url = `https://graph.facebook.com/v25.0/${PAGE_ID}/feed?fields=${fields}&limit=20&access_token=${TOKEN}`;
   const data = await fetchJSON(url);
 
   if (data.error) {
