@@ -5,9 +5,11 @@
 ### Facebook 自動同步正式上線
 - FB 開發者應用程式審查通過，正式發佈
 - 啟用 `pages_read_engagement` 權限（可供測試，管理員粉專可用）
-- 同步腳本改用 User Token + `/me/accounts` 自動取得 Page Token（FB 不允許直接產生 Page Token）
+- 取得永久 Page Token（永不過期），不用再每 60 天重新產生
+- 新增 `get-permanent-token.js` 一次性腳本（短期 Token → 永久 Token）
 - API endpoint 從 `/feed` 改為 `/posts`（`/feed` 需要 Page Public Content Access 審查，`/posts` 不需要）
 - 新增 `.sync-ignore` 忽略清單機制：刪除的文章把 `fb_id` 加到此檔案，同步時自動跳過
+- 同步頻率從每小時改為每天一次（台灣 8:00），節省 API 額度
 - 完整 FB 設定步驟寫入 README
 
 ### 手機版響應式優化
