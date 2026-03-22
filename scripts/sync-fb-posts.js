@@ -105,12 +105,32 @@ function extractManualFields(existingContent) {
 
 async function main() {
   const PAGE_ID = process.env.FB_PAGE_ID;
-  const TOKEN = process.env.FB_PAGE_TOKEN;
+  const USER_TOKEN = process.env.FB_PAGE_TOKEN;
 
-  if (!PAGE_ID || !TOKEN) {
+  if (!PAGE_ID || !USER_TOKEN) {
     console.error("❌ 環境變數 FB_PAGE_ID / FB_PAGE_TOKEN 未設定");
     process.exit(1);
   }
+
+  // 用 User Token 取得該粉專的 Page Access Token
+  console.log("🔑 正在取得 Page Access Token...");
+  const accountsUrl = `https://graph.facebook.com/v25.0/me/accounts?access_token=${USER_TOKEN}`;
+  const accountsData = await fetchJSON(accountsUrl);
+
+  if (accountsData.error) {
+    console.error("❌ 取得 Page Token 失敗:", accountsData.error.message);
+    process.exit(1);
+  }
+
+  const page = (accountsData.data || []).find((p) => p.id === PAGE_ID);
+  if (!page) {
+    console.error(`❌ 找不到 PAGE_ID=${PAGE_ID} 的粉專，請確認此用戶是該粉專的管理員`);
+    console.error("可用的粉專:", (accountsData.data || []).map((p) => `${p.name} (${p.id})`).join(", "));
+    process.exit(1);
+  }
+
+  const TOKEN = page.access_token;
+  console.log(`✅ 已取得「${page.name}」的 Page Token\n`);
 
   const postsDir = path.join(__dirname, "..", "content", "posts");
   const imagesDir = path.join(__dirname, "..", "public", "images", "posts");
