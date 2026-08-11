@@ -235,19 +235,20 @@ export default function VehicleOrbit() {
   const selectedBrand = brands.find((b) => b.id === selected);
 
   return (
-    <section id="vehicles" className="relative py-16 md:py-28 overflow-hidden bg-primary-deep">
+    <section id="vehicles" className="vehicle-workshop relative overflow-hidden bg-primary-deep py-20 md:py-28">
+      <div className="absolute inset-0 paper-grain opacity-25" />
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
-        <div className="text-center mb-6">
-          <span className="text-xs font-bold tracking-[0.3em] text-accent">適用車款</span>
+        <div className="relative mb-6 max-w-2xl">
+          <span className="section-kicker"><span className="h-px w-10 bg-gold/70" />適用車款</span>
           <h2 className="mt-3 font-display text-[clamp(1.8rem,3.5vw,3rem)] font-black text-white">可維修車款一覽</h2>
-          <p className="mt-2 text-sm text-white/40">點擊品牌查看可維修車款</p>
+          <p className="mt-2 text-sm text-text-muted">點擊品牌，查看目前可維修的車款。</p>
         </div>
 
         <div className="relative">
           {/* Left panel */}
           <div className={`lg:absolute lg:-left-32 lg:top-1/2 lg:-translate-y-1/2 z-30 w-full lg:w-[360px] transition-all duration-500 ${selected ? "opacity-100 translate-x-0" : "opacity-0 lg:-translate-x-10 pointer-events-none h-0 lg:h-auto"}`}>
             {selectedBrand && (
-              <div className="rounded-2xl border border-white/[0.08] bg-primary-deep/95 backdrop-blur-xl p-5 md:p-8 shadow-2xl">
+              <div className="rounded-[0.5rem_1.5rem_0.5rem_1.5rem] border border-gold/[0.16] bg-primary-deep/95 p-5 shadow-2xl backdrop-blur-xl md:p-8">
                 <h3 className="font-bold text-2xl mb-2" style={{ color: selectedBrand.color }}>
                   {selectedBrand.id === "yamaha" ? "YAMAHA" : selectedBrand.id === "suzuki" ? "SUZUKI" : selectedBrand.id === "vespa" ? "Vespa" : selectedBrand.name} {selectedBrand.sub}
                 </h3>
@@ -308,7 +309,7 @@ export default function VehicleOrbit() {
               {/* Center: subtle brand glow + calligraphy image */}
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <div className={`relative transition-all duration-500 ${selected ? "scale-90 opacity-60" : "scale-100 opacity-100"}`}>
-                  <div className="absolute left-1/2 top-1/2 h-[250px] w-[360px] -translate-x-1/2 -translate-y-1/2 rounded-[50%] blur-[55px]" style={{ background: "radial-gradient(ellipse, rgba(220,60,40,0.15) 0%, rgba(197,148,70,0.07) 42%, transparent 72%)" }} />
+                  <div className="absolute left-1/2 top-1/2 h-[250px] w-[360px] -translate-x-1/2 -translate-y-1/2 rounded-[50%] opacity-70" style={{ background: "radial-gradient(ellipse, oklch(0.78 0.11 80 / 0.08) 0%, transparent 68%)" }} />
                   {/* Calligraphy image (transparent PNG) */}
                   <div className="relative flex items-center justify-center">
                     <img src="/images/bei-da-orbit-v2.png" alt="北大" className="w-[380px] h-auto" draggable={false} />
@@ -355,7 +356,7 @@ export default function VehicleOrbit() {
         </div>
 
         <div className="mt-6 text-center">
-          <p className="text-xs text-text-dim">⚠️ 僅服務一般機車儀表，重機與汽車恕不服務 ｜ 114.07.27 更新</p>
+          <p className="text-xs text-text-dim">僅服務一般機車儀表，重機與汽車儀表恕不提供維修；支援車款持續更新中。</p>
         </div>
       </div>
     </section>

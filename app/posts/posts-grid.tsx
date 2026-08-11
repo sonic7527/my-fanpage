@@ -484,13 +484,13 @@ export default function PostsGrid({
   }
 
   return (
-    <div ref={containerRef}>
+    <div ref={containerRef} className="posts-ledger">
       {/* ── Pinned posts ── */}
       {pinnedPosts.length > 0 && (
         <section className="mb-10 md:mb-16">
           <div className="mb-6 flex items-center gap-3">
-            <span className="h-px w-8 bg-accent" />
-            <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-accent">置頂文章</h2>
+            <span className="h-px w-8 bg-gold/70" />
+            <h2 className="text-sm font-bold tracking-[0.2em] text-gold">置頂文章</h2>
           </div>
           {/* Dynamic layout based on pinned post count */}
           {pinnedPosts.length === 1 && (
@@ -543,8 +543,8 @@ export default function PostsGrid({
               onClick={() => handleCategoryChange(cat.value)}
               className={`rounded-full px-3 py-1.5 text-xs md:px-5 md:py-2 md:text-sm font-medium transition-all duration-300 ${
                 isActive
-                  ? "bg-accent text-white shadow-[0_0_20px_rgba(220,60,40,0.3)]"
-                  : "border border-white/[0.08] text-text-muted hover:border-white/20 hover:text-white hover:bg-white/[0.04]"
+                  ? "bg-accent text-text"
+                  : "border border-gold/[0.14] text-text-muted hover:border-gold/40 hover:text-text hover:bg-surface/60"
               }`}
             >
               {cat.label}
@@ -570,7 +570,7 @@ export default function PostsGrid({
           <button
             type="button"
             onClick={() => setVisibleCount((prev) => prev + PAGE_SIZE)}
-            className="group inline-flex items-center gap-2 rounded-full border border-white/[0.1] px-8 py-3 text-sm font-medium text-text-muted transition-all duration-300 hover:border-accent/40 hover:text-accent hover:bg-accent/[0.06]"
+            className="group inline-flex items-center gap-2 rounded-full border border-gold/20 px-8 py-3 text-sm font-medium text-text-muted transition-all duration-300 hover:border-gold/55 hover:text-gold"
           >
             載入更多
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="transition-transform duration-300 group-hover:translate-y-0.5">

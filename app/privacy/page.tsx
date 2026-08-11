@@ -6,9 +6,10 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <div className="min-h-screen pt-20 md:pt-24 pb-16 md:pb-20">
+    <div className="reading-page min-h-screen pb-20 pt-28 md:pt-32">
       <div className="mx-auto max-w-3xl px-4 md:px-6">
-        <header className="mb-10">
+        <header className="mb-10 border-b border-gold/[0.14] pb-8">
+          <span className="section-kicker">網站資訊</span>
           <h1 className="font-display text-2xl md:text-3xl font-black text-text">隱私權政策</h1>
           <p className="mt-2 text-sm text-text-dim">最後更新：2026-03-22</p>
         </header>

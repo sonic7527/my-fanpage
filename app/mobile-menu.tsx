@@ -21,7 +21,7 @@ export default function MobileMenu() {
   ];
 
   return (
-    <div className="md:hidden">
+    <div className="lg:hidden">
       {/* 漢堡按鈕 */}
       <button
         type="button"
@@ -83,7 +83,7 @@ export default function MobileMenu() {
           <a
             href="/#contact"
             onClick={() => setOpen(false)}
-            className={`mt-8 inline-flex items-center gap-2 rounded-full bg-accent px-8 py-4 text-base font-bold text-white transition-all duration-500 hover:scale-105 ${
+            className={`mt-8 inline-flex items-center gap-2 rounded-full bg-line px-8 py-4 text-base font-bold text-line-ink transition-all duration-500 hover:-translate-y-0.5 ${
               open ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
             }`}
             style={{ transitionDelay: open ? "420ms" : "0ms" }}

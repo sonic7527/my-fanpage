@@ -1,25 +1,27 @@
 @import "tailwindcss";
 
 @theme {
-  --font-display: "Noto Sans TC", system-ui, sans-serif;
+  --font-display: "Noto Serif TC", "Noto Sans TC", serif;
   --font-body: "Noto Sans TC", system-ui, sans-serif;
 
-  --color-primary: oklch(0.18 0.03 260);
-  --color-primary-deep: oklch(0.12 0.03 260);
-  --color-surface: oklch(0.22 0.04 255);
-  --color-surface-light: oklch(0.28 0.05 250);
-  --color-accent: oklch(0.62 0.22 15);
-  --color-accent-hover: oklch(0.68 0.22 15);
-  --color-accent-light: oklch(0.30 0.06 15);
-  --color-gold: oklch(0.76 0.15 75);
-  --color-gold-dim: oklch(0.60 0.12 75);
-  --color-text: oklch(0.92 0.01 260);
-  --color-text-muted: oklch(0.68 0.02 260);
-  --color-text-dim: oklch(0.50 0.02 260);
-  --color-border: oklch(0.30 0.03 260);
-  --color-border-light: oklch(0.36 0.03 260);
-  --color-white: oklch(1 0 0);
-  --color-dark: oklch(0.15 0.02 260);
+  --color-primary: oklch(0.185 0.027 249);
+  --color-primary-deep: oklch(0.135 0.025 249);
+  --color-surface: oklch(0.225 0.029 247);
+  --color-surface-light: oklch(0.29 0.032 244);
+  --color-accent: oklch(0.61 0.19 25);
+  --color-accent-hover: oklch(0.67 0.18 27);
+  --color-accent-light: oklch(0.29 0.055 27);
+  --color-gold: oklch(0.78 0.11 80);
+  --color-gold-dim: oklch(0.61 0.075 78);
+  --color-text: oklch(0.93 0.018 78);
+  --color-text-muted: oklch(0.73 0.025 72);
+  --color-text-dim: oklch(0.56 0.026 69);
+  --color-border: oklch(0.32 0.027 246);
+  --color-border-light: oklch(0.39 0.03 245);
+  --color-white: oklch(0.97 0.012 78);
+  --color-dark: oklch(0.15 0.023 249);
+  --color-line: oklch(0.79 0.18 145);
+  --color-line-ink: oklch(0.18 0.035 147);
 }
 
 html {
@@ -29,8 +31,27 @@ html {
 body {
   background-color: var(--color-primary);
   color: var(--color-text);
+  font-kerning: normal;
+  line-height: 1.7;
+  overflow-x: clip;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: oklch(0.61 0.19 25 / 0.45);
+  color: var(--color-text);
+}
+
+a,
+button,
+summary {
+  -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 4px;
 }
 
 /* ─── Entry animations ─── */
@@ -100,9 +121,9 @@ body {
 /* ─── Nav scroll state ─── */
 .nav-bar { transition: background-color 0.5s, border-color 0.5s, box-shadow 0.5s; }
 .nav-scrolled {
-  background-color: oklch(0.10 0.03 260 / 0.95) !important;
-  border-color: oklch(0.30 0.03 260 / 0.3) !important;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+  background-color: oklch(0.12 0.025 249 / 0.97) !important;
+  border-color: oklch(0.78 0.11 80 / 0.16) !important;
+  box-shadow: 0 16px 40px oklch(0.08 0.02 249 / 0.36);
 }
 
 /* ─── Height utility ─── */
@@ -205,3 +226,171 @@ details[open] .faq-answer { animation: fade-up 0.35s cubic-bezier(0.16, 1, 0.3, 
 ::-webkit-scrollbar-track { background: var(--color-primary-deep); }
 ::-webkit-scrollbar-thumb { background: var(--color-surface-light); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--color-accent); }
+
+/* ─── 北大視覺系統：職人工坊夜色 ─── */
+.paper-grain {
+  background-image:
+    radial-gradient(circle at 18% 28%, oklch(0.93 0.018 78 / 0.035) 0 0.8px, transparent 1px),
+    radial-gradient(circle at 72% 64%, oklch(0.78 0.11 80 / 0.03) 0 0.7px, transparent 1px);
+  background-size: 19px 23px, 29px 31px;
+  mix-blend-mode: soft-light;
+}
+
+.hero-workbench-image {
+  opacity: 0.84;
+  filter: saturate(0.86) contrast(1.02);
+}
+
+.hero-workbench-wash {
+  background:
+    linear-gradient(90deg, var(--color-primary-deep) 0%, oklch(0.135 0.025 249 / 0.97) 34%, oklch(0.135 0.025 249 / 0.58) 56%, oklch(0.135 0.025 249 / 0.12) 82%),
+    linear-gradient(0deg, var(--color-primary-deep) 0%, transparent 22%, transparent 78%, oklch(0.135 0.025 249 / 0.55) 100%);
+}
+
+.brush-underline {
+  background: linear-gradient(90deg, transparent, var(--color-accent) 8% 88%, transparent);
+  clip-path: polygon(1% 52%, 15% 28%, 48% 40%, 84% 17%, 100% 46%, 88% 61%, 54% 57%, 19% 79%);
+  opacity: 0.58;
+}
+
+.section-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--color-gold);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+}
+
+.craft-section::after,
+.article-preview::after,
+.contact-workshop::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  width: min(34vw, 30rem);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, oklch(0.78 0.11 80 / 0.28), transparent);
+  transform: rotate(-8deg);
+}
+
+.craft-section,
+.article-preview {
+  overflow: hidden;
+}
+
+.craft-section::after { right: -4rem; top: 5rem; }
+.article-preview::after { left: -5rem; top: 7rem; transform: rotate(7deg); }
+.contact-workshop::after { right: -4rem; bottom: 7rem; }
+
+.service-entry {
+  border-radius: 1.5rem 0.5rem 1.5rem 0.5rem;
+  box-shadow: 0 24px 60px oklch(0.09 0.018 249 / 0.2);
+}
+
+.service-entry:nth-child(1) { grid-column: span 5; }
+.service-entry:nth-child(2) { grid-column: span 7; border-radius: 0.5rem 1.5rem 0.5rem 1.5rem; }
+.service-entry:nth-child(3) { grid-column: 3 / span 8; }
+
+.reason-entry:nth-child(2) {
+  border-left: 1px solid oklch(0.78 0.11 80 / 0.14);
+  border-right: 1px solid oklch(0.78 0.11 80 / 0.14);
+}
+
+.article-preview-card {
+  border-radius: 0.5rem 1.25rem 0.5rem 1.25rem;
+  box-shadow: 0 20px 50px oklch(0.09 0.018 249 / 0.18);
+}
+
+.article-preview-card:nth-child(even) {
+  border-radius: 1.25rem 0.5rem 1.25rem 0.5rem;
+}
+
+.process-ledger {
+  border-radius: 0.5rem 1.75rem 0.5rem 1.75rem;
+  box-shadow: 0 28px 70px oklch(0.09 0.018 249 / 0.22);
+}
+
+.posts-canvas,
+.reading-page {
+  position: relative;
+  background:
+    linear-gradient(180deg, oklch(0.135 0.025 249 / 0.55), transparent 24rem),
+    var(--color-primary);
+}
+
+.posts-canvas::before,
+.reading-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 16% 22%, oklch(0.93 0.018 78 / 0.025) 0 0.8px, transparent 1px),
+    radial-gradient(circle at 78% 68%, oklch(0.78 0.11 80 / 0.022) 0 0.7px, transparent 1px);
+  background-size: 23px 29px, 31px 37px;
+}
+
+.posts-ledger a[class*="rounded-"] {
+  border-color: oklch(0.78 0.11 80 / 0.14);
+  border-radius: 0.5rem 1.25rem 0.5rem 1.25rem;
+  box-shadow: 0 18px 44px oklch(0.09 0.018 249 / 0.16);
+}
+
+.posts-ledger a[class*="rounded-"]:hover {
+  border-color: oklch(0.78 0.11 80 / 0.38);
+  box-shadow: 0 24px 54px oklch(0.09 0.018 249 / 0.24);
+}
+
+.posts-ledger > section:first-child {
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid oklch(0.78 0.11 80 / 0.1);
+}
+
+.faq-ledger details {
+  border-left: 1px solid transparent;
+  transition: border-color 250ms cubic-bezier(0.25, 1, 0.5, 1), padding-left 250ms cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.faq-ledger details[open] {
+  border-left-color: var(--color-accent);
+  padding-left: 1rem;
+}
+
+.prose-custom {
+  color: var(--color-text-muted);
+  font-size: 1.05rem;
+  line-height: 2;
+}
+
+.prose-custom p + p { margin-top: 1.25rem; }
+.prose-custom img {
+  border: 1px solid oklch(0.78 0.11 80 / 0.16);
+  border-radius: 0.4rem 1.2rem 0.4rem 1.2rem;
+}
+
+@media (max-width: 767px) {
+  .hero-workbench-image {
+    opacity: 0.44;
+    object-position: 68% center;
+  }
+
+  .hero-workbench-wash {
+    background:
+      linear-gradient(90deg, oklch(0.135 0.025 249 / 0.96), oklch(0.135 0.025 249 / 0.62)),
+      linear-gradient(0deg, var(--color-primary-deep), transparent 35%);
+  }
+
+  .service-entry:nth-child(n) { grid-column: auto; }
+  .reason-entry:nth-child(2) { border-left: 0; border-right: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

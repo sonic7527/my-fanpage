@@ -54,6 +54,7 @@ export default function HomePage() {
       <StatusBanner />
       <ServicesSection />
       <WhyUsSection />
+      <ArticlesSection posts={posts} />
       <ContactSection />
     </>
   );
@@ -64,44 +65,42 @@ export default function HomePage() {
    ═══════════════════════════════════════════ */
 function HeroSection() {
   return (
-    <section className="relative flex min-h-screen items-center overflow-hidden">
-      {/* 多層背景 */}
+    <section className="hero-workbench relative flex min-h-[94svh] items-center overflow-hidden">
       <div className="absolute inset-0 bg-primary-deep" />
-      <div className="absolute inset-0 grid-texture opacity-20" />
-
-      {/* 光暈裝飾 */}
-      <div className="absolute top-[-20%] right-[-10%] h-[800px] w-[800px] rounded-full bg-accent/[0.04] blur-[120px] animate-float" />
-      <div className="absolute bottom-[-30%] left-[-15%] h-[600px] w-[600px] rounded-full bg-gold/[0.03] blur-[100px] animate-float-delayed" />
-
-      {/* 背景網格 */}
-      <div className="absolute inset-0 hero-grid opacity-[0.04]" />
+      <img
+        src="/images/bei-da-workbench-hero-v1.png"
+        alt="機車液晶儀表維修工作檯"
+        className="hero-workbench-image absolute inset-0 h-full w-full object-cover object-[62%_center]"
+      />
+      <div className="hero-workbench-wash absolute inset-0" />
+      <div className="absolute inset-0 paper-grain opacity-25" />
 
       {/* 內容 */}
-      <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-10 pt-20 md:pt-28 pb-16 md:pb-20">
-        <div className="max-w-3xl">
-          <div className="animate-fade-up mb-8 flex items-center gap-3">
-            <span className="h-px w-16 bg-gradient-to-r from-accent to-transparent" />
-            <span className="text-xs font-bold tracking-[0.3em] text-accent/80">
-              北大液晶儀表維修
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-6 pb-16 pt-28 lg:px-10">
+        <div className="max-w-[44rem]">
+          <div className="animate-fade-up mb-7 flex items-center gap-3">
+            <span className="h-px w-12 bg-gold/70" />
+            <span className="text-xs font-bold tracking-[0.26em] text-gold">
+              高雄・屏東｜預約制工坊
             </span>
           </div>
 
           <h1 className="animate-fade-up-delay-1">
-            <span className="block font-display text-[clamp(2rem,5vw,4rem)] font-black leading-[1.1] tracking-tight text-white">
-              北大工作室堅持不換偏光片
+            <span className="block font-display text-[clamp(2.55rem,6vw,5.4rem)] font-black leading-[1.08] tracking-[-0.04em] text-text">
+              讓模糊的儀表，
             </span>
-            <span className="block font-display text-[clamp(2rem,5vw,4rem)] font-black leading-[1.1] tracking-tight">
-              採用直接更換
-              <span className="relative text-accent">
-                全新液晶
-                <span className="absolute -bottom-2 left-0 h-1 w-full bg-accent/30 rounded-full" />
+            <span className="mt-1 block font-display text-[clamp(2.55rem,6vw,5.4rem)] font-black leading-[1.08] tracking-[-0.04em] text-text">
+              重新清楚上路。
+              <span className="relative ml-2 inline-block text-accent">
+                換新液晶
+                <span className="brush-underline absolute -bottom-2 left-0 h-2 w-full" />
               </span>
             </span>
           </h1>
 
-          <p className="animate-fade-up-delay-2 mt-6 md:mt-10 max-w-xl text-base md:text-lg leading-relaxed text-white/60">
-            專注一般機車液晶儀表維修 — 液晶淡化、斷字、按鍵故障。
-            效果更好、壽命更長。高雄、屏東雙據點，採預約制服務。
+          <p className="animate-fade-up-delay-2 mt-8 max-w-[36rem] text-base leading-8 text-text-muted md:text-lg md:leading-9">
+            北大專注一般機車液晶儀表維修。不以更換偏光片暫時處理，
+            而是直接更換全新液晶，讓顯示清晰、使用更長久。
           </p>
 
           <div className="animate-fade-up-delay-3 mt-8 md:mt-12 flex flex-wrap items-center gap-3 md:gap-4">
@@ -109,7 +108,7 @@ function HeroSection() {
               href="https://line.me/R/ti/p/@777xvkrg"
               target="_blank"
               rel="noopener noreferrer"
-              className="group relative inline-flex min-h-12 items-center gap-2 rounded-full bg-[#06C755] px-6 py-3 md:px-8 md:py-4 text-sm font-bold text-white overflow-hidden transition-all duration-300 hover:bg-[#05b84f] hover:shadow-[0_0_28px_rgba(6,199,85,0.3)] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#06C755]"
+              className="group relative inline-flex min-h-13 items-center gap-2 rounded-full bg-line px-6 py-3 text-sm font-black text-line-ink transition-transform duration-300 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-line md:px-8 md:py-4"
             >
               <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" className="relative z-10" aria-hidden="true">
                 <path d="M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" />
@@ -121,7 +120,7 @@ function HeroSection() {
             </a>
             <a
               href="#services"
-              className="inline-flex items-center gap-2 rounded-full border border-white/15 px-6 py-3 md:px-8 md:py-4 text-sm font-medium text-white/70 transition-all duration-300 hover:border-white/30 hover:text-white hover:bg-white/[0.04]"
+              className="inline-flex min-h-13 items-center gap-2 rounded-full border border-gold/30 px-6 py-3 text-sm font-medium text-text-muted transition-all duration-300 hover:border-gold/70 hover:text-text md:px-8 md:py-4"
             >
               瀏覽服務項目
             </a>
@@ -131,7 +130,7 @@ function HeroSection() {
       </div>
 
       {/* 底部漸層過渡 */}
-      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-primary via-primary/50 to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-primary via-primary/55 to-transparent" />
     </section>
   );
 }
@@ -142,7 +141,7 @@ function HeroSection() {
    ═══════════════════════════════════════════ */
 function StatusBanner() {
   return (
-    <div className="relative overflow-hidden border-y border-border bg-surface/50 py-3">
+    <div className="status-ribbon relative overflow-hidden border-y border-gold/[0.12] bg-surface py-3">
       <div className="flex animate-ticker whitespace-nowrap">
         {[1, 2].map((copy) => (
           <div key={copy} className="flex shrink-0 items-center gap-6 px-4 md:gap-12 md:px-6">
@@ -195,14 +194,13 @@ function ServicesSection() {
   ];
 
   return (
-    <section id="services" className="relative py-16 md:py-32">
-      <div className="absolute inset-0 bg-surface/20" />
-      <div className="absolute inset-0 stripe-accent opacity-50" />
+    <section id="services" className="craft-section relative py-20 md:py-32">
+      <div className="absolute inset-0 paper-grain opacity-30" />
       <div className="relative mx-auto max-w-7xl px-6 lg:px-10">
         <ScrollReveal>
           <div className="mb-12 md:mb-20 max-w-2xl">
-            <span className="flex items-center gap-3 text-xs font-bold tracking-[0.3em] text-accent">
-              <span className="h-px w-10 bg-accent" /> 服務項目
+            <span className="section-kicker">
+              <span className="h-px w-10 bg-gold/70" /> 服務項目
             </span>
             <h2 className="mt-4 font-display text-[clamp(2rem,4vw,3.5rem)] font-black leading-tight text-white">
               專業維修項目
@@ -217,11 +215,11 @@ function ServicesSection() {
           </div>
         </ScrollReveal>
 
-        <ScrollRevealGroup className="grid gap-6 md:grid-cols-3">
+        <ScrollRevealGroup className="service-ledger grid gap-5 md:grid-cols-12 md:items-stretch">
           {services.map((s) => (
             <div
               key={s.num}
-              className="reveal group relative rounded-2xl border border-white/[0.06] bg-primary-deep/60 p-5 md:p-8 backdrop-blur-sm transition-all duration-500 hover:border-accent/30 hover:bg-surface/40 hover:shadow-[0_0_40px_rgba(220,60,40,0.08)] hover:-translate-y-1"
+              className="service-entry reveal group relative overflow-hidden border border-gold/[0.12] bg-primary-deep/70 p-6 transition-all duration-500 hover:border-gold/35 md:p-9"
             >
               {/* 序號 */}
               <span className="absolute top-6 right-6 font-display text-6xl font-black text-white/[0.04] transition-all duration-500 group-hover:text-accent/10">
@@ -229,7 +227,7 @@ function ServicesSection() {
               </span>
 
               {/* 圖示 */}
-              <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-accent/10 text-accent transition-all duration-300 group-hover:bg-accent group-hover:text-white group-hover:scale-110 group-hover:shadow-[0_0_20px_rgba(220,60,40,0.3)]">
+              <div className="mb-8 flex h-12 w-12 items-center justify-center border border-gold/20 text-gold transition-colors duration-300 group-hover:border-accent/50 group-hover:text-accent">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d={s.icon} />
                 </svg>
@@ -282,29 +280,28 @@ function WhyUsSection() {
   ];
 
   return (
-    <section className="relative bg-primary-deep py-16 md:py-32 overflow-hidden">
-      {/* 背景光暈 */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[600px] rounded-full bg-accent/[0.03] blur-[120px]" />
+    <section className="why-ledger relative overflow-hidden bg-primary-deep py-20 md:py-32">
+      <div className="absolute inset-0 paper-grain opacity-20" />
 
       <div className="relative mx-auto max-w-7xl px-6 lg:px-10">
         <ScrollReveal>
-          <div className="mb-12 md:mb-20 text-center">
-            <span className="flex items-center justify-center gap-3 text-xs font-bold tracking-[0.3em] text-accent">
-              <span className="h-px w-10 bg-accent/50" /> 選擇北大 <span className="h-px w-10 bg-accent/50" />
+          <div className="mb-12 max-w-2xl md:mb-20">
+            <span className="section-kicker">
+              <span className="h-px w-10 bg-gold/70" /> 選擇北大
             </span>
             <h2 className="mt-4 font-display text-[clamp(2rem,4vw,3.5rem)] font-black leading-tight text-white">
               為什麼選擇北大
             </h2>
-            <p className="mt-4 text-base text-white/40 max-w-lg mx-auto">
+            <p className="mt-4 max-w-lg text-base text-text-muted">
               多年的維修經驗，堅持使用最好的材料與熱誠的服務
             </p>
           </div>
         </ScrollReveal>
 
-        <ScrollRevealGroup className="grid gap-6 md:grid-cols-3">
+        <ScrollRevealGroup className="reason-list grid gap-0 md:grid-cols-3">
           {reasons.map((r) => (
-            <div key={r.title} className="reveal group relative rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 md:p-10 transition-all duration-500 hover:border-accent/20 hover:bg-white/[0.04] hover:-translate-y-2">
-              <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-accent/20 to-accent/5 text-accent ring-1 ring-accent/10">
+            <div key={r.title} className="reason-entry reveal group relative border-t border-gold/[0.14] p-6 transition-colors duration-500 hover:bg-surface/35 md:p-10">
+              <div className="mb-8 flex h-12 w-12 items-center justify-center text-gold">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d={r.icon} />
                 </svg>
@@ -329,12 +326,12 @@ function ArticlesSection({ posts }: { posts: Post[] }) {
   const revealClasses = ["reveal-left", "reveal-right", "reveal-scale", "reveal"];
 
   return (
-    <section id="articles" className="py-16 md:py-28">
+    <section id="articles" className="article-preview relative py-20 md:py-32">
       <div className="mx-auto max-w-7xl px-6">
         <ScrollReveal>
           <div className="mb-10 md:mb-16 flex items-end justify-between">
             <div>
-              <span className="text-xs font-bold uppercase tracking-[0.25em] text-accent">Repair Cases</span>
+              <span className="section-kicker">維修札記</span>
               <h2 className="mt-3 font-display text-[clamp(2rem,4vw,3.2rem)] font-black leading-tight text-text">
                 公告事項與維修案例
               </h2>
@@ -351,7 +348,7 @@ function ArticlesSection({ posts }: { posts: Post[] }) {
             <ScrollReveal key={post.slug} className={revealClasses[i % 4]}>
               <Link
                 href={`/posts/${post.slug}`}
-                className="group block overflow-hidden rounded-xl bg-surface border border-white/[0.06] hover:border-accent/30 transition-all duration-300 hover:shadow-[0_0_24px_rgba(220,60,40,0.15)] hover:scale-[1.03]"
+                className="article-preview-card group block overflow-hidden border border-gold/[0.12] bg-surface transition-all duration-300 hover:border-gold/40 hover:-translate-y-1"
               >
                 <div className="relative aspect-square overflow-hidden bg-surface-light">
                   {post.image ? (
@@ -438,12 +435,12 @@ function FaqSection() {
    ═══════════════════════════════════════════ */
 function ContactSection() {
   return (
-    <section id="contact" className="relative overflow-hidden border-t border-border bg-surface/30 py-16 md:py-28">
+    <section id="contact" className="contact-workshop relative overflow-hidden border-t border-gold/[0.14] bg-surface/35 py-20 md:py-32">
       <div className="mx-auto max-w-6xl px-6">
         <div className="grid gap-10 md:gap-16 lg:grid-cols-[1fr_1.2fr]">
           <ScrollReveal className="reveal-left">
             <div>
-              <span className="text-xs font-bold tracking-[0.25em] text-accent">聯絡方式</span>
+              <span className="section-kicker">聯絡方式</span>
               <h2 className="mt-3 font-display text-[clamp(2rem,4vw,3.2rem)] font-black leading-tight text-text">
                 聯絡我們
               </h2>
@@ -451,7 +448,7 @@ function ContactSection() {
                 有任何儀表問題歡迎隨時與我們聯繫，我們會盡快為您提供專業建議與報價。
               </p>
 
-              <div className="mt-6 rounded-xl border border-accent/30 bg-accent-light/30 px-5 py-3">
+              <div className="mt-6 border-l-2 border-accent bg-accent-light/30 px-5 py-3">
                 <p className="text-sm font-semibold text-accent">
                   ⚠ 本工作室採預約制，請先透過 LINE 或電話預約再前往
                 </p>
@@ -461,7 +458,7 @@ function ContactSection() {
                 href="https://line.me/R/ti/p/@777xvkrg"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group mt-5 flex min-h-16 items-center gap-4 rounded-2xl bg-[#06C755] px-5 py-4 text-white transition-all duration-300 hover:bg-[#05b84f] hover:-translate-y-0.5 hover:shadow-[0_16px_36px_rgba(6,199,85,0.2)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#06C755]"
+                className="group mt-5 flex min-h-16 items-center gap-4 rounded-2xl bg-line px-5 py-4 text-line-ink transition-transform duration-300 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-line"
               >
                 <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/15">
                   <svg width="25" height="25" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -470,7 +467,7 @@ function ContactSection() {
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block text-base font-black">LINE 預約諮詢</span>
-                  <span className="mt-0.5 block text-sm text-white/80">官方帳號 @777xvkrg</span>
+                  <span className="mt-0.5 block text-sm text-line-ink/75">官方帳號 @777xvkrg</span>
                 </span>
                 <svg width="18" height="18" viewBox="0 0 18 18" fill="none" className="shrink-0 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true">
                   <path d="M4 9h10m0 0-4-4m4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -499,7 +496,7 @@ function ContactSection() {
           </ScrollReveal>
 
           <ScrollReveal className="reveal-right">
-            <div className="rounded-xl border border-border bg-surface/50 p-5 md:p-10">
+            <div className="process-ledger border border-gold/[0.14] bg-primary-deep/70 p-6 md:p-10">
               <h3 className="font-display text-lg font-bold text-text">寄件維修流程</h3>
               <div className="mt-8 space-y-8">
                 <FlowStep num="1" title="聯繫我們" desc="透過 LINE 告知您的儀表問題與車款資訊。" />

@@ -56,11 +56,10 @@ export default function PostsPage() {
   const regularPosts = allPosts.filter((p) => !p.pinned);
 
   return (
-    <div className="min-h-screen bg-primary pt-24 pb-20">
+    <div className="posts-canvas min-h-screen bg-primary pb-20 pt-28 md:pt-32">
       {/* ── Background decorations ── */}
       <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-        <div className="absolute top-[-10%] right-[-5%] h-[600px] w-[600px] rounded-full bg-accent/[0.03] blur-[120px]" />
-        <div className="absolute bottom-[-15%] left-[-10%] h-[500px] w-[500px] rounded-full bg-gold/[0.02] blur-[100px]" />
+        <div className="absolute inset-0 paper-grain opacity-30" />
       </div>
 
       <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-10">
@@ -83,8 +82,8 @@ export default function PostsPage() {
 
         {/* ── Page header ── */}
         <header className="mb-14">
-          <span className="flex items-center gap-3 text-xs font-bold uppercase tracking-[0.3em] text-accent">
-            <span className="h-px w-10 bg-accent" /> Articles
+          <span className="section-kicker">
+            <span className="h-px w-10 bg-gold/70" /> 維修札記
           </span>
           <h1 className="mt-4 font-display text-[clamp(2rem,4vw,3.5rem)] font-black leading-tight text-white">
             全部文章

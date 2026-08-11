@@ -15,7 +15,7 @@ const faqs = [
       },
       {
         q: "維修大約需要多少時間？",
-        a: "一般儀表維修約 3-5 個工作天，視故障情況而定。如需特殊零件調貨，會另行通知預計交件時間。急件可提前告知，我們會盡量配合。",
+        a: "現場維修工時通常約 1 小時，可現場等候或事後取車；郵寄維修會在收到儀表後 3 個工作天內寄回。如遇特殊故障或零件狀況，我們會透過 LINE 另行告知預計時間。",
       },
       {
         q: "維修費用大概是多少？",
@@ -23,7 +23,7 @@ const faqs = [
       },
       {
         q: "維修後有保固嗎？",
-        a: "所有維修項目提供 3 個月保固。保固期間如有相同問題免費維修。人為損壞或進水等非正常使用不在保固範圍內。",
+        a: "所有維修項目提供 6 個月保固。保固期間如有相同問題可協助處理；儀表進水、碰撞或其他外力造成的損壞不在保固範圍內。",
       },
     ],
   },
@@ -61,11 +61,11 @@ const faqs = [
 
 export default function FaqPage() {
   return (
-    <div className="min-h-screen pt-20 md:pt-24 pb-16 md:pb-20">
+    <div className="reading-page min-h-screen pb-20 pt-28 md:pt-32">
       <div className="mx-auto max-w-3xl px-4 md:px-6">
         <header className="mb-10 md:mb-16">
-          <span className="text-xs font-bold uppercase tracking-[0.25em] text-accent">
-            FAQ
+          <span className="section-kicker">
+            維修前先了解
           </span>
           <h1 className="mt-3 font-display text-[clamp(2rem,4vw,3.2rem)] font-black leading-tight text-text">
             常見問題
@@ -81,7 +81,7 @@ export default function FaqPage() {
               <span className="h-px w-8 bg-gold/40" />
               {section.category}
             </h2>
-            <div className="divide-y divide-border">
+            <div className="faq-ledger divide-y divide-gold/[0.12]">
               {section.items.map((faq, i) => (
                 <details key={i} className="group">
                   <summary className="flex cursor-pointer items-center justify-between py-5">
