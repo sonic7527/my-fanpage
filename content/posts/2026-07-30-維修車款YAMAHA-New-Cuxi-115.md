@@ -1,0 +1,19 @@
+---
+title: "📌 維修車款：YAMAHA New  Cuxi 115"
+date: "2026-07-30"
+excerpt: "📌 維修車款：YAMAHA New  Cuxi 115 繼” Cuxi 115 “ 深受年輕族群中喜愛後 👏，YAMAHA 又推出了” New Cuxi 115 😍  “，這是一款主打輕巧便利、展現自我時尚風格的女性車款 🙆‍♀️，"
+fb_id: "106558851840335_1053593253836883"
+fb_permalink: "https://www.facebook.com/946815921181284/posts/1053593253836883"
+image: "/images/posts/2026-07-30-維修車款YAMAHA-New-Cuxi-115.jpg"
+category: ""
+model: ""
+pinned: false
+order: 0
+---
+
+📌 維修車款：YAMAHA New  Cuxi 115
+繼” Cuxi 115 “ 深受年輕族群中喜愛後 👏，YAMAHA 又推出了” New Cuxi 115 😍  “，這是一款主打輕巧便利、展現自我時尚風格的女性車款 🙆‍♀️，也是本工作室第一台的 ” New Cuxi 115 “ 維修唷！
+
+趕緊與大家分享 ” New Cuxi 115 “ 的維修過程 🪛 ~
+
+#北大液晶儀表維修工作室 阿浩 0958-320-153 📞
