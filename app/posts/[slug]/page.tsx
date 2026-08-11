@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
 import Link from "next/link";
-import { notFound, permanentRedirect } from "next/navigation";
+import { notFound } from "next/navigation";
 
 const postsDir = path.join(process.cwd(), "content/posts");
 const legacySlugRedirects: Record<string, string> = {
@@ -60,9 +60,6 @@ export default async function PostPage({
   const { slug } = await params;
   const decodedSlug = decodePostSlug(slug);
   if (!decodedSlug) notFound();
-
-  const canonicalSlug = legacySlugRedirects[decodedSlug];
-  if (canonicalSlug) permanentRedirect(`/posts/${canonicalSlug}`);
 
   const filePath = getPostFilePath(decodedSlug);
   if (!filePath || !fs.existsSync(filePath)) notFound();
