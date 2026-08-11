@@ -33,24 +33,112 @@ function fetchJSON(url) {
   });
 }
 
-function downloadFile(url, dest) {
+function downloadFile(url, dest, redirectCount = 0) {
   return new Promise((resolve, reject) => {
-    const file = fs.createWriteStream(dest);
+    if (redirectCount > 5) {
+      reject(new Error("圖片重新導向次數過多"));
+      return;
+    }
+
     https
       .get(url, (res) => {
-        if (res.statusCode === 301 || res.statusCode === 302) {
-          file.close();
-          fs.unlinkSync(dest);
-          return downloadFile(res.headers.location, dest).then(resolve, reject);
+        if ([301, 302, 303, 307, 308].includes(res.statusCode)) {
+          res.resume();
+          if (!res.headers.location) {
+            reject(new Error("圖片重新導向缺少目標網址"));
+            return;
+          }
+          downloadFile(res.headers.location, dest, redirectCount + 1).then(
+            resolve,
+            reject
+          );
+          return;
         }
+
+        if (res.statusCode < 200 || res.statusCode >= 300) {
+          res.resume();
+          reject(new Error(`圖片下載回傳 HTTP ${res.statusCode}`));
+          return;
+        }
+
+        const tempPath = `${dest}.part`;
+        const file = fs.createWriteStream(tempPath);
         res.pipe(file);
-        file.on("finish", () => file.close(resolve));
+        file.on("finish", () =>
+          file.close(() => {
+            fs.copyFileSync(tempPath, dest);
+            fs.unlinkSync(tempPath);
+            resolve();
+          })
+        );
+        file.on("error", (err) => {
+          if (fs.existsSync(tempPath)) fs.unlinkSync(tempPath);
+          reject(err);
+        });
       })
-      .on("error", (err) => {
-        fs.unlinkSync(dest);
-        reject(err);
-      });
+      .on("error", reject);
   });
+}
+
+function getMediaUrls(post) {
+  const urls = [];
+  const seen = new Set();
+
+  function addImage(item) {
+    const url = item?.media?.image?.src;
+    if (url && !seen.has(url)) {
+      seen.add(url);
+      urls.push(url);
+    }
+  }
+
+  for (const attachment of post.attachments?.data || []) {
+    const children = attachment.subattachments?.data || [];
+    if (children.length > 0) {
+      children.forEach(addImage);
+    } else {
+      addImage(attachment);
+    }
+  }
+
+  if (urls.length === 0 && post.full_picture) {
+    urls.push(post.full_picture);
+  }
+
+  return urls;
+}
+
+function getMediaRefs(slug, count) {
+  return Array.from(
+    { length: count },
+    (_, index) => `/images/posts/${slug}/${index + 1}.jpg`
+  );
+}
+
+async function syncMedia(mediaUrls, slug, imagesDir) {
+  if (mediaUrls.length === 0) return [];
+
+  const postImagesDir = path.join(imagesDir, slug);
+  fs.mkdirSync(postImagesDir, { recursive: true });
+
+  for (let index = 0; index < mediaUrls.length; index++) {
+    await downloadFile(
+      mediaUrls[index],
+      path.join(postImagesDir, `${index + 1}.jpg`)
+    );
+  }
+
+  for (const filename of fs.readdirSync(postImagesDir)) {
+    const match = filename.match(/^(\d+)\.jpg$/);
+    if (match && Number(match[1]) > mediaUrls.length) {
+      fs.unlinkSync(path.join(postImagesDir, filename));
+    }
+  }
+
+  const oldSingleImage = path.join(imagesDir, `${slug}.jpg`);
+  if (fs.existsSync(oldSingleImage)) fs.unlinkSync(oldSingleImage);
+
+  return getMediaRefs(slug, mediaUrls.length);
 }
 
 function toSlug(text, date, postId) {
@@ -126,6 +214,32 @@ function extractManualFields(existingContent) {
   return fields;
 }
 
+function buildMarkdown({ post, title, date, excerpt, mediaRefs, manual }) {
+  const body = [post.message.trim()];
+  for (const image of mediaRefs.slice(1)) {
+    body.push(`![${title.replace(/\]/g, "")}](${image})`);
+  }
+
+  return [
+    "---",
+    `title: "${title.replace(/"/g, '\\"')}"`,
+    `date: "${date}"`,
+    `excerpt: "${excerpt.replace(/"/g, '\\"')}"`,
+    `fb_id: "${post.id}"`,
+    `fb_permalink: "${post.permalink_url || ""}"`,
+    `fb_updated_time: "${post.updated_time || post.created_time}"`,
+    `media_count: ${mediaRefs.length}`,
+    `image: "${mediaRefs[0] || ""}"`,
+    `category: "${manual.category || ""}"`,
+    `model: "${manual.model || ""}"`,
+    `pinned: ${manual.pinned || "false"}`,
+    `order: ${manual.order || "0"}`,
+    "---",
+    "",
+    body.join("\n\n"),
+  ].join("\n");
+}
+
 async function main() {
   const PAGE_ID = process.env.FB_PAGE_ID;
   const TOKEN = process.env.FB_PAGE_TOKEN;
@@ -146,8 +260,10 @@ async function main() {
   console.log(`📋 已有 ${existingPosts.size} 篇 FB 文章\n`);
 
   // 取最近 20 篇
-  const fields = "id,message,full_picture,created_time,permalink_url,updated_time";
-  const url = `https://graph.facebook.com/v25.0/${PAGE_ID}/posts?fields=${fields}&limit=20&access_token=${TOKEN}`;
+  const fields =
+    "id,message,full_picture,created_time,permalink_url,updated_time," +
+    "attachments{media_type,type,media,target,subattachments{media_type,type,media,target}}";
+  const url = `https://graph.facebook.com/v25.0/${PAGE_ID}/posts?fields=${encodeURIComponent(fields)}&limit=20&access_token=${encodeURIComponent(TOKEN)}`;
   const data = await fetchJSON(url);
 
   if (data.error) {
@@ -171,93 +287,40 @@ async function main() {
     const date = post.created_time.split("T")[0];
     const title = post.message.split("\n")[0].slice(0, 80) || "粉專貼文";
     const excerpt = post.message.replace(/\n/g, " ").slice(0, 120);
+    const mediaUrls = getMediaUrls(post);
 
     const existing = existingPosts.get(post.id);
+    const slug = existing
+      ? existing.filename.replace(/\.md$/, "")
+      : toSlug(title, date, post.id);
+    const mediaRefs = getMediaRefs(slug, mediaUrls.length);
+    const manual = existing ? extractManualFields(existing.content) : {};
+    const markdown = buildMarkdown({
+      post,
+      title,
+      date,
+      excerpt,
+      mediaRefs,
+      manual,
+    });
+    const assetsReady = mediaRefs.every((image) =>
+      fs.existsSync(path.join(__dirname, "..", "public", image))
+    );
 
     if (existing) {
       // === 更新已存在的文章 ===
-      // 比對內容是否有變化（只比對 FB 的 message 部分）
-      const oldBodyMatch = existing.content.split("---").slice(2).join("---").trim();
-      const newBody = post.message.trim();
+      if (existing.content === markdown && assetsReady) continue;
 
-      if (oldBodyMatch === newBody) continue; // 內容沒變，跳過
-
-      // 保留手動設定的欄位
-      const manual = extractManualFields(existing.content);
-      const slug = existing.filename.replace(/\.md$/, "");
-
-      let image = "";
-      if (post.full_picture) {
-        image = `/images/posts/${slug}.jpg`;
-      }
-
-      const markdown = [
-        "---",
-        `title: "${title.replace(/"/g, '\\"')}"`,
-        `date: "${date}"`,
-        `excerpt: "${excerpt.replace(/"/g, '\\"')}"`,
-        `fb_id: "${post.id}"`,
-        `fb_permalink: "${post.permalink_url || ""}"`,
-        `image: "${image}"`,
-        `category: "${manual.category || ""}"`,
-        `model: "${manual.model || ""}"`,
-        `pinned: ${manual.pinned || "false"}`,
-        `order: ${manual.order || "0"}`,
-        "---",
-        "",
-        post.message,
-      ].join("\n");
-
+      await syncMedia(mediaUrls, slug, imagesDir);
       fs.writeFileSync(path.join(postsDir, existing.filename), markdown, "utf-8");
-      console.log(`🔄 已更新: ${slug}`);
-
-      // 更新圖片
-      if (post.full_picture) {
-        try {
-          await downloadFile(post.full_picture, path.join(imagesDir, `${slug}.jpg`));
-        } catch (err) {
-          console.log(`⚠ 圖片更新失敗: ${err.message}`);
-        }
-      }
+      console.log(`🔄 已更新: ${slug}（${mediaUrls.length} 張圖片）`);
 
       updateCount++;
     } else {
       // === 新文章 ===
-      const slug = toSlug(title, date, post.id);
-
-      let image = "";
-      if (post.full_picture) {
-        image = `/images/posts/${slug}.jpg`;
-      }
-
-      const markdown = [
-        "---",
-        `title: "${title.replace(/"/g, '\\"')}"`,
-        `date: "${date}"`,
-        `excerpt: "${excerpt.replace(/"/g, '\\"')}"`,
-        `fb_id: "${post.id}"`,
-        `fb_permalink: "${post.permalink_url || ""}"`,
-        `image: "${image}"`,
-        `category: ""`,
-        `model: ""`,
-        `pinned: false`,
-        `order: 0`,
-        "---",
-        "",
-        post.message,
-      ].join("\n");
-
+      await syncMedia(mediaUrls, slug, imagesDir);
       fs.writeFileSync(path.join(postsDir, `${slug}.md`), markdown, "utf-8");
-      console.log(`📝 新文章: ${slug}`);
-
-      if (post.full_picture) {
-        try {
-          await downloadFile(post.full_picture, path.join(imagesDir, `${slug}.jpg`));
-          console.log(`🖼 圖片已下載`);
-        } catch (err) {
-          console.log(`⚠ 圖片下載失敗: ${err.message}`);
-        }
-      }
+      console.log(`📝 新文章: ${slug}（${mediaUrls.length} 張圖片）`);
 
       newCount++;
     }
@@ -291,7 +354,11 @@ async function main() {
   }
 }
 
-main().catch((err) => {
-  console.error("❌ 同步失敗:", err.message);
-  process.exit(1);
-});
+if (require.main === module) {
+  main().catch((err) => {
+    console.error("❌ 同步失敗:", err.message);
+    process.exit(1);
+  });
+}
+
+module.exports = { buildMarkdown, getMediaRefs, getMediaUrls, toSlug };

@@ -187,7 +187,8 @@ node scripts/get-permanent-token.js <短期User Token>
 
 - 同步腳本直接使用永久 Page Token 呼叫 `/{PAGE_ID}/posts` 抓取最近 20 篇貼文
 - 每天自動執行一次（台灣 8:17），也可到 GitHub Actions 手動觸發
-- 新文章建立 `.md` 檔 + 下載圖片，已存在的文章比對內容更新
+- 新文章建立 `.md` 檔並下載 Facebook 貼文的全部圖片，已存在文章若文字、更新時間、圖片數量或本機圖片不一致會自動補齊
+- 首張圖片作為文章封面，其餘圖片依 Facebook 原順序顯示在文章內容中
 - 新文章網址只使用英數、日期與 Facebook 貼文 ID，避免中文網址編碼造成文章頁 404
 - 2026-07-30 的既有中文文章網址會在路由層永久轉址到新網址，舊分享連結不會失效
 - 不想同步的文章，把 `fb_id` 加到 `content/posts/.sync-ignore`（一行一個）
@@ -198,6 +199,7 @@ node scripts/get-permanent-token.js <短期User Token>
 |------|------|------|
 | `pages_read_engagement` 權限錯誤 | Token 產生時沒勾選該權限 | 重新產生 Token 並勾選 |
 | `/feed` endpoint 被擋 | 需要 Page Public Content Access 審查 | 改用 `/posts` endpoint（已修正） |
+| 多圖貼文只出現封面 | 只讀取 `full_picture`，沒有展開附件 | 同步程式已改讀取 `attachments` 與 `subattachments` 並逐張下載 |
 | 刪除的文章被重新同步 | fb_id 不在忽略清單 | 加到 `.sync-ignore` |
 | Token 過期 | 沒有使用永久 Token | 用 `get-permanent-token.js` 換取永久 Token |
 
