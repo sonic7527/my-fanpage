@@ -186,8 +186,10 @@ node scripts/get-permanent-token.js <短期User Token>
 ### 6. 同步機制說明
 
 - 同步腳本直接使用永久 Page Token 呼叫 `/{PAGE_ID}/posts` 抓取最近 20 篇貼文
-- 每天自動執行一次（台灣 8:00），也可到 GitHub Actions 手動觸發
+- 每天自動執行一次（台灣 8:17），也可到 GitHub Actions 手動觸發
 - 新文章建立 `.md` 檔 + 下載圖片，已存在的文章比對內容更新
+- 新文章網址只使用英數、日期與 Facebook 貼文 ID，避免中文網址編碼造成文章頁 404
+- 2026-07-30 的既有中文文章網址會永久轉址到新的安全網址，舊分享連結仍可使用
 - 不想同步的文章，把 `fb_id` 加到 `content/posts/.sync-ignore`（一行一個）
 
 ### 7. 常見問題

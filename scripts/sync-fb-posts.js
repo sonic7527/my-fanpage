@@ -53,13 +53,22 @@ function downloadFile(url, dest) {
   });
 }
 
-function toSlug(text, date) {
+function toSlug(text, date, postId) {
   const clean = text
-    .replace(/[^\w\u4e00-\u9fff\s-]/g, "")
+    .normalize("NFKD")
+    .replace(/[^\x00-\x7F]/g, " ")
+    .replace(/[^a-zA-Z0-9\s-]/g, "")
     .trim()
+    .toLowerCase()
     .replace(/\s+/g, "-")
-    .slice(0, 50);
-  return `${date}-${clean || "post"}`;
+    .replace(/-+/g, "-")
+    .slice(0, 40)
+    .replace(/-$/, "");
+  const idSuffix = String(postId || "")
+    .split("_")
+    .pop()
+    .replace(/\D/g, "");
+  return `${date}-${clean || "facebook-post"}${idSuffix ? `-${idSuffix}` : ""}`;
 }
 
 /**
@@ -214,7 +223,7 @@ async function main() {
       updateCount++;
     } else {
       // === 新文章 ===
-      const slug = toSlug(title, date);
+      const slug = toSlug(title, date, post.id);
 
       let image = "";
       if (post.full_picture) {

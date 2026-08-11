@@ -2,9 +2,32 @@ import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 
 const postsDir = path.join(process.cwd(), "content/posts");
+const legacySlugRedirects: Record<string, string> = {
+  "2026-07-30-維修車款YAMAHA-New-Cuxi-115":
+    "2026-07-30-yamaha-new-cuxi-115-1053593253836883",
+};
+
+function decodePostSlug(rawSlug: string): string | null {
+  try {
+    const slug = decodeURIComponent(rawSlug).normalize("NFC");
+    if (!slug || slug.includes("/") || slug.includes("\\") || slug.includes("\0")) {
+      return null;
+    }
+    return slug;
+  } catch {
+    return null;
+  }
+}
+
+function getPostFilePath(rawSlug: string): string | null {
+  const decodedSlug = decodePostSlug(rawSlug);
+  if (!decodedSlug) return null;
+  const canonicalSlug = legacySlugRedirects[decodedSlug] || decodedSlug;
+  return path.join(postsDir, `${canonicalSlug}.md`);
+}
 
 export async function generateStaticParams() {
   if (!fs.existsSync(postsDir)) return [];
@@ -20,8 +43,8 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const filePath = path.join(postsDir, `${slug}.md`);
-  if (!fs.existsSync(filePath)) return { title: "文章不存在" };
+  const filePath = getPostFilePath(slug);
+  if (!filePath || !fs.existsSync(filePath)) return { title: "文章不存在" };
   const { data } = matter(fs.readFileSync(filePath, "utf-8"));
   return {
     title: `${data.title} — 北大液晶儀表維修`,
@@ -35,8 +58,14 @@ export default async function PostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const filePath = path.join(postsDir, `${slug}.md`);
-  if (!fs.existsSync(filePath)) notFound();
+  const decodedSlug = decodePostSlug(slug);
+  if (!decodedSlug) notFound();
+
+  const canonicalSlug = legacySlugRedirects[decodedSlug];
+  if (canonicalSlug) permanentRedirect(`/posts/${canonicalSlug}`);
+
+  const filePath = getPostFilePath(decodedSlug);
+  if (!filePath || !fs.existsSync(filePath)) notFound();
 
   const raw = fs.readFileSync(filePath, "utf-8");
   const { data, content } = matter(raw);
