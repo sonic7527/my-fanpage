@@ -138,17 +138,17 @@ function Footer() {
           <div>
             <h4 className="mb-5 text-xs font-bold uppercase tracking-[0.2em] text-white/40">服務據點</h4>
             <div className="flex flex-col gap-3 text-sm text-text-muted">
-              <span>週一、三 — 高雄</span>
-              <span>週二、四、五 — 屏東</span>
-              <span>10:30 – 18:00</span>
+              <span>高雄｜週一至週五 11:30–16:00</span>
+              <span>屏東｜週二、週三 18:00–20:00</span>
+              <span>屏東｜週末 10:30–13:30</span>
               <span className="text-accent font-medium">採預約制服務</span>
             </div>
           </div>
         </div>
 
         <div className="mt-10 md:mt-16 flex flex-col items-center justify-between gap-4 border-t border-white/[0.06] pt-8 sm:flex-row">
-          <p className="text-xs text-white/30">© {new Date().getFullYear()} 北大液晶儀表維修工作室. All rights reserved.</p>
-          <p className="text-xs text-white/20">Bei Da LCD Dashboard Maintenance</p>
+          <p className="text-xs text-white/30">© {new Date().getFullYear()} 北大液晶儀表維修工作室．版權所有</p>
+          <p className="text-xs text-white/20">專業機車液晶儀表維修</p>
         </div>
       </div>
     </footer>

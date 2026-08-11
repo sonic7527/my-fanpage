@@ -238,7 +238,7 @@ export default function VehicleOrbit() {
     <section id="vehicles" className="relative py-16 md:py-28 overflow-hidden bg-primary-deep">
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
         <div className="text-center mb-6">
-          <span className="text-xs font-bold uppercase tracking-[0.3em] text-accent">Compatible Models</span>
+          <span className="text-xs font-bold tracking-[0.3em] text-accent">適用車款</span>
           <h2 className="mt-3 font-display text-[clamp(1.8rem,3.5vw,3rem)] font-black text-white">可維修車款一覽</h2>
           <p className="mt-2 text-sm text-white/40">點擊品牌查看可維修車款</p>
         </div>
@@ -305,28 +305,13 @@ export default function VehicleOrbit() {
                 />
               ))}
 
-              {/* Center: galaxy glow + calligraphy image */}
+              {/* Center: subtle brand glow + calligraphy image */}
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <div className={`relative transition-all duration-500 ${selected ? "scale-90 opacity-60" : "scale-100 opacity-100"}`}>
-                  {/* Glow layers */}
-                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] h-[340px] rounded-full" style={{ background: "radial-gradient(circle, rgba(120,40,200,0.15) 0%, rgba(80,20,160,0.08) 40%, transparent 70%)" }} />
-                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[260px] h-[260px] rounded-full blur-[60px]" style={{ background: "radial-gradient(circle, rgba(140,60,220,0.3) 0%, rgba(100,30,180,0.15) 50%, transparent 80%)" }} />
-                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[200px] h-[200px] rounded-full blur-[40px]" style={{ background: "radial-gradient(circle, rgba(220,80,50,0.25) 0%, rgba(200,60,120,0.18) 40%, transparent 75%)" }} />
-                  {/* Spinning crystal layers */}
-                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[160px] h-[160px] animate-spin" style={{ animationDuration: "12s" }}>
-                    <div className="absolute inset-0 rounded-[30%] rotate-45" style={{ background: "linear-gradient(135deg, rgba(180,60,220,0.4) 0%, rgba(220,80,40,0.3) 50%, rgba(60,120,220,0.35) 100%)", filter: "blur(12px)" }} />
-                  </div>
-                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[130px] h-[130px]" style={{ animation: "spin 18s linear infinite reverse" }}>
-                    <div className="absolute inset-0 rounded-[35%] -rotate-12" style={{ background: "linear-gradient(225deg, rgba(240,100,60,0.35) 0%, rgba(200,50,150,0.3) 40%, rgba(100,60,220,0.4) 100%)", filter: "blur(8px)" }} />
-                  </div>
-                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[100px] h-[100px] animate-spin" style={{ animationDuration: "8s" }}>
-                    <div className="absolute inset-0 rounded-[25%] rotate-[30deg]" style={{ background: "linear-gradient(315deg, rgba(80,140,255,0.4) 0%, rgba(180,80,220,0.35) 50%, rgba(240,90,70,0.3) 100%)", filter: "blur(5px)" }} />
-                  </div>
-                  {/* Hot core */}
-                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[60px] h-[60px] rounded-full" style={{ background: "radial-gradient(circle, rgba(255,200,180,0.35) 0%, rgba(220,100,180,0.2) 40%, transparent 70%)", filter: "blur(8px)" }} />
+                  <div className="absolute left-1/2 top-1/2 h-[250px] w-[360px] -translate-x-1/2 -translate-y-1/2 rounded-[50%] blur-[55px]" style={{ background: "radial-gradient(ellipse, rgba(220,60,40,0.15) 0%, rgba(197,148,70,0.07) 42%, transparent 72%)" }} />
                   {/* Calligraphy image (transparent PNG) */}
                   <div className="relative flex items-center justify-center">
-                    <img src="/北大旋轉書法.png" alt="北大" className="w-[320px] h-auto" style={{ mixBlendMode: "screen" }} draggable={false} />
+                    <img src="/images/bei-da-orbit-v2.png" alt="北大" className="w-[380px] h-auto" draggable={false} />
                   </div>
                 </div>
               </div>

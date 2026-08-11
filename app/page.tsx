@@ -81,8 +81,8 @@ function HeroSection() {
         <div className="max-w-3xl">
           <div className="animate-fade-up mb-8 flex items-center gap-3">
             <span className="h-px w-16 bg-gradient-to-r from-accent to-transparent" />
-            <span className="text-xs font-bold uppercase tracking-[0.3em] text-accent/80">
-              Bei Da LCD Dashboard Maintenance
+            <span className="text-xs font-bold tracking-[0.3em] text-accent/80">
+              北大液晶儀表維修
             </span>
           </div>
 
@@ -106,10 +106,15 @@ function HeroSection() {
 
           <div className="animate-fade-up-delay-3 mt-8 md:mt-12 flex flex-wrap items-center gap-3 md:gap-4">
             <a
-              href="#contact"
-              className="group relative inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 md:px-8 md:py-4 text-sm font-bold text-white overflow-hidden transition-all duration-300 hover:shadow-[0_0_32px_rgba(220,60,40,0.5)] hover:scale-[1.03] hover:gap-3"
+              href="https://line.me/R/ti/p/@777xvkrg"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group relative inline-flex min-h-12 items-center gap-2 rounded-full bg-[#06C755] px-6 py-3 md:px-8 md:py-4 text-sm font-bold text-white overflow-hidden transition-all duration-300 hover:bg-[#05b84f] hover:shadow-[0_0_28px_rgba(6,199,85,0.3)] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#06C755]"
             >
-              <span className="relative z-10">預約維修諮詢</span>
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" className="relative z-10" aria-hidden="true">
+                <path d="M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" />
+              </svg>
+              <span className="relative z-10">使用 LINE 預約</span>
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="relative z-10 transition-transform duration-300 group-hover:translate-x-1">
                 <path d="M3 8h10m0 0L9 4m4 4L9 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
@@ -196,8 +201,8 @@ function ServicesSection() {
       <div className="relative mx-auto max-w-7xl px-6 lg:px-10">
         <ScrollReveal>
           <div className="mb-12 md:mb-20 max-w-2xl">
-            <span className="flex items-center gap-3 text-xs font-bold uppercase tracking-[0.3em] text-accent">
-              <span className="h-px w-10 bg-accent" /> Services
+            <span className="flex items-center gap-3 text-xs font-bold tracking-[0.3em] text-accent">
+              <span className="h-px w-10 bg-accent" /> 服務項目
             </span>
             <h2 className="mt-4 font-display text-[clamp(2rem,4vw,3.5rem)] font-black leading-tight text-white">
               專業維修項目
@@ -284,8 +289,8 @@ function WhyUsSection() {
       <div className="relative mx-auto max-w-7xl px-6 lg:px-10">
         <ScrollReveal>
           <div className="mb-12 md:mb-20 text-center">
-            <span className="flex items-center justify-center gap-3 text-xs font-bold uppercase tracking-[0.3em] text-accent">
-              <span className="h-px w-10 bg-accent/50" /> Why Choose Us <span className="h-px w-10 bg-accent/50" />
+            <span className="flex items-center justify-center gap-3 text-xs font-bold tracking-[0.3em] text-accent">
+              <span className="h-px w-10 bg-accent/50" /> 選擇北大 <span className="h-px w-10 bg-accent/50" />
             </span>
             <h2 className="mt-4 font-display text-[clamp(2rem,4vw,3.5rem)] font-black leading-tight text-white">
               為什麼選擇北大
@@ -433,12 +438,12 @@ function FaqSection() {
    ═══════════════════════════════════════════ */
 function ContactSection() {
   return (
-    <section id="contact" className="relative border-t border-border bg-surface/30 py-16 md:py-28">
+    <section id="contact" className="relative overflow-hidden border-t border-border bg-surface/30 py-16 md:py-28">
       <div className="mx-auto max-w-6xl px-6">
         <div className="grid gap-10 md:gap-16 lg:grid-cols-[1fr_1.2fr]">
           <ScrollReveal className="reveal-left">
             <div>
-              <span className="text-xs font-bold uppercase tracking-[0.25em] text-accent">Contact</span>
+              <span className="text-xs font-bold tracking-[0.25em] text-accent">聯絡方式</span>
               <h2 className="mt-3 font-display text-[clamp(2rem,4vw,3.2rem)] font-black leading-tight text-text">
                 聯絡我們
               </h2>
@@ -452,25 +457,43 @@ function ContactSection() {
                 </p>
               </div>
 
+              <a
+                href="https://line.me/R/ti/p/@777xvkrg"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group mt-5 flex min-h-16 items-center gap-4 rounded-2xl bg-[#06C755] px-5 py-4 text-white transition-all duration-300 hover:bg-[#05b84f] hover:-translate-y-0.5 hover:shadow-[0_16px_36px_rgba(6,199,85,0.2)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#06C755]"
+              >
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/15">
+                  <svg width="25" height="25" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" />
+                  </svg>
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block text-base font-black">LINE 預約諮詢</span>
+                  <span className="mt-0.5 block text-sm text-white/80">官方帳號 @777xvkrg</span>
+                </span>
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" className="shrink-0 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true">
+                  <path d="M4 9h10m0 0-4-4m4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </a>
+
               <div className="mt-8 space-y-5">
                 <ContactRow label="高雄據點" value="高雄市苓雅區建國一路64巷59號2樓" />
                 <ContactRow label="屏東據點" value="屏東市頂柳路539巷78號" />
-                <ContactRow label="營業時間" value="10:30 – 18:00｜週六、日公休｜特殊時段可提前預約" />
+                <ContactRow label="高雄營業時間" value="週一至週五 11:30–16:00" />
+                <ContactRow label="屏東營業時間" value="週二、週三 18:00–20:00｜週末 10:30–13:30" />
                 <ContactRow label="電話" value="0958-320-153" />
               </div>
 
               <div className="mt-8 flex gap-3">
-                {["Facebook", "LINE"].map((name) => (
-                  <a
-                    key={name}
-                    href={name === "LINE" ? "https://line.me/R/ti/p/@777xvkrg" : "#"}
-                    target={name === "LINE" ? "_blank" : undefined}
-                    rel={name === "LINE" ? "noopener noreferrer" : undefined}
-                    className="rounded-full border border-white/10 px-4 py-1.5 text-xs font-medium text-white/50 hover:border-accent/50 hover:text-accent transition-all duration-300"
-                  >
-                    {name}
-                  </a>
-                ))}
+                <a
+                  href="https://www.facebook.com/profile.php?id=100075586557819"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-full border border-white/10 px-4 py-2 text-xs font-medium text-white/60 transition-all duration-300 hover:border-accent/50 hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                >
+                  Facebook 粉絲專頁
+                </a>
               </div>
             </div>
           </ScrollReveal>
