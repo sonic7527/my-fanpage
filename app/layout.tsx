@@ -46,14 +46,14 @@ function Nav() {
   return (
     <nav className="nav-bar fixed top-0 left-0 right-0 z-50 transition-all duration-500">
       {/* 三欄 grid：Logo 左 ｜ 導航置中 ｜ CTA 右 */}
-      <div className="relative grid h-20 grid-cols-[1fr_auto_1fr] items-center px-5 md:h-24 lg:px-10">
+      <div className="relative grid h-24 grid-cols-[1fr_auto_1fr] items-center px-5 md:h-32 lg:px-10">
         {/* 左欄：Logo */}
         <div className="justify-self-start">
           <a href="/" className="group inline-block">
             <img
               src="/images/logo-nav-white.png"
               alt="北大液晶儀表維修"
-              className="h-16 w-auto transition-transform duration-300 group-hover:scale-[1.03] md:h-20"
+              className="h-20 w-auto transition-transform duration-300 group-hover:scale-[1.03] md:h-28"
             />
           </a>
         </div>

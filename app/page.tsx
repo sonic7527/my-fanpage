@@ -76,7 +76,7 @@ function HeroSection() {
       <div className="absolute inset-0 paper-grain opacity-25" />
 
       {/* 內容 */}
-      <div className="relative z-10 mx-auto w-full max-w-7xl px-6 pb-16 pt-28 lg:px-10">
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-6 pb-16 pt-32 md:pt-40 lg:px-10">
         <div className="max-w-[44rem]">
           <div className="animate-fade-up mb-7 flex items-center gap-3">
             <span className="h-px w-12 bg-gold/70" />

@@ -7,6 +7,10 @@
 ## 更新日誌
 
 ### 2026-08-11
+- 左上角品牌 Logo 與導覽列同步放大，桌機與手機皆保留清楚品牌辨識
+- Facebook 同步工作流程從 `disabled_inactivity` 恢復為 `active`，手動實跑成功搬入 2026-07-30 新文章與圖片
+- Facebook 同步改為每日 08:17 執行，避開 GitHub Actions 整點尖峰；新增每月心跳提交，避免公開 repo 60 天無活動後再次停用
+- GitHub Actions 升級至 `checkout@v6`、`setup-node@v6` 與 Node.js 24
 - 全站視覺統一為「職人工坊夜色」：深海軍藍底、暖金與朱砂重點色、紙張顆粒、編輯式不對稱排版
 - 新增 AI 生成首頁工作檯主視覺 `public/images/bei-da-workbench-hero-v1.png`，延續北大書法圖的水墨與技術線條語言
 - 首頁、車款軌道、服務項目、選擇北大、文章預覽、聯絡區、導覽列、頁尾與 LINE 入口完成一致化
@@ -54,7 +58,7 @@ https://my-fanpage.vercel.app
 - **首頁** — 職人工坊主視覺、可維修車款軌道、服務項目、選擇北大、最新 6 篇文章、聯絡資訊
 - **公告事項與維修案例** — 置頂文章動態排列 + 多種版面交替排列，分類篩選
 - **管理後台** — 登入後可預覽、編輯、新增、刪除文章（透過 GitHub API）
-- **Facebook 同步** — 排程設計為每天台灣時間 08:00 從 FB 粉專抓新貼文，轉為 Markdown 存入 repo；目前 GitHub Actions 狀態為 `disabled_inactivity`，需在 Actions 頁重新啟用
+- **Facebook 同步** — 每天台灣時間 08:17 從 FB 粉專抓新貼文，轉為 Markdown 存入 repo；每月心跳提交避免排程因公開 repo 長期無活動而停用
 - **LINE 官方帳號** — Webhook 整合，自動回覆訊息
 - **營業時間** — 高雄：週一至週五 11:30–16:00；屏東：週二、週三 18:00–20:00、週末 10:30–13:30（皆採預約制）
 
@@ -66,7 +70,7 @@ https://my-fanpage.vercel.app
 - **通訊**: LINE Messaging API webhook
 - **後台**: GitHub Contents API（Vercel serverless 環境寫入）
 - **部署**: Vercel（推送 GitHub 自動部署；亦可使用 Vercel CLI 直接部署）
-- **同步**: GitHub Actions cron（每天台灣時間 08:00）
+- **同步**: GitHub Actions cron（每天台灣時間 08:17，另有每月防休眠心跳）
 
 ## 專案結構
 
@@ -100,8 +104,10 @@ https://my-fanpage.vercel.app
 │   └── migrate-fb-posts.js    # FB 資料匯出轉 Markdown
 ├── public/                     # 靜態資源
 │   └── images/bei-da-workbench-hero-v1.png # 首頁職人工坊主視覺
-└── .github/workflows/
-    └── sync-fb.yml            # FB 同步排程（每小時）
+└── .github/
+    ├── fb-sync-heartbeat      # 每月更新，避免排程因 repo 無活動被停用
+    └── workflows/
+        └── sync-fb.yml        # FB 同步排程（每天台灣時間 08:17）
 ```
 
 ## 環境變數
@@ -128,9 +134,9 @@ NEXT_PUBLIC_LINE_OA_URL=
 
 ## Facebook 同步設定（完整步驟）
 
-FB 同步由 GitHub Actions 每天自動執行一次（台灣 8:00），抓取粉專最新貼文轉為 Markdown。
+FB 同步由 GitHub Actions 每天自動執行一次（台灣 8:17），抓取粉專最新貼文轉為 Markdown。
 
-> 2026-08-11 檢查：工作流程因長時間無活動被 GitHub 標記為 `disabled_inactivity`。重新啟用工作流程後才會依上述時間執行；首頁已恢復文章區塊，成功同步的新文章會顯示於首頁與文章列表。
+> 2026-08-11 驗證：工作流程已從 `disabled_inactivity` 重新啟用，手動執行成功新增 1 篇 Facebook 文章與圖片並推送至 GitHub。工作流程另會每月更新 `.github/fb-sync-heartbeat`，避免公開 repo 因 60 天無活動再次停用。
 
 ### 1. Facebook 開發者應用程式設定
 

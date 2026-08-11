@@ -61,7 +61,7 @@ const faqs = [
 
 export default function FaqPage() {
   return (
-    <div className="reading-page min-h-screen pb-20 pt-28 md:pt-32">
+    <div className="reading-page min-h-screen pb-20 pt-32 md:pt-40">
       <div className="mx-auto max-w-3xl px-4 md:px-6">
         <header className="mb-10 md:mb-16">
           <span className="section-kicker">

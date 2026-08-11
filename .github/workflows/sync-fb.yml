@@ -2,8 +2,8 @@ name: Sync Facebook Posts
 
 on:
   schedule:
-    # 每天一次（UTC 0:00 = 台灣 8:00）
-    - cron: "0 0 * * *"
+    # 每天一次（UTC 0:17 = 台灣 8:17），避開整點尖峰
+    - cron: "17 0 * * *"
   workflow_dispatch: # 允許手動觸發
 
 permissions:
@@ -15,15 +15,39 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: "20"
+          node-version: "24"
+          package-manager-cache: false
 
       - name: Run sync script
         env:
           FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
           FB_PAGE_TOKEN: ${{ secrets.FB_PAGE_TOKEN }}
         run: node scripts/sync-fb-posts.js
+
+      # 公開 repo 若 60 天沒有活動，GitHub 會自動停用排程。
+      # 每月更新一次心跳檔，避免 FB 同步再次進入 disabled_inactivity。
+      - name: Keep scheduled sync active
+        if: ${{ github.event_name == 'schedule' }}
+        shell: bash
+        run: |
+          month="$(date -u +%Y-%m)"
+          heartbeat=".github/fb-sync-heartbeat"
+          current="$(cat "$heartbeat" 2>/dev/null || true)"
+
+          if [ "$current" = "$month" ]; then
+            echo "Heartbeat already current: $month"
+            exit 0
+          fi
+
+          printf '%s\n' "$month" > "$heartbeat"
+          git config user.name "FB Sync Bot"
+          git config user.email "bot@noreply.github.com"
+          git add "$heartbeat"
+          git commit -m "chore: keep Facebook sync active ($month)"
+          git pull --rebase origin master
+          git push origin master

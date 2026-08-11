@@ -42,7 +42,7 @@ export default async function PostPage({
   const { data, content } = matter(raw);
 
   return (
-    <article className="reading-page min-h-screen pb-20 pt-28 md:pt-32">
+    <article className="reading-page min-h-screen pb-20 pt-32 md:pt-40">
       <div className="mx-auto max-w-3xl px-4 md:px-6">
         {/* Back link */}
         <Link

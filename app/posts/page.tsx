@@ -56,7 +56,7 @@ export default function PostsPage() {
   const regularPosts = allPosts.filter((p) => !p.pinned);
 
   return (
-    <div className="posts-canvas min-h-screen bg-primary pb-20 pt-28 md:pt-32">
+    <div className="posts-canvas min-h-screen bg-primary pb-20 pt-32 md:pt-40">
       {/* ── Background decorations ── */}
       <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
         <div className="absolute inset-0 paper-grain opacity-30" />

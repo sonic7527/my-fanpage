@@ -26,7 +26,7 @@ export default function MobileMenu() {
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="relative flex h-10 w-10 items-center justify-center rounded-lg text-text-muted hover:text-white transition-colors z-[60]"
+        className="relative z-[60] flex h-11 w-11 items-center justify-center rounded-lg text-text-muted transition-colors hover:text-white"
         aria-label={open ? "關閉選單" : "開啟選單"}
       >
         <div className="flex flex-col gap-[5px]">
