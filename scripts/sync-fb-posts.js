@@ -15,22 +15,69 @@ const path = require("path");
 const https = require("https");
 const { execSync } = require("child_process");
 
-function fetchJSON(url) {
-  return new Promise((resolve, reject) => {
-    https
-      .get(url, (res) => {
-        let data = "";
-        res.on("data", (chunk) => (data += chunk));
-        res.on("end", () => {
-          try {
-            resolve(JSON.parse(data));
-          } catch (e) {
-            reject(new Error(`JSON parse error: ${data.slice(0, 200)}`));
-          }
-        });
-      })
-      .on("error", reject);
-  });
+async function fetchJSON(url) {
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      return await new Promise((resolve, reject) => {
+        const request = https
+          .get(url, (res) => {
+            let data = "";
+            res.on("error", reject);
+            res.on("aborted", () => reject(new Error("Facebook 回應中斷")));
+            res.on("data", (chunk) => (data += chunk));
+            res.on("end", () => {
+              try {
+                const parsed = JSON.parse(data);
+                if (res.statusCode === 429 || res.statusCode >= 500 || parsed.error?.is_transient) {
+                  reject(new Error(`Facebook 暫時無法回應（HTTP ${res.statusCode}）`));
+                  return;
+                }
+                resolve(parsed);
+              } catch {
+                reject(new Error("Facebook 回傳格式不是 JSON"));
+              }
+            });
+          })
+          .on("error", reject);
+        request.setTimeout(30000, () => request.destroy(new Error("Facebook 連線逾時")));
+      });
+    } catch (err) {
+      if (attempt === 3) throw err;
+      console.log(`⚠ Facebook 讀取失敗，第 ${attempt} 次重試`);
+      await new Promise((resolve) => setTimeout(resolve, attempt * 5000));
+    }
+  }
+}
+
+async function fetchRecentPosts(firstUrl) {
+  const cutoff = Date.now() - 90 * 24 * 60 * 60 * 1000;
+  const posts = new Map();
+  let nextUrl = firstUrl;
+  for (let page = 1; nextUrl; page++) {
+    if (page > 100) throw new Error("Facebook 分頁超過安全上限，請檢查回傳資料");
+    const parsedUrl = new URL(nextUrl);
+    if (parsedUrl.protocol !== "https:" || parsedUrl.hostname !== "graph.facebook.com") {
+      throw new Error("Facebook 分頁網址不是官方 API");
+    }
+    const data = await fetchJSON(nextUrl);
+    if (data.error) throw new Error(`Facebook API 錯誤：${data.error.message}`);
+    if (!Array.isArray(data.data)) throw new Error("Facebook 回傳缺少貼文清單");
+    if (page === 1 && data.data.length === 0) {
+      throw new Error("Facebook 回傳空清單，不能判定為沒有新文章");
+    }
+    for (const post of data.data) {
+      if (!post.id || !Number.isFinite(Date.parse(post.created_time))) {
+        throw new Error("Facebook 貼文缺少識別碼或發文時間");
+      }
+      if (Date.parse(post.created_time) >= cutoff) posts.set(post.id, post);
+    }
+    console.log(`📖 Facebook 第 ${page} 頁：${data.data.length} 篇`);
+    const allOlder = data.data.length > 0 && data.data.every(
+      (post) => Date.parse(post.created_time) < cutoff
+    );
+    nextUrl = allOlder ? null : data.paging?.next;
+  }
+  return [...posts.values()];
 }
 
 function downloadFile(url, dest, redirectCount = 0) {
@@ -257,21 +304,21 @@ async function main() {
   fs.mkdirSync(imagesDir, { recursive: true });
 
   const existingPosts = getExistingPosts();
+  const auditOnly = process.env.FB_SYNC_AUDIT_ONLY === "true";
+  const changedPosts = [];
+  const postsToVerify = [];
   console.log(`📋 已有 ${existingPosts.size} 篇 FB 文章\n`);
 
-  // 取最近 20 篇
+  // 逐頁補查最近 90 天，避免停機期間貼文超過單頁而永久漏搬。
   const fields =
     "id,message,full_picture,created_time,permalink_url,updated_time," +
     "attachments{media_type,type,media,target,subattachments{media_type,type,media,target}}";
   const url = `https://graph.facebook.com/v25.0/${PAGE_ID}/posts?fields=${encodeURIComponent(fields)}&limit=20&access_token=${encodeURIComponent(TOKEN)}`;
-  const data = await fetchJSON(url);
-
-  if (data.error) {
-    console.error("❌ Facebook API 錯誤:", data.error.message);
-    process.exit(1);
+  const posts = await fetchRecentPosts(url);
+  console.log(`🕒 執行時間：${new Date().toISOString()}；近 90 天讀到 ${posts.length} 篇`);
+  for (const post of posts) {
+    console.log(`📋 貼文 ${post.id}，發文 ${post.created_time}，${existingPosts.has(post.id) ? "已收錄" : "未收錄"}`);
   }
-
-  const posts = data.data || [];
   let newCount = 0;
   let updateCount = 0;
 
@@ -307,6 +354,14 @@ async function main() {
       fs.existsSync(path.join(__dirname, "..", "public", image))
     );
 
+    postsToVerify.push({ slug, title, mediaRefs, createdTime: post.created_time });
+    if (existing?.content === markdown && assetsReady) continue;
+    changedPosts.push({ slug, title, mediaRefs, createdTime: post.created_time });
+    if (auditOnly) {
+      console.log(`🔎 待同步：${slug}（${mediaUrls.length} 張圖片）`);
+      continue;
+    }
+
     if (existing) {
       // === 更新已存在的文章 ===
       if (existing.content === markdown && assetsReady) continue;
@@ -327,6 +382,26 @@ async function main() {
   }
 
   const totalChanges = newCount + updateCount;
+  const result = {
+    checkedAt: new Date().toISOString(),
+    auditOnly,
+    fetchedCount: posts.length,
+    changedPosts,
+    postsToVerify,
+  };
+  if (process.env.FB_SYNC_RESULT_PATH) {
+    fs.writeFileSync(process.env.FB_SYNC_RESULT_PATH, JSON.stringify(result, null, 2));
+  }
+  if (process.env.GITHUB_STEP_SUMMARY) {
+    fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,
+      `## Facebook 同步核對\n\n檢查時間：${result.checkedAt}\n\n近 90 天讀到 ${posts.length} 篇；${auditOnly ? "待同步" : "異動"} ${changedPosts.length} 篇。\n\n` +
+      posts.map((post) => `- 貼文 ${post.id}；發文：${post.created_time}；${existingPosts.has(post.id) ? "原已收錄" : "本次新發現"}`).join("\n") + "\n"
+    );
+  }
+  if (auditOnly) {
+    console.log(`🔎 核對完成，待同步 ${changedPosts.length} 篇，未寫入文章`);
+    return;
+  }
   if (totalChanges === 0) {
     console.log("✅ 沒有需要同步的變更");
     return;

@@ -2,9 +2,15 @@
 
 專業機車液晶儀表維修服務網站 — 北大工作室堅持不換偏光片，採用直接更換全新液晶。
 
-> 最後更新：2026-08-11
+> 最後更新：2026-10-15
 
 ## 更新日誌
+
+### 2026-10-15
+- Facebook 同步改為每小時第 37 分執行，降低單次排程延遲造成隔天仍未搬遷的風險
+- 逐頁補查近 90 天貼文；連線失敗自動重試，空清單或錯誤格式會回報失敗
+- 每次同步記錄來源貼文時間，並驗收正式站文章及全部圖片；沒有新 commit 也會核對線上文章
+- 新增手動「僅核對」模式（`audit_only`），可查看漏搬文章而不修改內容
 
 ### 2026-08-11
 - 左上角品牌 Logo 與導覽列同步放大，桌機與手機皆保留清楚品牌辨識
@@ -58,7 +64,7 @@ https://my-fanpage.vercel.app
 - **首頁** — 職人工坊主視覺、可維修車款軌道、服務項目、選擇北大、最新 6 篇文章、聯絡資訊
 - **公告事項與維修案例** — 置頂文章動態排列 + 多種版面交替排列，分類篩選
 - **管理後台** — 登入後可預覽、編輯、新增、刪除文章（透過 GitHub API）
-- **Facebook 同步** — 每天台灣時間 08:17 從 FB 粉專抓新貼文，轉為 Markdown 存入 repo；每月心跳提交避免排程因公開 repo 長期無活動而停用
+- **Facebook 同步** — 每小時第 37 分從 FB 粉專逐頁補查近 90 天貼文，轉為 Markdown 存入 repo，驗收正式站文章及圖片；每月心跳提交避免排程因公開 repo 長期無活動而停用
 - **LINE 官方帳號** — Webhook 整合，自動回覆訊息
 - **營業時間** — 高雄：週一至週五 11:30–16:00；屏東：週二、週三 18:00–20:00、週末 10:30–13:30（皆採預約制）
 
@@ -70,7 +76,7 @@ https://my-fanpage.vercel.app
 - **通訊**: LINE Messaging API webhook
 - **後台**: GitHub Contents API（Vercel serverless 環境寫入）
 - **部署**: Vercel（推送 GitHub 自動部署；亦可使用 Vercel CLI 直接部署）
-- **同步**: GitHub Actions cron（每天台灣時間 08:17，另有每月防休眠心跳）
+- **同步**: GitHub Actions cron（每小時第 37 分，另有每月防休眠心跳）
 
 ## 專案結構
 
@@ -101,13 +107,14 @@ https://my-fanpage.vercel.app
 ├── content/posts/              # Markdown 文章
 ├── scripts/
 │   ├── sync-fb-posts.js       # FB API 同步（GitHub Actions 用）
+│   ├── verify-fb-publication.js # 同步後驗收正式網站文章與圖片
 │   └── migrate-fb-posts.js    # FB 資料匯出轉 Markdown
 ├── public/                     # 靜態資源
 │   └── images/bei-da-workbench-hero-v1.png # 首頁職人工坊主視覺
 └── .github/
     ├── fb-sync-heartbeat      # 每月更新，避免排程因 repo 無活動被停用
     └── workflows/
-        └── sync-fb.yml        # FB 同步排程（每天台灣時間 08:17）
+        └── sync-fb.yml        # FB 同步排程（每小時第 37 分）
 ```
 
 ## 環境變數
@@ -134,7 +141,9 @@ NEXT_PUBLIC_LINE_OA_URL=
 
 ## Facebook 同步設定（完整步驟）
 
-FB 同步由 GitHub Actions 每天自動執行一次（台灣 8:17），抓取粉專最新貼文轉為 Markdown。
+FB 同步由 GitHub Actions 每小時第 37 分執行，逐頁補查近 90 天貼文並轉為 Markdown。目標是發文後下一次檢查就搬入，避免每天只有一次機會。
+
+GitHub 排程可能延遲或被平台略過，因此這是多次補查機制，並非準時或 24 小時內的服務保證。若需硬性期限，須另接有執行時間保證的排程器。同步失敗、文章或圖片未在正式站出現時，工作流程會顯示失敗。
 
 > 2026-08-11 驗證：工作流程已從 `disabled_inactivity` 重新啟用，手動執行成功新增 1 篇 Facebook 文章與圖片並推送至 GitHub。工作流程另會每月更新 `.github/fb-sync-heartbeat`，避免公開 repo 因 60 天無活動再次停用。
 
@@ -185,8 +194,11 @@ node scripts/get-permanent-token.js <短期User Token>
 
 ### 6. 同步機制說明
 
-- 同步腳本直接使用永久 Page Token 呼叫 `/{PAGE_ID}/posts` 抓取最近 20 篇貼文
-- 每天自動執行一次（台灣 8:17），也可到 GitHub Actions 手動觸發
+- 同步腳本使用 Page Token 呼叫 `/{PAGE_ID}/posts`，每頁 20 篇並追蹤分頁，補查近 90 天貼文
+- 每小時第 37 分執行；連線或暫時性伺服器錯誤最多嘗試 3 次，可在 GitHub Actions 手動觸發
+- 每次執行摘要記錄貼文 ID、Facebook 發文時間與收錄狀態；正式網站文章與圖片驗收也會寫入摘要
+- 手動觸發勾選 `audit_only` 可僅核對、不修改；命令列設定 `FB_SYNC_AUDIT_ONLY=true` 有相同效果
+- 自動化使用 `FB_SYNC_RESULT_PATH` 存放暫存驗收清單（位於 runner 暫存目錄，不提交 Git）
 - 新文章建立 `.md` 檔並下載 Facebook 貼文的全部圖片，已存在文章若文字、更新時間、圖片數量或本機圖片不一致會自動補齊
 - 首張圖片作為文章封面，其餘圖片依 Facebook 原順序顯示在文章內容中
 - 新文章網址只使用英數、日期與 Facebook 貼文 ID，避免中文網址編碼造成文章頁 404

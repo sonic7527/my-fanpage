@@ -2,9 +2,18 @@ name: Sync Facebook Posts
 
 on:
   schedule:
-    # 每天一次（UTC 0:17 = 台灣 8:17），避開整點尖峰
-    - cron: "17 0 * * *"
-  workflow_dispatch: # 允許手動觸發
+    # 每小時第 37 分檢查，單次排程延遲不再錯過一整天。
+    - cron: "37 * * * *"
+  workflow_dispatch:
+    inputs:
+      audit_only:
+        description: "僅核對 Facebook 與網站文章，不寫入或提交"
+        type: boolean
+        default: false
+
+concurrency:
+  group: facebook-post-sync
+  cancel-in-progress: false
 
 permissions:
   contents: write
@@ -12,6 +21,7 @@ permissions:
 jobs:
   sync:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - name: Checkout
@@ -27,7 +37,15 @@ jobs:
         env:
           FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
           FB_PAGE_TOKEN: ${{ secrets.FB_PAGE_TOKEN }}
+          FB_SYNC_AUDIT_ONLY: ${{ inputs.audit_only || 'false' }}
+          FB_SYNC_RESULT_PATH: ${{ runner.temp }}/fb-sync-result.json
         run: node scripts/sync-fb-posts.js
+
+      - name: Verify published articles
+        if: ${{ inputs.audit_only != true }}
+        env:
+          FB_SYNC_RESULT_PATH: ${{ runner.temp }}/fb-sync-result.json
+        run: node scripts/verify-fb-publication.js
 
       # 公開 repo 若 60 天沒有活動，GitHub 會自動停用排程。
       # 每月更新一次心跳檔，避免 FB 同步再次進入 disabled_inactivity。
