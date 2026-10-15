@@ -328,8 +328,23 @@ async function main() {
   }
 
   for (const post of posts) {
-    if (!post.message) continue;
-    if (ignoredIds.has(post.id)) continue;
+    if (ignoredIds.has(post.id)) {
+      console.log(`🚫 略過忽略清單貼文：${post.id}`);
+      continue;
+    }
+
+    const mediaTypes = (post.attachments?.data || []).flatMap((attachment) => [
+      attachment.media_type || attachment.type || "未知附件",
+      ...(attachment.subattachments?.data || []).map(
+        (item) => item.media_type || item.type || "未知附件"
+      ),
+    ]);
+    if (!post.message?.trim()) {
+      const hasVideo = mediaTypes.some((type) => /video/i.test(type));
+      const title = hasVideo ? "粉專影片分享" : "粉專照片與動態分享";
+      post.message = `${title}\n\n此貼文沒有文字說明。${hasVideo ? "請點選「查看 Facebook 原文」觀看完整影片。" : "可透過「查看 Facebook 原文」查看來源貼文。"}`;
+      console.log(`🖼 補收無文字貼文：${post.id}；附件類型：${mediaTypes.join("、") || "未提供"}`);
+    }
 
     const date = post.created_time.split("T")[0];
     const title = post.message.split("\n")[0].slice(0, 80) || "粉專貼文";
