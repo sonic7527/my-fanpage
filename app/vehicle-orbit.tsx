@@ -19,7 +19,13 @@ const brands = [
     id: "yamaha", name: "YAM", sub: "山葉", color: "#0EA5E9",
     orbit: { layer: 0, fixedAngle: 310 },
     size: 62,
-    models: ["BWS'X", "BWS'R", "CUXI", "NEW CUXI", "CUXI 115", "FORCE", "GTR", "LIMI", "RS-ZERO", "S-MAX", "勁戰2代"],
+    models: ["BWS'X", "BWS'R", "CUXI", "NEW CUXI", "CUXI 115", "FORCE", "GTR", "LIMI", "RS-ZERO", "S-MAX", "勁戰2代", "MT-15（舊版）", "勁戰六代（CYGNUS GRYPHUS）"],
+  },
+  {
+    id: "honda", name: "HONDA", sub: "本田", color: "#EF4444",
+    orbit: { layer: 2, fixedAngle: 120 },
+    size: 64,
+    models: ["MSX125"],
   },
   {
     id: "pgo", name: "PGO", sub: "比雅久", color: "#F97316",
@@ -129,7 +135,7 @@ const decorDots = [
   { layer: 0, angle: 230, color: "#8B5CF6", size: 10 },
   { layer: 1, angle: 150, color: "#3B82F6", size: 14 },
   { layer: 1, angle: 320, color: "#0EA5E9", size: 10 },
-  { layer: 2, angle: 120, color: "#DC3C28", size: 9 },
+  { layer: 2, angle: 90, color: "#DC3C28", size: 9 },
   { layer: 2, angle: 300, color: "#14B8A6", size: 11 },
 ];
 

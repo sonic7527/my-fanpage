@@ -27,7 +27,14 @@ const brands = [
     models: [
       "BWS'X", "BWS'R", "CUXI", "NEW CUXI", "CUXI 115",
       "FORCE", "GTR", "LIMI", "RSZ", "RS-ZERO",
-      "S-MAX", "勁戰2代",
+      "S-MAX", "勁戰2代", "MT-15（舊版）", "勁戰六代（CYGNUS GRYPHUS）",
+    ],
+  },
+  {
+    name: "HONDA 本田",
+    color: "text-red-400",
+    models: [
+      "MSX125",
     ],
   },
   {
